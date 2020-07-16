@@ -1,0 +1,22 @@
+\chapter{General principles}
+
+\sysname{} is designed to provide most of the functionality that
+typical clients will need.  But \sysname{} is also designed to be
+extended by clients that need additional functionality.
+
+The main mechanism for providing extensions is the use of a
+\texttt{client} parameter in all of the generic functions defined by
+\sysname{}.  None of the methods of the generic functions defined by
+\sysname{} specialize to the \texttt{client} parameter.  However, it is
+highly recommended that client code respect these two conventions:
+
+\begin{enumerate}
+\item Clients calling a \sysname{} generic function should always
+  supply an instance of some client-specific standard object as the
+  \texttt{client} argument.
+\item Client-specific methods on \sysname{} generic functions should
+  always specialize to some client-specific class.
+\end{enumerate}
+
+These rules exist so that several different clients may coexist in
+the same \commonlisp{} image, without interfering with one another.
