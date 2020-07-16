@@ -1,1 +1,34 @@
 \chapter{Evaluation environment}
+
+\section{Mixin class}
+
+\Defclass {evaluation-environment-mixin}
+
+This class should be used in order to create an evaluation environment
+class that has this mixin class and a run-time environment class as
+superclasses.
+
+\Definitarg {:parent}
+
+This initialization argument must be provided and should be either
+another evaluation environment, or a run-time-environment.
+
+\Defgeneric {parent} {environment}
+
+\Defmethod {parent} {(environment {\tt evaluation-environment-mixin})}
+
+This generic function return the environment objection that was passed
+as the \texttt{:parent} initialization argument when
+\textit{environment} was created.
+
+\section{Methods}
+
+{\small\Defmethod {fboundp} {client (environment {\tt
+      evaluation-environment-mixin}) \\ function-name}
+}
+
+This method first calls \texttt{(call-next-method)}.  If that call
+returns true, then that true value is returned.  If that call returns
+false, then this method calls \texttt{fboundp} with the same \texttt{client}
+argument, a second argument resulting from calling \texttt{(parent
+  environment)} and the same \texttt{function-name} argument.
