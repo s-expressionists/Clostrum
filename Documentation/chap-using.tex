@@ -1,0 +1,49 @@
+\chapter{Using \sysname{}}
+
+There are several use cases for \sysname{} depending on the type and
+level of ambition of the client.
+
+\section{Compilation environment only}
+
+An existing (perhaps relatively new) \commonlisp{} implementation that
+has decided to take advantage of the permission to merge the run-time
+environment and the evaluation environment, but that wants a separate
+compilation environment can use \sysname{} as follows:
+
+\begin{itemize}
+\item It would define an environment class  (say
+  \texttt{client:global-environment}) that has
+  \texttt{clostrum:run-time-environment} as a superclass.
+\item It would implement methods on the generic functions in
+  \refSec{sec-run-time-protocol-functions} that trampoline to existing
+  implementation-specific functions in the single global environment
+  of the client.
+\item It would create a constellation consisting of an instance of
+  \texttt{client:global-environment} as the parent of an instance of
+  \texttt{clostrum:compilation-environment}
+\end{itemize}
+
+\section{Compilation and evaluation environment}
+
+An existing \commonlisp{} implementation with a traditional, single
+global run-time environment that wants a separate evaluation
+environment in order to avoid compile-time side effects to its
+run-time environment can use \sysname{} as follows:
+
+\begin{itemize}
+\item It would define an environment class  (say
+  \texttt{client:run-time-environment}) that has
+  \texttt{clostrum:environment} as a superclass.
+\item It would implement methods on the generic functions in
+  \refSec{sec-run-time-protocol-functions} that trampoline to existing
+  implementation-specific functions in the single global environment
+  of the client.
+\item It would create a class (say
+  \texttt{client:evaluation-environment}) as a subclass of
+  \texttt{clostrum:evaluation-environment-mixin} and
+  \texttt{client:run-time-environment}.
+\item It would create a constellation consisting of an instance of
+  \texttt{client:run-time-environment}, an instance of
+  \texttt{client:evaluation-environment},
+  \texttt{clostrum:compilation-environment}
+\end{itemize}
