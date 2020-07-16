@@ -1,1 +1,54 @@
 \chapter{Compilation environment}
+
+\section{Class}
+
+\Defclass {compilation-environment}
+
+An instance of this class is passed as the \texttt{\&environment}
+argument to macro functions during compile time.
+
+\Definitarg {:parent}
+
+This initialization argument must be provided and should be
+an evaluation environment.
+
+\Defgeneric {parent} {environment}
+
+\Defmethod {parent} {(environment {\tt compilation-environment})}
+
+This generic function return the environment objection that was passed
+as the \texttt{:parent} initialization argument when
+\textit{environment} was created.
+
+\section{Generic functions}
+
+\Defgeneric {function-class-name} {client environment \\ function-name}
+
+This generic function returns the name of a the class of the function
+named \textit{function-name}.  If no information about a generic
+function with that name exists in \textit{environment}, then
+\texttt{nil} is returned.
+
+\Defgeneric {(setf function-class-name)} {class-name client environment \\
+function-name}
+
+This generic function sets the name of a the class of the function
+named \textit{function-name}.
+
+Information about the class of a function is useful mostly for generic
+functions, but can also be used for ordinary functions and instances
+of the class named \texttt{funcallable-standard-object}, defined by
+the metaobject protocol.
+
+\Defgeneric {method-class-name} {client environment \\ function-name}
+
+This generic function returns the name of a the class of the methods
+on the generic function named \textit{function-name}.  If no information
+about a generic function with that name exists in
+\textit{environment}, then \texttt{nil} is returned.
+
+\Defgeneric {(setf method-class-name)} {class-name client environment \\
+function-name}
+
+This generic function sets the name of a the class of the methods on
+the generic function named \textit{function-name}.
