@@ -17,7 +17,7 @@ another evaluation environment, or a run-time-environment.
 
 \Defmethod {parent} {(environment {\tt evaluation-environment-mixin})}
 
-This generic function return the environment objection that was passed
+This generic function returns the environment objection that was passed
 as the \texttt{:parent} initialization argument when
 \textit{environment} was created.
 
@@ -29,6 +29,29 @@ as the \texttt{:parent} initialization argument when
 
 This method first calls \texttt{(call-next-method)}.  If that call
 returns true, then that true value is returned.  If that call returns
-false, then this method calls \texttt{fboundp} with the same \texttt{client}
-argument, a second argument resulting from calling \texttt{(parent
-  environment)} and the same \texttt{function-name} argument.
+false, then this method calls \texttt{fboundp} with the same
+\texttt{client} argument, a second argument resulting from calling
+\texttt{(parent environment)} and the same \texttt{function-name}
+argument.
+
+{\small\Defmethod {special-operator} {client (environment {\tt
+      evaluation-environment-mixin}) \\ function-name}
+}
+
+This method first calls \texttt{(call-next-method)}.  If that call
+returns true, then that true value is returned.  If that call returns
+false, then this method calls \texttt{special-operator} with the same
+\texttt{client} argument, a second argument resulting from calling
+\texttt{(parent environment)} and the same \texttt{function-name}
+argument.
+
+{\small\Defmethod {fdefinition} {client (environment {\tt
+      evaluation-environment-mixin}) \\ function-name}
+}
+
+This method first calls \texttt{(call-next-method)}.  If that call
+returns true, then that true value is returned.  If that call returns
+false, then this method calls \texttt{fdefinition} with the same
+\texttt{client} argument, a second argument resulting from calling
+\texttt{(parent environment)} and the same \texttt{function-name}
+argument.
