@@ -16,16 +16,32 @@ an evaluation environment.
 
 \Defmethod {parent} {(environment {\tt compilation-environment})}
 
-This generic function return the environment objection that was passed
+This generic function returns the environment objection that was passed
 as the \texttt{:parent} initialization argument when
 \textit{environment} was created.
 
 \section{Generic functions}
 
+\Defgeneric {function-lambda-list} {client environment \\ function-name}
+
+This generic function returns two values.  The first value is the
+lambda list of the function named \textit{function-name}.  The second
+value is true if and only if information about the lambda list of the
+function named \textit{function-name} exists.  In other words, if no
+information about a the lambda list of a function with that name
+exists in \textit{environment}, then the values \texttt{nil} and
+\texttt{nil} are returned.
+
+\Defgeneric {(setf function-lambda-list)} {lambda-list client environment \\
+function-name}
+
+This generic function sets the lambda list class of the function
+named \textit{function-name}.
+
 \Defgeneric {function-class-name} {client environment \\ function-name}
 
 This generic function returns the name of a the class of the function
-named \textit{function-name}.  If no information about a generic
+named \textit{function-name}.  If no information about a
 function with that name exists in \textit{environment}, then
 \texttt{nil} is returned.
 
