@@ -32,11 +32,22 @@ information about a the lambda list of a function with that name
 exists in \textit{environment}, then the values \texttt{nil} and
 \texttt{nil} are returned.
 
+This function is used in a Trucler method in order to return
+information about the name of a function that is being encountered in
+source code.
+
 \Defgeneric {(setf function-lambda-list)} {lambda-list client environment \\
 function-name}
 
 This generic function sets the lambda list class of the function
 named \textit{function-name}.
+
+This generic function can be called by the expansion of the macros
+\texttt{defun} or \texttt{defgeneric}, in the
+\texttt{:compile-toplevel} situation of an \texttt{eval-when} form.
+Thus, even though the function can not be created at compile time, the
+compiler is informed about the lambda list when a reference to the
+function is encountered later during compilation.
 
 \Defgeneric {function-class-name} {client environment \\ function-name}
 
@@ -44,6 +55,15 @@ This generic function returns the name of a the class of the function
 named \textit{function-name}.  If no information about a
 function with that name exists in \textit{environment}, then
 \texttt{nil} is returned.
+
+This generic function is typically used in the expansion of the
+\texttt{defmethod} macro, in the \texttt{:compile-toplevel} situation
+of an \texttt{eval-when} form.  Recall that the MOP function
+\texttt{make-method-lambda} is called at compile time by the expansion
+of this macro.  In order to pass a class prototype for the
+\texttt{generic-function} argument to \texttt{make-method-lambda},
+this generic function can be used to determine which class prototype
+to use.
 
 \Defgeneric {(setf function-class-name)} {class-name client environment \\
 function-name}
