@@ -1,13 +1,65 @@
-\chapter{Using Trucler with \sysname{}}
+\chapter{Using \trucler{} with \sysname{}}
+
+\section{ASDF system definition and package}
+
+\trucler{} can optionally be used with \sysname{}.  The ASDF system
+\texttt{clostrum-trucler} should be used for this purpose.
+
+The code for the method definitions described in this chapter is in a
+separate package named \texttt{clostrum-trucler}.
+
+\section{\trucler{} methods}
 
 \Defmethod {describe-variable} {client (environment
   compilation-environment) \\ name}
 
+This method makes an instance of an appropriate \trucler{} class
+as follows:
+
+\begin{itemize}
+\item If \textit{name} is the name of a special variable in
+  \textit{environment}, then an instance of the \trucler{} class
+  \texttt{global-special-variable-description} is made.
+\item If \textit{name} is the name of a constant variable in
+  \textit{environment}, then an instance of the \trucler{} class
+  \texttt{constant-variable-description} is made.
+\item If \textit{name} is the name of a symbol macro in
+  \textit{environment}, then an instance of the \trucler{} class
+  \texttt{global-symbol-macro-description} is made.
+\end{itemize}
+
 \Defmethod {describe-function} {client (environment
   compilation-environment) \\ name}
 
+This method makes an instance of an appropriate \trucler{} class
+as follows:
+
+\begin{itemize}
+\item If \textit{name} is the name of an ordinary function in
+  \textit{environment}, then an instance of the \trucler{} class
+  \texttt{global-function-description} is made.
+\item If \textit{name} is the name of a generic function in
+  \textit{environment}, then an instance of the \trucler{} class
+  \texttt{generic-function-description} is made.
+\item If \textit{name} is the name of a macro in
+  \textit{environment}, then an instance of the \trucler{} class
+  \texttt{global-macro-description} is made.
+\end{itemize}
+
+\Defmethod {describe-block} {client (environment
+  compilation-environment) \\ name}
+
+This method returns \texttt{nil}.
+
+\Defmethod {describe-tag} {client (environment
+  compilation-environment) \\ name}
+
+This method returns \texttt{nil}.
+
 \Defmethod {global-environment} {client (environment
   compilation-environment)}
+
+This method returns \textit{environment}.
 
 \Defmethod {macro-function} {client (environment
   compilation-environment) \\ symbol}
