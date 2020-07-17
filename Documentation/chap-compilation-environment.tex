@@ -83,6 +83,12 @@ on the generic function named \textit{function-name}.  If no information
 about a generic function with that name exists in
 \textit{environment}, then \texttt{nil} is returned.
 
+Like the generic function \texttt{function-class-name} this generic
+function is used in the expansion of the \texttt{defmethod} macro, and
+for the same reason.  The generic function \texttt{make-method-lambda}
+must be given the class prototype of a method class, and that method
+class is determined using this generic function.
+
 \Defgeneric {(setf method-class-name)} {class-name client environment \\
 function-name}
 
