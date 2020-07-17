@@ -1,4 +1,4 @@
-\chapter{Trucler methods}
+\chapter{Using Trucler with \sysname{}}
 
 \Defmethod {describe-variable} {client (environment
   compilation-environment) \\ name}
@@ -8,3 +8,12 @@
 
 \Defmethod {global-environment} {client (environment
   compilation-environment)}
+
+\Defmethod {macro-function} {client (environment
+  compilation-environment) \\ symbol}
+
+\Defmethod {compiler-macro-function} {client (environment
+  compilation-environment) \\ function-name}
+
+\Defmethod {symbol-macro-expansion} {client (environment
+  compilation-environment) \\ symbol}
