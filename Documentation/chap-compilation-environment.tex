@@ -22,77 +22,41 @@ as the \texttt{:parent} initialization argument when
 
 \section{Generic functions}
 
-\Defgeneric {function-lambda-list} {client environment \\ function-name}
-
-This generic function returns two values.  The first value is the
-lambda list of the function named \textit{function-name}.  The second
-value is true if and only if information about the lambda list of the
-function named \textit{function-name} exists.  In other words, if no
-information about a the lambda list of a function with that name
-exists in \textit{environment}, then the values \texttt{nil} and
-\texttt{nil} are returned.
-
-This function is used in a Trucler method in order to return
-information about the name of a function that is being encountered in
-source code.
-
-\Defgeneric {(setf function-lambda-list)} {lambda-list client environment \\
+\Defgeneric {(setf function-description)} {description client environment \\
 function-name}
 
-This generic function sets the lambda list class of the function
-named \textit{function-name}.
+This generic function is typically called by client code in the
+expansion of one of the macros \texttt{defun} and
+\texttt{defgeneric} in the \texttt{:compile-toplevel} situation of an
+\texttt{eval-when} form.  The \textit{description} argument is then an
+object that describes the function being defined.  It would typically
+contain the following information:
 
-This generic function can be called by the expansion of the macros
-\texttt{defun} or \texttt{defgeneric}, in the
-\texttt{:compile-toplevel} situation of an \texttt{eval-when} form.
-Thus, even though the function can not be created at compile time, the
-compiler is informed about the lambda list when a reference to the
-function is encountered later during compilation.
+\begin{itemize}
+\item The lambda list of the function.
+\item The class name of the function.  For an ordinary function, this
+  name may be just \texttt{function}, and for a generic function, it
+  is the argument of the \texttt{:generic-function-class}
+  \texttt{defgeneric} option.
+\item The class name for methods if it is a generic function.  It is
+  the argument of the \texttt{:method-class} \texttt{defgeneric}
+  option.
+\item The method combination if it is a generic function.  It is the
+  argument of the \texttt{:method-combination} \texttt{defgeneric}
+  option.
+\item Information for possible inlining.
+\item Information about an associated compiler macro.
+\item Information about source location.
+\end{itemize}
 
-\Defgeneric {function-class-name} {client environment \\ function-name}
+A value of \texttt{nil} for the \textit{description} argument deletes
+the existing information associated with \textit{function-name} in
+\textit{environment}.
 
-This generic function returns the name of a the class of the function
-named \textit{function-name}.  If no information about a
-function with that name exists in \textit{environment}, then
-\texttt{nil} is returned.
+\Defgeneric {function-description} {client environment \\ function-name}
 
-This generic function is typically used in the expansion of the
-\texttt{defmethod} macro, in the \texttt{:compile-toplevel} situation
-of an \texttt{eval-when} form.  Recall that the MOP function
-\texttt{make-method-lambda} is called at compile time by the expansion
-of this macro.  In order to pass a class prototype for the
-\texttt{generic-function} argument to \texttt{make-method-lambda},
-this generic function can be used to determine which class prototype
-to use.
-
-\Defgeneric {(setf function-class-name)} {class-name client environment \\
-function-name}
-
-This generic function sets the name of a the class of the function
-named \textit{function-name}.
-
-Information about the class of a function is useful mostly for generic
-functions, but can also be used for ordinary functions and instances
-of the class named \texttt{funcallable-standard-object}, defined by
-the metaobject protocol.
-
-\Defgeneric {method-class-name} {client environment \\ function-name}
-
-This generic function returns the name of a the class of the methods
-on the generic function named \textit{function-name}.  If no information
-about a generic function with that name exists in
-\textit{environment}, then \texttt{nil} is returned.
-
-Like the generic function \texttt{function-class-name} this generic
-function is used in the expansion of the \texttt{defmethod} macro, and
-for the same reason.  The generic function \texttt{make-method-lambda}
-must be given the class prototype of a method class, and that method
-class is determined using this generic function.
-
-\Defgeneric {(setf method-class-name)} {class-name client environment \\
-function-name}
-
-This generic function sets the name of a the class of the methods on
-the generic function named \textit{function-name}.
+This generic function returns the function description provided by the
+generic function \texttt{(setf function-description)}.  If no function
+description has been provided, then \texttt{nil} is returned.
 
 MORE GENERIC FUNCTIONS HERE
