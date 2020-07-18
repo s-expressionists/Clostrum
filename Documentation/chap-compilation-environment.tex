@@ -55,6 +55,11 @@ A value of \texttt{nil} for the \textit{description} argument deletes
 the existing information associated with \textit{function-name} in
 \textit{environment}.
 
+Before calling this generic function, client code might want to verify
+that a call to \texttt{macro-function} returns \texttt{nil}.  If not,
+it means that \textit{function-name} already names a macro, either in
+the evaluation environment or in the run-time environment.
+
 \Defgeneric {function-description} {client environment \\ function-name}
 
 This generic function returns the function description provided by the
@@ -81,3 +86,12 @@ This method calls \texttt{(setf macro-function)} with the same
 \textit{function} argument, with the same \textit{client} argument, with
 the value of calling \texttt{parent} on \textit{environment}, and with
 the same \textit{symbol} argument.
+
+Before client code calls this generic function, it might want to
+verify that a call to \texttt{function-description} returns
+\texttt{nil}, and take action if this is not the case, because then it
+means that a definition of a function and a definition of a macro of
+the same name both exist in the same compilation unit.  Possible
+actions include calling \texttt{(setf function-description)} with a
+description of \texttt{nil}, thereby effectively replacing the
+function by the macro.
