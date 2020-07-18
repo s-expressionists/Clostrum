@@ -22,8 +22,9 @@ as the \texttt{:parent} initialization argument when
 
 \section{Generic functions}
 
-\Defgeneric {(setf function-description)} {description client environment \\
+{\small\Defgeneric {(setf function-description)} {description client environment \\
 function-name}
+}
 
 This generic function is typically called by client code in the
 expansion of one of the macros \texttt{defun} and
@@ -46,6 +47,7 @@ contain the following information:
   option.
 \item Information for possible inlining.
 \item Information about an associated compiler macro.
+\item The function type.
 \item Information about source location.
 \end{itemize}
 
@@ -60,3 +62,22 @@ generic function \texttt{(setf function-description)}.  If no function
 description has been provided, then \texttt{nil} is returned.
 
 MORE GENERIC FUNCTIONS HERE
+
+\section{Methods}
+
+{\small\Defmethod {macro-function} {client (environment {\tt
+      compilation-environment-mixin}) \\ symbol}
+}
+
+This method calls \texttt{macro-function} with the same
+\textit{client} argument, with the value of calling \texttt{parent} on
+\textit{environment}, and with the same \textit{symbol} argument.
+
+{\small\Defmethod {(setf macro-function)} {function client (environment {\tt
+      compilation-environment-mixin}) \\ symbol}
+}
+
+This method calls \texttt{(setf macro-function)} with the same
+\textit{function} argument, with the same \textit{client} argument, with
+the value of calling \texttt{parent} on \textit{environment}, and with
+the same \textit{symbol} argument.
