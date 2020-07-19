@@ -92,6 +92,34 @@ This generic function returns the function description provided by the
 generic function \texttt{(setf variable-description)}.  If no variable
 description has been provided, then \texttt{nil} is returned.
 
+{\small\Defgeneric {(setf class-description)} {description client environment \\
+symbol}
+}
+
+This generic function is typically called by client code in th
+expansion of the \texttt{defclass} macro in the
+\texttt{:compile-toplevel} situation of an \texttt{eval-when} form.
+The \textit{description} argument is then an object that describes the
+class being defined.  It would typically contain the following
+information:
+
+\begin{itemize}
+\item The name of the class.
+\item The name of its superclasses.
+\item The name of its metaclass.
+\item Information about source location.
+\end{itemize}
+
+A value of \texttt{nil} for the \textit{description} argument, deletes
+the existing information associated with \textit{symbol} in
+\textit{environment}.
+
+\Defgeneric {class-description} {client environment \\ symbol}
+
+This generic function returns the function description provided by the
+generic function \texttt{(setf class-description)}.  If no variable
+description has been provided, then \texttt{nil} is returned.
+
 MORE GENERIC FUNCTIONS HERE
 
 \section{Methods}
