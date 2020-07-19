@@ -66,6 +66,32 @@ This generic function returns the function description provided by the
 generic function \texttt{(setf function-description)}.  If no function
 description has been provided, then \texttt{nil} is returned.
 
+{\small\Defgeneric {(setf variable-description)} {description client environment \\
+symbol}
+}
+
+This generic function is typically called by client code in the
+expansion of one of the macros \texttt{devar} and
+\texttt{defparameter} in the \texttt{:compile-toplevel} situation of an
+\texttt{eval-when} form.  The \textit{description} argument is then an
+object that describes the variable being defined.  It would typically
+contain the following information:
+
+\begin{itemize}
+\item The variable type.
+\item Information about source location.
+\end{itemize}
+
+A value of \texttt{nil} for the \textit{description} argument, deletes
+the existing information associated with \textit{symbol} in
+\textit{environment}.
+
+\Defgeneric {variable-description} {client environment \\ symbol}
+
+This generic function returns the function description provided by the
+generic function \texttt{(setf variable-description)}.  If no variable
+description has been provided, then \texttt{nil} is returned.
+
 MORE GENERIC FUNCTIONS HERE
 
 \section{Methods}
