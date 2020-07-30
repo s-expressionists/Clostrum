@@ -19,4 +19,5 @@
    #:function-lambda-list #:function-class-name #:method-class-name))
 
 (defpackage #:clostrum-implementation
-  (:use #:cl))
+  (:use #:cl)
+  (:local-nicknames (#:env #:clostrum)))
