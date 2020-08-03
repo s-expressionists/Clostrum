@@ -16,7 +16,10 @@
    #:default-setf-expander #:type-expander #:find-package)
   ;; compilation environment operators
   (:export
-   #:function-lambda-list #:function-class-name #:method-class-name))
+   #:function-lambda-list #:function-class-name #:method-class-name)
+  ;; shared readers
+  (:export
+   #:parent))
 
 (defpackage #:clostrum-implementation
   (:use #:cl)
