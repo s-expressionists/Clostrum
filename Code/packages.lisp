@@ -16,7 +16,9 @@
    #:default-setf-expander #:type-expander #:find-package)
   ;; compilation environment operators
   (:export
-   #:function-lambda-list #:function-class-name #:method-class-name)
+   #:function-description
+   #:variable-description
+   #:class-description)
   ;; shared readers
   (:export
    #:parent))
