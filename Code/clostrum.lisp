@@ -13,3 +13,114 @@
 (defclass env:compilation-environment ()
   ((parent :initarg :parent :reader env:parent))
   (:default-initargs :parent (error "~s is required." :parent)))
+
+;;; Macros DEFINE-FUNCTION and DEFINE-ACCESSOR are used to define
+;;; run-time-environment protocol functions, so it is possible to generate
+;;; trampolines for the evaluation-environment-mixin automatically. They also
+;;; ensure that each protocol function has parameters environment and client.
+
+(eval-when (:compile-toplevel)
+  (defparameter *run-time-operators* nil)
+  (defparameter *run-time-accessors* nil)
+  (defparameter *compilation-accessors* nil))
+
+(defmacro define-operator (name args &rest options)
+  (assert (member 'environment args))
+  (assert (member 'client args))
+  `(progn (defgeneric ,name ,args ,@options)
+          (eval-when (:compile-toplevel)
+            (push (list* ',name ',args) *run-time-operators*))))
+
+(defmacro define-accessor (name args &rest options)
+  (assert (member 'environment args))
+  (assert (member 'client args))
+  (let ((new-value (gensym "NEW-VALUE")))
+    `(progn (defgeneric ,name ,args ,@options)
+            (defgeneric (setf ,name) (,new-value ,@args) ,@options)
+            (eval-when (:compile-toplevel)
+              (push (list* ',name ',args) *run-time-accessors*)))))
+
+(defmacro define-accessor* (name args &rest options)
+  (assert (member 'environment args))
+  (assert (member 'client args))
+  (let ((new-value (gensym "NEW-VALUE")))
+    `(progn (defgeneric ,name ,args ,@options)
+            (defgeneric (setf ,name) (,new-value ,@args) ,@options)
+            (eval-when (:compile-toplevel)
+              (push (list* ',name ',args) *compilation-accessors*)))))
+
+;;; run time
+(define-operator env:fboundp (client environment function-name))
+(define-operator env:fmakunbound (client environment function-name))
+(define-accessor env:special-operator (client environment function-name))
+(define-accessor env:fdefinition (client environment function-name))
+(define-accessor env:macro-function (client environment symbol))
+(define-accessor env:compiler-macro-function (client environment function-name))
+(define-accessor env:function-type (client environment function-name))
+(define-accessor env:function-inline (client environment function-name))
+(define-operator env:function-cell (client environment function-name))
+(define-operator env:function-unbound (client environment function-name))
+(define-operator env:function-lambda-list (client environment function-name))
+
+(define-operator env:boundp (client environment symbol))
+(define-accessor env:constant-variable (client environment symbol))
+(define-accessor env:special-variable (client environment symbol))
+(define-accessor env:symbol-macro (client environment symbol))
+(define-accessor env:variable-type (client environment symbol))
+(define-operator env:variable-unbound (client environment symbol))
+
+(define-accessor env:find-class (client environment symbol))
+(define-accessor env:setf-expander (client environment symbol))
+(define-accessor env:default-setf-expander (client environment))
+(define-accessor env:type-expander (client environment symbol))
+(define-accessor env:find-package (client environment name))
+
+;;; compilation time
+(define-accessor* env:function-description (client environment function-name))
+(define-accessor* env:variable-description (client environment symbol))
+(define-accessor* env:class-description (client environment symbol))
+
+(defmethod env:macro-function
+    (client (environment env:compilation-environment) symbol)
+  (env:macro-function client (env:parent environment) symbol))
+
+(defmethod (setf env:macro-function)
+    (function client (environment env:compilation-environment) symbol)
+  (funcall #'(setf env:macro-function) function
+           client (env:parent environment) symbol))
+
+;;; evaluation-environment-mixin trampolines
+;;;
+;;; To minimize possibility of a typo trampolines are generated
+;;; automatically. That also reduce amount of code in the module.
+(defmacro define-operator-trampolines (env-class)
+  (let ((methods
+          (loop with spec = `(environment ,env-class)
+                for (name . arg-names) in *run-time-operators*
+                collect
+                `(defmethod ,name ,(subst spec 'environment arg-names)
+                   (or (call-next-method)
+                       (let ((environment (env:parent environment)))
+                         (funcall (function ,name) ,@arg-names)))))))
+    `(progn ,@methods)))
+
+(defmacro define-accessor-trampolines (env-class)
+  (let ((methods
+          (loop with spec = `(environment ,env-class)
+                with nval = (gensym "NEW-VALUE")
+                for (name . arg-names) in *run-time-accessors*
+                collect
+                `(defmethod ,name ,(subst spec 'environment arg-names)
+                   (or (call-next-method)
+                       (let ((environment (env:parent environment)))
+                         (funcall (function ,name) ,@arg-names))))
+                collect
+                `(defmethod (setf ,name)
+                     ,(list* nval (subst spec 'environment arg-names))
+                   (or (call-next-method)
+                       (let ((environment (env:parent environment)))
+                         (funcall (function (setf ,name)) ,nval ,@arg-names)))))))
+    `(progn ,@methods)))
+
+(define-operator-trampolines env:evaluation-environment-mixin)
+(define-accessor-trampolines env:evaluation-environment-mixin)
