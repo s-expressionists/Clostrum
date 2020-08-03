@@ -125,7 +125,7 @@ MORE GENERIC FUNCTIONS HERE
 \section{Methods}
 
 {\small\Defmethod {macro-function} {client (environment {\tt
-      compilation-environment-mixin}) \\ symbol}
+      compilation-environment}) \\ symbol}
 }
 
 This method calls \texttt{macro-function} with the same
@@ -133,7 +133,7 @@ This method calls \texttt{macro-function} with the same
 \textit{environment}, and with the same \textit{symbol} argument.
 
 {\small\Defmethod {(setf macro-function)} {function client (environment {\tt
-      compilation-environment-mixin}) \\ symbol}
+      compilation-environment}) \\ symbol}
 }
 
 This method calls \texttt{(setf macro-function)} with the same
