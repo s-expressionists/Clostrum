@@ -60,7 +60,6 @@
 (define-accessor env:function-inline (client environment function-name))
 (define-operator env:function-cell (client environment function-name))
 (define-operator env:function-unbound (client environment function-name))
-(define-operator env:function-lambda-list (client environment function-name))
 
 (define-operator env:boundp (client environment symbol))
 (define-accessor env:constant-variable (client environment symbol))

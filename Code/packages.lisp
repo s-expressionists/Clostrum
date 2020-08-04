@@ -9,7 +9,7 @@
   (:export
    #:fboundp #:fmakunbound #:special-operator #:fdefinition #:macro-function
    #:compiler-macro-function #:function-type #:function-inline #:function-cell
-   #:function-unbound #:function-lambda-list
+   #:function-unbound
    ;;
    #:boundp #:constant-variable #:special-variable #:symbol-macro
    #:variable-type #:variable-unbound #:find-class #:setf-expander
