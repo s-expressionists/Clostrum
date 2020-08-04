@@ -371,15 +371,16 @@ environment.
 
 \Defgeneric {variable-unbound} {client environment symbol}
 
-A call to this function always succeeds.  It returns an object that
-indicates that the variable is unbound.  The \texttt{cons} cell
-returned by the function \texttt{variable-cell} contains this object
-whenever the variable named \textit{symbol} is unbound.  The return
-value of this function is always the same (in the sense of
-\texttt{eq}) when it is passed the same symbol and the same
-environment (in the sense of \texttt{eq}).
-Client code can use the return value of this function to
-determine whether \textit{symbol} is unbound.
+A call to this function always succeeds.  It returns an object that indicates
+that the variable is unbound.  The \texttt{cons} cell returned by the function
+\texttt{variable-cell} contains this object whenever the variable named
+\textit{symbol} is unbound.  The return value of this function is always the
+same (in the sense of \texttt{eq}) when it is passed the same symbol and the
+same environment (in the sense of \texttt{eq}).
+
+If the value returned by this function is \texttt{eq} to the \texttt{car} of
+the \texttt{cons} cell returned by \texttt{variable-cell}, then the variable
+\textit{symbol} is unbound.
 
 \Defgeneric {find-class} {client environment symbol}
 
