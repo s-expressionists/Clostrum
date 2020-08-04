@@ -226,18 +226,20 @@ value of this function is always the same (in the sense of
 
 \Defgeneric {function-unbound} {client environment function-name}
 
-A call to this function always succeeds.  It returns a function that,
-when called, signals an error of type \texttt{undefined-function}.
-When \textit{function-name} has no definition as a function, the
-return value of this function is the contents of the \texttt{cons}
-cell returned by \texttt{function-cell}.  The return value of this
-function is always the same (in the sense of \texttt{eq}) when it is
-passed the same (in the sense of \texttt{equal}) function name and the
-same (in the sense of \texttt{eq}) environment.  Client code can use
-the return value of this function to determine whether
-\textit{function-name} is unbound and if so signal an error when an
-attempt is made to evaluate the form \texttt{(function
-  \textrm{\textit{function-name}})}.
+A call to this function always succeeds.  It returns a function that, when
+called, signals an error of type \texttt{undefined-function}.  When
+\textit{function-name} has no definition as a function, the return value of
+this function is the contents of the \texttt{cons} cell returned by
+\texttt{function-cell}.  The return value of this function is always the same
+(in the sense of \texttt{eq}) when it is passed the same (in the sense of
+\texttt{equal}) function name and the same (in the sense of \texttt{eq})
+environment.
+
+If the value returned by this function is \texttt{eq} to the \texttt{car} of
+the \texttt{cons} cell returned by \texttt{function-cell}, then the function
+\textit{function-name} is unbound. The returned function may be called to
+signal en error when an attempt is made to evaluate the form
+\texttt{(function \textrm{\textit{function-name}})}.
 
 \Defgeneric {boundp} {client environment symbol}
 
