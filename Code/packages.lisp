@@ -12,8 +12,10 @@
    #:function-unbound
    ;;
    #:boundp #:constant-variable #:special-variable #:symbol-macro
-   #:variable-type #:variable-unbound #:find-class #:setf-expander
-   #:default-setf-expander #:type-expander #:find-package)
+   #:variable-type #:variable-cell #:variable-unbound
+   ;;
+   #:find-class #:setf-expander #:default-setf-expander #:type-expander
+   #:find-package)
   ;; compilation environment operators
   (:export
    #:function-description

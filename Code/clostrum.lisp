@@ -66,6 +66,7 @@
 (define-accessor env:special-variable (client environment symbol))
 (define-accessor env:symbol-macro (client environment symbol))
 (define-accessor env:variable-type (client environment symbol))
+(define-operator env:variable-cell (client environment symbol))
 (define-operator env:variable-unbound (client environment symbol))
 
 (define-accessor env:find-class (client environment symbol))
