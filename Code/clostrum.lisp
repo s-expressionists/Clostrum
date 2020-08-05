@@ -63,7 +63,11 @@
 
 (define-operator env:boundp (client environment symbol))
 (define-accessor env:constant-variable (client environment symbol))
-(define-accessor env:special-variable (client environment symbol))
+;;; The accessor ENV:SPECIAL-VARIABLE is defined as two operators, because it
+;;; has an irregular lambda list.
+(define-operator env:special-variable (client environment symbol))
+(define-operator (setf env:special-variable)
+    (new-value client environment symbol init-p))
 (define-accessor env:symbol-macro (client environment symbol))
 (define-accessor env:variable-type (client environment symbol))
 (define-operator env:variable-cell (client environment symbol))
