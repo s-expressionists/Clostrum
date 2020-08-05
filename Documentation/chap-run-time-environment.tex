@@ -249,11 +249,10 @@ as a symbol macro.  Otherwise, it returns \texttt{nil}.
 
 \Defgeneric {constant-variable} {client environment symbol}
 
-This function returns the value of the constant variable
-\textit{symbol}.
-
-If \textit{symbol} does not have a definition as a constant variable,
-then an error is signaled.
+This function returns two values. The first value is true if \textit{symbol}
+has a definition as a constant variable and \texttt{nil} otherwise. The second
+value is the value of the constant variable \textit{symbol} or \texttt{nil} if
+\textit{symbol} doesn't have a definition as a constant variable.
 
 \Defgeneric {(setf constant-variable)} {value client environment symbol}
 
@@ -269,19 +268,17 @@ error is signaled.
 
 \Defgeneric {special-variable} {client environment symbol}
 
-This function returns two values.  The first value is the value of
-\textit{symbol} as a special variable in \textit{environment}, or
-\texttt{nil} if \textit{symbol} does not have a value as a special
-variable in \textit{environment}.  The second value is true if
-\textit{symbol} does have a value as a special variable in
-\textit{environment} and \texttt{nil} otherwise.
+This function returns two values. The first value is true if \textit{symbol}
+has a definition as a special variable and \texttt{nil} otherwise. The second
+value is the value of \textit{symbol} as a special variable in
+\textit{environment}. When the special variable is unbound, then the second
+value is \texttt{eq} to the result of calling \textit{variable-unbound}.
 
-Notice that the symbol can have a value even though this function
-returns \texttt{nil} and \texttt{nil}.  The first such case is when
-the symbol has a value as a constant variable in \textit{environment}.
-The second case is when the symbol was assigned a value using
-\texttt{(setf symbol-value)} without declaring the variable as
-\texttt{special}.
+Notice that the symbol can have a value even though this function returns
+\texttt{nil} as its first value.  The first such case is when the symbol has a
+value as a constant variable in \textit{environment}.  The second case is when
+the symbol was assigned a value using \texttt{(setf symbol-value)} without
+declaring the variable as \texttt{special}.
 
 \Defgeneric {(setf special-variable)} {value client environment symbol init-p}
 
