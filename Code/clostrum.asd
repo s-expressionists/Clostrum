@@ -9,7 +9,7 @@
 
 (defsystem "clostrum/virtual"
   :description "Example implementation of the Clostrum protocol."
-  :depends-on ("clostrum")
+  :depends-on ("clostrum" "alexandria")
   :components
   ((:file "virtual"))
   :in-order-to ((test-op (test-op "clostrum/test"))))
