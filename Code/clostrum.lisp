@@ -73,7 +73,6 @@
 
 (define-accessor env:find-class (client environment symbol))
 (define-accessor env:setf-expander (client environment symbol))
-(define-accessor env:default-setf-expander (client environment))
 (define-accessor env:type-expander (client environment symbol))
 (define-accessor env:find-package (client environment name))
 

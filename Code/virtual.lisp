@@ -120,9 +120,7 @@
    (classes symbol)
    (setf-expanders symbol)
    (type-expanders symbol)
-   (packages package-name)
-   default-setf-expander)
-  (:default-initargs :default-setf-expander (constantly nil)))
+   (packages package-name)))
 
 (defmethod env:fboundp
     ((client virtual-client)
