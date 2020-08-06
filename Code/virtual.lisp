@@ -6,8 +6,6 @@
 ;;; - add entry for function-inline in compilation environment
 ;;;   (what about other proclamations?)
 ;;;
-;;; - add function/variable-class-description to run-time-environment
-;;;
 ;;; - why only (setf symbol-macro) signals program-error?
 ;;;   i.e (setf special-variable) signals "error"
 
@@ -300,6 +298,13 @@
   (check-type function-name function-name)
   (cdr (env:function-cell client env function-name)))
 
+(defmethod env:function-description
+    ((client virtual-client)
+     (env virtual-run-time-environment)
+     function-name)
+  (check-type function-name function-name)
+  nil)
+
 
 (defmethod env:boundp
     ((client virtual-client)
@@ -433,3 +438,90 @@
   (check-type symbol symbol)
   +unbound+)
 
+(defmethod env:variable-description
+    ((client virtual-client)
+     (env virtual-run-time-environment)
+     symbol)
+  (check-type symbol symbol)
+  nil)
+
+(defmethod env:find-class
+    ((client virtual-client)
+     (env virtual-run-time-environment)
+     symbol)
+  (check-type symbol symbol)
+  (values (access symbol (classes env))))
+
+(defmethod (setf env:find-class)
+    (new-value
+     (client virtual-client)
+     (env virtual-run-time-environment)
+     symbol)
+  (check-type symbol symbol)
+  (check-type new-value (or class null))
+  (if (null new-value)
+      (unbound symbol (classes env))
+      (update new-value symbol (classes env))))
+
+(defmethod env:class-description
+    ((client virtual-client)
+     (env virtual-run-time-environment)
+     symbol)
+  (check-type symbol symbol)
+  nil)
+
+(defmethod env:setf-expander
+    ((client virtual-client)
+     (env virtual-run-time-environment)
+     symbol)
+  (check-type symbol symbol)
+  (values (access symbol (setf-expanders env))))
+
+(defmethod (setf env:setf-expander)
+    (new-value
+     (client virtual-client)
+     (env virtual-run-time-environment)
+     symbol)
+  (check-type symbol symbol)
+  (cond ((null new-value)
+         (unbound symbol (setf-expanders env)))
+        ((or (access symbol (functions env))
+             (access symbol (macro-functions env)))
+         (update new-value symbol (classes env)))
+        (t
+         (error "~s is not a function nor a macro." symbol))))
+
+(defmethod env:type-expander
+    ((client virtual-client)
+     (env virtual-run-time-environment)
+     symbol)
+  (check-type symbol symbol)
+  (values (access symbol (type-expanders env))))
+
+(defmethod (setf env:type-expander)
+    (new-value
+     (client virtual-client)
+     (env virtual-run-time-environment)
+     symbol)
+  (check-type symbol symbol)
+  (if (null new-value)
+      (unbound symbol (setf-expanders env))
+      (update new-value symbol (classes env))))
+
+(defmethod env:find-package
+    ((client virtual-client)
+     (env virtual-run-time-environment)
+     name)
+  (check-type name string)
+  (values (access name (packages env))))
+
+(defmethod (setf env:find-package)
+    (new-package
+     (client virtual-client)
+     (env virtual-run-time-environment)
+     name)
+  (check-type name string)
+  (check-type new-package (or null package))
+  (if (null new-package)
+      (unbound name (packages env))
+      (update new-package name (packages env))))
