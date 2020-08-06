@@ -35,12 +35,9 @@ same \texttt{function-name} argument.
       evaluation-environment-mixin}) \\ function-name}
 }
 
-This method first calls \texttt{(call-next-method)}.  If that call
-returns true, then that true value is returned.  If that call returns
-false, then this method calls \texttt{special-operator} with the same
+The default method calls \texttt{special-operator} with the same
 \texttt{client} argument, a second argument resulting from calling
-\texttt{(parent environment)} and the same \texttt{function-name}
-argument.
+\texttt{(parent environment)} and the same \texttt{function-name} argument.
 
 {\small\Defmethod {fdefinition} {client (environment {\tt
       evaluation-environment-mixin}) \\ function-name}
