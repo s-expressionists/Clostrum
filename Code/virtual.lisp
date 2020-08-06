@@ -6,11 +6,7 @@
 ;;; - add entry for function-inline in compilation environment
 ;;;   (what about other proclamations?)
 ;;;
-;;; - add speciication for inline-information
-;;;   (is it really needed in spite of function-description?)
-;;;
-;;; - confirm that fdefinition can return NIL instead of an error and if yes,
-;;;   then update the specification
+;;; - add function/variable-class-description to run-time-environment
 ;;;
 ;;; - why only (setf symbol-macro) signals program-error?
 ;;;   i.e (setf special-variable) signals "error"
@@ -178,13 +174,14 @@
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
-  (cond ((access function-name (functions env)))
+  (cond ((alx:when-let ((def (access function-name (functions env))))
+           (values def 'cl:function)))
         ((alx:when-let ((def (access function-name (macro-functions env))))
-           (list 'cl:macro-function def)))
+           (values def 'cl:macro-function)))
         ((alx:when-let ((def (access function-name (special-operators env))))
-           (list 'cl:special def)))
+           (list def 'cl:special)))
         (t
-         (error 'undefined-function :name function-name))))
+         (values nil nil))))
 
 (defmethod (setf env:fdefinition)
     (new-value
