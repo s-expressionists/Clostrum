@@ -22,7 +22,7 @@
 (eval-when (:compile-toplevel)
   (defparameter *run-time-operators* nil)
   (defparameter *run-time-accessors* nil)
-  (defparameter *compilation-accessors* nil))
+  (defparameter *compilation-operators* nil))
 
 (defmacro define-operator (name args &rest options)
   (assert (member 'environment args))
@@ -40,14 +40,12 @@
             (eval-when (:compile-toplevel)
               (push (list* ',name ',args) *run-time-accessors*)))))
 
-(defmacro define-accessor* (name args &rest options)
+(defmacro define-operator* (name args &rest options)
   (assert (member 'environment args))
   (assert (member 'client args))
-  (let ((new-value (gensym "NEW-VALUE")))
-    `(progn (defgeneric ,name ,args ,@options)
-            (defgeneric (setf ,name) (,new-value ,@args) ,@options)
-            (eval-when (:compile-toplevel)
-              (push (list* ',name ',args) *compilation-accessors*)))))
+  `(progn (defgeneric ,name (,@args) ,@options)
+          (eval-when (:compile-toplevel)
+            (push (list* ',name ',args) *compilation-operators*))))
 
 ;;; run time
 (define-operator env:fboundp (client environment function-name))
@@ -79,10 +77,31 @@
 (define-accessor env:type-expander (client environment symbol))
 (define-accessor env:find-package (client environment name))
 
+(define-operator env:function-description (client environment function-name))
+(define-operator env:variable-description (client environment symbol))
+(define-operator env:class-description (client environment symbol))
+
 ;;; compilation time
-(define-accessor* env:function-description (client environment function-name))
-(define-accessor* env:variable-description (client environment symbol))
-(define-accessor* env:class-description (client environment symbol))
+(define-operator* (setf env:function-description)
+    (new-value client environment funciton-name))
+
+(define-operator* (setf env:variable-description)
+    (new-value client environment symbol))
+
+(define-operator* (setf env:class-description)
+    (new-value client environment symbol))
+
+(defmethod env:function-description
+    (client (environment env:compilation-environment) function-name)
+  (env:function-description client (env:parent environment) function-name))
+
+(defmethod env:variable-description
+    (client (environment env:compilation-environment) symbol)
+  (env:variable-description client (env:parent environment) symbol))
+
+(defmethod env:class-description
+    (client (environment env:compilation-environment) symbol)
+  (env:class-description client (env:parent environment) symbol))
 
 (defmethod env:macro-function
     (client (environment env:compilation-environment) symbol)
