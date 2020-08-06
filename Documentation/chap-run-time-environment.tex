@@ -230,6 +230,12 @@ the \texttt{cons} cell returned by \texttt{function-cell}, then the function
 signal en error when an attempt is made to evaluate the form
 \texttt{(function \textrm{\textit{function-name}})}.
 
+\Defgeneric {function-description} {client environment function-name}
+
+This generic function returns the function description. If no function
+description is available, then \texttt{nil} is returned. Result of this
+function may be used by the compiler and for introspection.
+
 \Defgeneric {boundp} {client environment symbol}
 
 It returns true if \textit{symbol} has a definition in
@@ -368,6 +374,12 @@ If the value returned by this function is \texttt{eq} to the \texttt{car} of
 the \texttt{cons} cell returned by \texttt{variable-cell}, then the variable
 \textit{symbol} is unbound.
 
+\Defgeneric {variable-description} {client environment symbol}
+
+This generic function returns the variable description. If no variable
+description is available, then \texttt{nil} is returned. Result of this
+function may be used by the compiler and for introspection.
+
 \Defgeneric {find-class} {client environment symbol}
 
 This generic function is a generic version of the Common Lisp function
@@ -395,6 +407,12 @@ longer associated with a class in \textit{environment}.
 
 If \textit{new-class} is neither a class metaobject nor \texttt{nil},
 then an error of type \texttt{type-error} is signaled.
+
+\Defgeneric {class-description} {client environment symbol}
+
+This generic function returns the class description. If no class description
+is available, then \texttt{nil} is returned. Result of this function may be
+used by the compiler and for introspection.
 
 \Defgeneric {setf-expander} {client environment symbol}
 
