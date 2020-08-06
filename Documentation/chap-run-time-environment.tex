@@ -68,8 +68,8 @@ in the function namespace of \textit{environment} (i.e., if \texttt{fboundp}
 returns true), then the first value is the object representing the
 definition. The second value is the function definition type, that is:
 \texttt{cl:function}, \texttt{cl:macro-function} or
-\texttt{cl:special}. Otherwise values \texttt{nil} and \texttt{nil} are
-returned.
+\texttt{cl:special}. Otherwise a function which signals
+\texttt{undefined-error} and \texttt{cl:undefined-function} are returned.
 
 \Defgeneric {(setf fdefinition)} {new-def client environment function-name}
 

@@ -179,9 +179,10 @@
         ((alx:when-let ((def (access function-name (macro-functions env))))
            (values def 'cl:macro-function)))
         ((alx:when-let ((def (access function-name (special-operators env))))
-           (list def 'cl:special)))
+           (values def 'cl:special)))
         (t
-         (values nil nil))))
+         (let ((def (env:function-unbound client env function-name)))
+           (values def 'cl:undefined-function)))))
 
 (defmethod (setf env:fdefinition)
     (new-value
