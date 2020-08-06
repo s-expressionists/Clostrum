@@ -95,6 +95,9 @@
        slot-names)
      ,@options))
 
+
+;;; Run-time environment
+
 ;;; Here we take a naive approach where each operator and variable type have a
 ;;; different storage and functions FUNCTION-CELL and VARIABLE-CELL lazily
 ;;; create the cell when they are called. Better strategy would be to have a
@@ -119,6 +122,9 @@
    (setf-expanders symbol)
    (type-expanders symbol)
    (packages package-name)))
+
+
+;;; Functions
 
 (defmethod env:fboundp
     ((client virtual-client)
@@ -306,6 +312,8 @@
   nil)
 
 
+;;; Variables
+
 (defmethod env:boundp
     ((client virtual-client)
      (env virtual-run-time-environment)
@@ -445,6 +453,9 @@
   (check-type symbol symbol)
   nil)
 
+
+;;; Other
+
 (defmethod env:find-class
     ((client virtual-client)
      (env virtual-run-time-environment)
@@ -525,3 +536,59 @@
   (if (null new-package)
       (unbound name (packages env))
       (update new-package name (packages env))))
+
+
+;;; Compilation environment
+
+(define-class virtual-compilation-environment (env:compilation-environment)
+  ((function-descriptions function-name)
+   (variable-descriptions variable-name)
+   (class-descriptions class-name)))
+
+(defmethod env:function-description
+    ((client virtual-client)
+     (env virtual-compilation-environment)
+     function-name)
+  (check-type function-name function-name)
+  (or (access function-name (function-descriptions env))
+      (env:function-description client (env:parent env) function-name)))
+
+(defmethod (setf function-description)
+    (description
+     (client virtual-client)
+     (env virtual-compilation-environment)
+     function-name)
+  (check-type function-name function-name)
+  (update description function-name (function-descriptions env)))
+
+(defmethod variable-description
+    ((client virtual-client)
+     (env virtual-compilation-environment)
+     symbol)
+  (check-type symbol symbol)
+  (or (access symbol (variable-descriptions env))
+      (env:variable-description client (env:parent env) symbol)))
+
+(defmethod (setf variable-description)
+    (description
+     (client virtual-client)
+     (env virtual-compilation-environment)
+     symbol)
+  (check-type symbol symbol)
+  (update description symbol (variable-descriptions env)))
+
+(defmethod class-description
+    ((client virtual-client)
+     (env virtual-compilation-environment)
+     symbol)
+  (check-type symbol symbol)
+  (or (access symbol (class-descriptions env))
+      (env:class-description client (env:parent env) symbol)))
+
+(defmethod (setf class-description)
+    (description
+     (client virtual-client)
+     (env virtual-compilation-environment)
+     symbol)
+  (check-type symbol symbol)
+  (update description symbol (class-descriptions env)))
