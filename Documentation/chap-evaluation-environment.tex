@@ -27,12 +27,9 @@ as the \texttt{:parent} initialization argument when
       evaluation-environment-mixin}) \\ function-name}
 }
 
-This method first calls \texttt{(call-next-method)}.  If that call
-returns true, then that true value is returned.  If that call returns
-false, then this method calls \texttt{fboundp} with the same
-\texttt{client} argument, a second argument resulting from calling
-\texttt{(parent environment)} and the same \texttt{function-name}
-argument.
+This method calls \texttt{fboundp} with the same \texttt{client} argument, a
+second argument resulting from calling \texttt{(parent environment)} and the
+same \texttt{function-name} argument.
 
 {\small\Defmethod {special-operator} {client (environment {\tt
       evaluation-environment-mixin}) \\ function-name}
@@ -49,44 +46,32 @@ argument.
       evaluation-environment-mixin}) \\ function-name}
 }
 
-This method first calls \texttt{(call-next-method)}.  If that call
-returns true, then that true value is returned.  If that call returns
-false, then this method calls \texttt{fdefinition} with the same
-\texttt{client} argument, a second argument resulting from calling
-\texttt{(parent environment)} and the same \texttt{function-name}
-argument.
+This method calls \texttt{fdefinition} with the same \texttt{client} argument,
+a second argument resulting from calling \texttt{(parent environment)} and the
+same \texttt{function-name} argument.
 
 {\small\Defmethod {macro-function} {client (environment {\tt
       evaluation-environment-mixin}) \\ symbol}
 }
 
-This method first calls \texttt{(call-next-method)}.  If that call
-returns true, then that true value is returned.  If that call returns
-false, then this method calls \texttt{macro-function} with the same
-\texttt{client} argument, a second argument resulting from calling
-\texttt{(parent environment)} and the same \texttt{symbol}
-argument.
+This method calls \texttt{macro-function} with the same \texttt{client}
+argument, a second argument resulting from calling \texttt{(parent
+  environment)} and the same \texttt{symbol} argument.
 
 {\small\Defmethod {compiler-macro-function} {client (environment {\tt
       evaluation-environment-mixin}) \\ function-name}
 }
 
-This method first calls \texttt{(call-next-method)}.  If that call
-returns true, then that true value is returned.  If that call returns
-false, then this method calls \texttt{compiler-macro-function} with
-the same \texttt{client} argument, a second argument resulting from
-calling \texttt{(parent environment)} and the same
-\texttt{function-name} argument.
+This method calls \texttt{compiler-macro-function} with the same
+\texttt{client} argument, a second argument resulting from calling
+\texttt{(parent environment)} and the same \texttt{function-name} argument.
 
 {\small\Defmethod {function-type} {client (environment {\tt
       evaluation-environment-mixin}) \\ function-name}
 }
 
-This method first calls \texttt{(call-next-method)}.  If that call
-returns true, then that true value is returned.  If that call returns
-false, then this method calls \texttt{function-type} with the same
-\texttt{client} argument, a second argument resulting from calling
-\texttt{(parent environment)} and the same \texttt{function-name}
-argument.
+This method calls \texttt{function-type} with the same \texttt{client}
+argument, a second argument resulting from calling \texttt{(parent
+  environment)} and the same \texttt{function-name} argument.
 
 MORE METHODS HERE...

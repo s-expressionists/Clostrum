@@ -103,9 +103,8 @@
                 for (name . arg-names) in *run-time-operators*
                 collect
                 `(defmethod ,name ,(subst spec 'environment arg-names)
-                   (or (call-next-method)
-                       (let ((environment (env:parent environment)))
-                         (funcall (function ,name) ,@arg-names)))))))
+                   (let ((environment (env:parent environment)))
+                     (funcall (function ,name) ,@arg-names))))))
     `(progn ,@methods)))
 
 (defmacro define-accessor-trampolines (env-class)
@@ -115,15 +114,13 @@
                 for (name . arg-names) in *run-time-accessors*
                 collect
                 `(defmethod ,name ,(subst spec 'environment arg-names)
-                   (or (call-next-method)
-                       (let ((environment (env:parent environment)))
-                         (funcall (function ,name) ,@arg-names))))
+                   (let ((environment (env:parent environment)))
+                     (funcall (function ,name) ,@arg-names)))
                 collect
                 `(defmethod (setf ,name)
                      ,(list* nval (subst spec 'environment arg-names))
-                   (or (call-next-method)
-                       (let ((environment (env:parent environment)))
-                         (funcall (function (setf ,name)) ,nval ,@arg-names)))))))
+                   (let ((environment (env:parent environment)))
+                     (funcall (function (setf ,name)) ,nval ,@arg-names))))))
     `(progn ,@methods)))
 
 (define-operator-trampolines env:evaluation-environment-mixin)
