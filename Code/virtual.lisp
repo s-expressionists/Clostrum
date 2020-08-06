@@ -161,15 +161,15 @@
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
-  (if new-value
+  (if (null new-value)
+      (unbound function-name (special-operators env))
       (cond
         ((access function-name (functions env))
          (error "~s already names a function." function-name))
         ((access function-name (macro-functions env))
          (error "~s already names a macro." function-name))
         (t
-         (update new-value function-name (special-operators env))))
-      (unbound function-name (special-operators env))))
+         (update new-value function-name (special-operators env))))))
 
 (defmethod env:fdefinition
     ((client virtual-client)
@@ -214,11 +214,9 @@
   (check-type new-value (or function null))
   ;; The special operator is not modified.
   (unbound symbol (functions env))
-  (unbound symbol (function-types env))
-  (unbound symbol (function-inlines env))
-  (if new-value
-      (update new-value symbol (macro-functions env))
-      (unbound symbol (macro-functions env))))
+  (if (null new-value)
+      (unbound symbol (macro-functions env))
+      (update new-value symbol (macro-functions env))))
 
 (defmethod env:compiler-macro-function
     ((client virtual-client)
@@ -233,9 +231,9 @@
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
-  (if new-value
-      (update new-value function-name (compiler-macro-functions env))
-      (unbound function-name (compiler-macro-functions env))))
+  (if (null new-value)
+      (unbound function-name (compiler-macro-functions env))
+      (update new-value function-name (compiler-macro-functions env))))
 
 (defmethod env:function-type
     ((client virtual-client)
