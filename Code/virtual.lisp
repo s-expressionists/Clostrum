@@ -17,7 +17,7 @@
 (in-package #:clostrum/virtual)
 
 (deftype function-name ()
-  `(or symbol (cons (eql setf) symbol)))
+  `(or symbol (cons (eql setf) (cons symbol null))))
 
 (deftype package-name ()
   `string)
