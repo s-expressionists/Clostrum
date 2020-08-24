@@ -571,8 +571,9 @@
      (client virtual-client)
      (env virtual-run-time-environment)
      (name (eql 'cl:optimize)))
+  (check-type new-value list)
   (if (null new-value)
-      ;; When the new-value is NIL then remove all declarations.
+      ;; When the new-value is NIL then remove all qualities.
       (unbound name (declarations env))
       (loop with qualities = (access 'cl:optimize (declarations env))
             for new-quality in new-value
@@ -587,11 +588,15 @@
      (client virtual-client)
      (env virtual-run-time-environment)
      (name (eql 'cl:declaration)))
-  (loop with declarations = (access name (declarations env))
-        for name in new-value
-        do (check-type name symbol)
-           (pushnew name declarations)
-        finally (update declarations 'cl:declaration (declarations env))))
+  (check-type new-value list)
+  (if (null new-value)
+      ;; When the new-value is NIL then remove all declarations.
+      (unbound name (declarations env))
+      (loop with declarations = (access name (declarations env))
+            for name in new-value
+            do (check-type name symbol)
+               (pushnew name declarations)
+            finally (update declarations 'cl:declaration (declarations env)))))
 
 
 ;;; Compilation environment
