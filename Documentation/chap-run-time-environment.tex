@@ -469,3 +469,29 @@ longer associated with a package in \textit{environment}.
 
 If \textit{new-package} is neither a package object nor \texttt{nil},
 then an error of type \texttt{type-error} is signaled.
+
+\Defgeneric {find-declaration} {client environment symbol}
+
+This function retruns a declaration asociated with \textit{symbol} in
+\textit{environment} and is not associated with a variable or a function. By
+default only \texttt{cl:optimize} and \texttt{cl:declaration} are expected to
+return anything.
+
+\Defgeneric {(setf find-declaration)} {new-value client environment symbol}
+
+This function is used to associate a new value with a declaration
+\textit{symbol} in \textit{environment}. \textit{new-value} is a list.
+
+If \textit{new-value} is \texttt{nil}, then \textit{name} association is lost.
+
+%% It is an undefined behavior what happens, when not all old optimization
+%% qualities are overwritten (from the Common Lisp spec perspective).
+If \textit{symbol} is \texttt{cl:optimize}, then qualities contained in
+\textit{new-value} overwrite old values, while remaining qualities are intact.
+
+If \textit{symbol} is \texttt{cl:declaration}, then symbols contained in
+\textit{new-value} are appended to allowed declarations.
+
+If \textit{symbol} is not one of the above and it is not an allowed
+declaration, then an error is signaled. Otherwise, when it is allowed, the old
+value is replaced with \textit{new-value}.
