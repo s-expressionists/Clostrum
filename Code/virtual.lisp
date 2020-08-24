@@ -3,11 +3,8 @@
 
 ;;; TODO
 ;;;
-;;; - add entry for function-inline in compilation environment
-;;;   (what about other proclamations?)
-;;;
-;;; - why only (setf symbol-macro) signals program-error?
-;;;   i.e (setf special-variable) signals "error"
+;;; - add entries like function-inline in the compilation environment
+;;; - specify error conditions in documentation and use them
 
 (defpackage #:clostrum/virtual
   (:use #:cl)
@@ -21,6 +18,11 @@
 
 (deftype package-name ()
   `string)
+
+(deftype optimize-quality ()
+  `(or symbol
+       (cons symbol
+             (cons (integer 0 3) null))))
 
 (defconstant +unbound+ 'unbound)
 
@@ -121,7 +123,8 @@
    (classes symbol)
    (setf-expanders symbol)
    (type-expanders symbol)
-   (packages package-name)))
+   (packages package-name)
+   (declarations symbol)))
 
 
 ;;; Functions
@@ -521,7 +524,7 @@
     ((client virtual-client)
      (env virtual-run-time-environment)
      name)
-  (check-type name string)
+  (check-type name package-name)
   (values (access name (packages env))))
 
 (defmethod (setf env:find-package)
@@ -529,11 +532,66 @@
      (client virtual-client)
      (env virtual-run-time-environment)
      name)
-  (check-type name string)
+  (check-type name package-name)
   (check-type new-package (or null package))
   (if (null new-package)
       (unbound name (packages env))
       (update new-package name (packages env))))
+
+
+;;; Declarations
+
+(defmethod env:find-declaration
+    ((client virtual-client)
+     (env virtual-run-time-environment)
+     name)
+  (check-type name symbol)
+  (access name (declarations env)))
+
+(defmethod (setf env:find-declaration)
+    (new-value
+     (client virtual-client)
+     (env virtual-run-time-environment)
+     name)
+  (check-type name symbol)
+  (cond ((null new-value)
+         (unbound name (declarations env)))
+        ((member name (access 'cl:declaration (declarations env)))
+         (update new-value name (declarations env)))
+        (t
+         (error "~s is not a known declaration name." name))))
+
+;;; Undefined behavior: it is not specified whether new optimization qualities
+;;; merge with previous ones or maybe rather replace them. This implementation
+;;; merges optimization qualities, however alternative approach might be more
+;;; useful in some contexts. In that case it would be enough to remove this
+;;; method, a default method replaces the declaration value. -- jd 2020-08-24
+(defmethod (setf env:find-declaration)
+    (new-value
+     (client virtual-client)
+     (env virtual-run-time-environment)
+     (name (eql 'cl:optimize)))
+  (if (null new-value)
+      ;; When the new-value is NIL then remove all declarations.
+      (unbound name (declarations env))
+      (loop with qualities = (access 'cl:optimize (declarations env))
+            for new-quality in new-value
+            do (check-type new-quality optimize-quality)
+               (destructuring-bind (name &optional (value 3))
+                   (alx:ensure-list new-quality)
+                 (setf (getf qualities name) value))
+            finally (update qualities 'cl:optimize (declarations env)))))
+
+(defmethod (setf env:find-declaration)
+    (new-value
+     (client virtual-client)
+     (env virtual-run-time-environment)
+     (name (eql 'cl:declaration)))
+  (loop with declarations = (access name (declarations env))
+        for name in new-value
+        do (check-type name symbol)
+           (pushnew name declarations)
+        finally (update declarations 'cl:declaration (declarations env))))
 
 
 ;;; Compilation environment

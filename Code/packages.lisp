@@ -14,8 +14,8 @@
    #:boundp #:constant-variable #:special-variable #:symbol-macro
    #:variable-type #:variable-cell #:variable-unbound #:variable-description
    ;;
-   #:find-class #:setf-expander #:type-expander #:find-package
-   #:class-description)
+   #:find-class #:class-description #:setf-expander #:type-expander
+   #:find-package #:find-declaration)
   ;; compilation environment operators
   (:export
    #:function-description
