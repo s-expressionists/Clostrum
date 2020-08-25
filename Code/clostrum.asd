@@ -12,8 +12,20 @@
   :depends-on ("clostrum" "alexandria")
   :components
   ((:file "virtual"))
-  :in-order-to ((test-op (test-op "clostrum/test"))))
+  :in-order-to ((test-op (load-op "clostrum/test")))
+  :perform (test-op (operation component)
+             (flet ((s (name) (uiop:find-symbol* name '#:clostrum/virtual)))
+               (uiop:symbol-call
+                '#:clostrum/test '#:run-tests
+                (s '#:virtual-client)
+                (s '#:virtual-run-time-environment)
+                nil
+                (s '#:virtual-compilation-environment)))))
 
 (defsystem "clostrum/test"
   :description "Test suite for a Clostrum implementation."
-  :depends-on ("clostrum" "fiveam"))
+  :depends-on ("clostrum" "fiveam")
+  :components
+  ((:file "tests"))
+  :perform (test-op (operation component)
+             (error "No-can-do's-ville, baby doll.")))
