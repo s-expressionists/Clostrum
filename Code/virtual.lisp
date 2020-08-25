@@ -10,11 +10,21 @@
   (:use #:cl)
   (:local-nicknames (#:env #:clostrum)
                     (#:alx #:alexandria))
-  (:shadow #:package-name))
+  (:shadow #:class-name #:package-name)
+  (:export #:virtual-client
+           #:virtual-run-time-environment
+           #:virtual-evaluation-environment
+           #:virtual-compilation-environment))
 (in-package #:clostrum/virtual)
 
 (deftype function-name ()
   `(or symbol (cons (eql setf) (cons symbol null))))
+
+(deftype variable-name ()
+  `symbol)
+
+(deftype class-name ()
+  `symbol)
 
 (deftype package-name ()
   `string)
@@ -32,7 +42,7 @@
 
 (defun make-storage (key-type)
   (ecase key-type
-    (symbol
+    ((symbol variable-name class-name)
      (make-hash-table :test 'eq))
     (package-name
      (make-hash-table :test 'equal))
