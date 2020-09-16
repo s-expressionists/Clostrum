@@ -26,6 +26,9 @@
 (deftype class-name ()
   `symbol)
 
+(deftype classoid ()
+  `(or class null))
+
 (deftype package-name ()
   `string)
 
@@ -448,7 +451,7 @@
      (env simple-run-time-environment)
      symbol)
   (check-type symbol symbol)
-  (check-type new-value (or class null))
+  (check-type new-value classoid)
   (if (null new-value)
       (unbound symbol (classes env))
       (update new-value symbol (classes env))))
