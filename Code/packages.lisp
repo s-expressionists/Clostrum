@@ -8,11 +8,11 @@
   ;; run-time operators
   (:export
    #:fboundp #:fmakunbound #:special-operator #:fdefinition #:macro-function
-   #:compiler-macro-function #:function-type #:function-inline #:function-cell
+   #:compiler-macro-function #:function-type #:function-inline
    #:function-unbound #:function-description
    ;;
    #:boundp #:constant-variable #:special-variable #:symbol-macro
-   #:variable-type #:variable-cell #:variable-unbound #:variable-description
+   #:variable-type #:variable-unbound #:variable-description
    ;;
    #:find-class #:class-description #:setf-expander #:type-expander
    #:find-package #:find-declaration)

@@ -65,25 +65,4 @@
   ;; Proclamations
   (5am:is (null (env:function-type cli renv 'unknown)))
   (5am:is (null (env:function-inline cli renv 'unknown)))
-  (let ((cell-1 (5am:finishes (env:function-cell cli renv 'unknown)))
-        (cell-2 (5am:finishes (env:function-cell cli renv 'unknown)))
-        (undefn (5am:finishes (env:function-unbound cli renv 'unknown))))
-    (5am:is (eq cell-1 cell-2))
-    (5am:is (eq undefn (car cell-1))))
   (5am:is (null (env:function-description cli renv 'unknown))))
-
-(5am:test (function-cell-eq :fixture with-envs)
-  "Tests whether cells are EQ after the function is redefined."
-  (let ((cell-1 (env:function-cell cli renv 'fun))
-        (cell-2 (progn
-                  (setf (env:fdefinition cli renv 'fun) #'(lambda () 42))
-                  (env:function-cell cli renv 'fun)))
-        (cell-3 (progn
-                  (setf (env:fdefinition cli renv 'fun) #'(lambda () 30))
-                  (env:function-cell cli renv 'fun)))
-        (cell-4 (progn
-                  (env:fmakunbound cli renv 'fun)
-                  (env:function-cell cli renv 'fun))))
-    (5am:is (eq cell-1 cell-2))
-    (5am:is (eq cell-2 cell-3))
-    (5am:is (eq cell-3 cell-4))))

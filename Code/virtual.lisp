@@ -111,9 +111,8 @@
 ;;; Run-time environment
 
 ;;; Here we take a naive approach where each operator and variable type have a
-;;; different storage and functions FUNCTION-CELL and VARIABLE-CELL lazily
-;;; create the cell when they are called. Better strategy would be to have a
-;;; cell contain all information about the object in its namespace.
+;;; different storage. Better strategy would be to have a separate cell which
+;;; contains all information about the object in its namespace.
 (define-class virtual-run-time-environment (env:run-time-environment)
   (;; Operators
    (special-operators function-name)
@@ -122,13 +121,11 @@
    (compiler-macro-functions function-name)
    (function-types function-name)
    (function-inlines function-name)
-   (function-cells function-name)
    ;; Variables
    (constants symbol)
    (specials symbol)
    (symbol-macros symbol)
    (variable-types symbol)
-   (variable-cells symbol)
    ;; Other
    (classes symbol)
    (setf-expanders symbol)
@@ -291,29 +288,14 @@
       (update new-value function-name (function-inlines env))
       (error "The function ~s doesn't exist." function-name)))
 
-(defmethod env:function-cell
-    ((client virtual-client)
-     (env virtual-run-time-environment)
-     function-name)
-  (check-type function-name function-name)
-  ;; In CDR we store lambda, so the undefined-function signalling function is
-  ;; always EQ for the same FUNCTION-NAME and ENVIRONMENT.
-  (let ((cell (ensure function-name (function-cells env)
-                      (cons nil
-                            (lambda (&rest args)
-                              (declare (ignore args))
-                              (error 'undefined-function :name function-name))))))
-    (setf (car cell)
-          (or (access function-name (functions env))
-              (cdr cell)))
-    cell))
-
 (defmethod env:function-unbound
     ((client virtual-client)
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
-  (cdr (env:function-cell client env function-name)))
+  (lambda (&rest args)
+    (declare (ignore args))
+    (error 'undefined-function :name function-name)))
 
 (defmethod env:function-description
     ((client virtual-client)
@@ -435,20 +417,6 @@
   (if (nth-value 1 (access symbol (constants env)))
       (error "Can't proclaim a type of a constant ~s." symbol)
       (update new-value symbol (variable-types env))))
-
-
-(defmethod env:variable-cell
-    ((client virtual-client)
-     (env virtual-run-time-environment)
-     symbol)
-  (check-type symbol symbol)
-  (let ((cell (ensure symbol (variable-cells env)
-                      (cons nil :jd-was-here))))
-    (setf (car cell)
-          (or (access symbol (constants env))
-              (access symbol (specials env))
-              +unbound+))
-    cell))
 
 (defmethod env:variable-unbound
     ((client virtual-client)

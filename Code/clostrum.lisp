@@ -56,7 +56,6 @@
 (define-accessor env:compiler-macro-function (client environment function-name))
 (define-accessor env:function-type (client environment function-name))
 (define-accessor env:function-inline (client environment function-name))
-(define-operator env:function-cell (client environment function-name))
 (define-operator env:function-unbound (client environment function-name))
 
 (define-operator env:boundp (client environment symbol))
@@ -68,7 +67,6 @@
     (new-value client environment symbol init-p))
 (define-accessor env:symbol-macro (client environment symbol))
 (define-accessor env:variable-type (client environment symbol))
-(define-operator env:variable-cell (client environment symbol))
 (define-operator env:variable-unbound (client environment symbol))
 
 (define-accessor env:find-class (client environment symbol))

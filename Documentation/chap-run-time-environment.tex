@@ -190,35 +190,10 @@ If \textit{function-name} is not associated with an ordinary function
 or a generic function in \textit{environment}, then an error is
 signaled.
 
-\Defgeneric {function-cell} {client environment function-name}
-
-A call to this function always succeeds.  It returns a \texttt{cons}
-cell, in which the \texttt{car} always holds the current definition of
-the function named \textit{function-name}.  When
-\textit{function-name} has no definition as a function, the
-\texttt{car} of this cell will contain a function that, when called,
-signals an error of type \texttt{undefined-function}.  The return
-value of this function is always the same (in the sense of
-\texttt{eq}) when it is passed the same (in the sense of
-\texttt{equal}) function name and the same (in the sense of
-\texttt{eq}) environment.
-
 \Defgeneric {function-unbound} {client environment function-name}
 
 A call to this function always succeeds.  It returns a function that, when
-called, signals an error of type \texttt{undefined-function}.  When
-\textit{function-name} has no definition as a function, the return value of
-this function is the contents of the \texttt{cons} cell returned by
-\texttt{function-cell}.  The return value of this function is always the same
-(in the sense of \texttt{eq}) when it is passed the same (in the sense of
-\texttt{equal}) function name and the same (in the sense of \texttt{eq})
-environment.
-
-If the value returned by this function is \texttt{eq} to the \texttt{car} of
-the \texttt{cons} cell returned by \texttt{function-cell}, then the function
-\textit{function-name} is unbound. The returned function may be called to
-signal en error when an attempt is made to evaluate the form
-\texttt{(function \textrm{\textit{function-name}})}.
+called, signals an error of type \texttt{undefined-function}.
 
 \Defgeneric {function-description} {client environment function-name}
 
@@ -339,30 +314,10 @@ symbol macro.  Therefore, it is meaningful to call this function when
 \textit{symbol} has a definition as a symbol macro in
 \textit{environment}.
 
-\Defgeneric {variable-cell} {client environment symbol}
-
-A call to this function always succeeds.  It returns a \texttt{cons}
-cell, in which the \texttt{car} always holds the current definition of
-the variable named \textit{symbol}.  When \textit{symbol} has no
-definition as a variable, the \texttt{car} of this cell will contain
-an object that indicates that the variable is unbound.  This object is
-the return value of the function \texttt{variable-unbound}.  The
-return value of this function is always the same (in the sense of
-\texttt{eq}) when it is passed the same symbol and the same
-environment.
-
 \Defgeneric {variable-unbound} {client environment symbol}
 
 A call to this function always succeeds.  It returns an object that indicates
-that the variable is unbound.  The \texttt{cons} cell returned by the function
-\texttt{variable-cell} contains this object whenever the variable named
-\textit{symbol} is unbound.  The return value of this function is always the
-same (in the sense of \texttt{eq}) when it is passed the same symbol and the
-same environment (in the sense of \texttt{eq}).
-
-If the value returned by this function is \texttt{eq} to the \texttt{car} of
-the \texttt{cons} cell returned by \texttt{variable-cell}, then the variable
-\textit{symbol} is unbound.
+that the variable is unbound.
 
 \Defgeneric {variable-description} {client environment symbol}
 
