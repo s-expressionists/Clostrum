@@ -14,8 +14,32 @@
   (:export #:virtual-client
            #:virtual-run-time-environment
            #:virtual-evaluation-environment
-           #:virtual-compilation-environment))
+           #:virtual-compilation-environment)
+  (:export #:function-cell
+           #:variable-cell))
 (in-package #:clostrum/virtual)
+
+;;; Cell functions are _not_ part of the clostrum protocol.
+
+;; A call to this function always succeeds.  It returns a CONS cell, in which
+;; the CAR always holds the current definition of the function named
+;; FUNCTION-NAME. When FUNCTION-NAME has no definition as a function, the CAR
+;; of this cell will contain a function that, when called, signals an error of
+;; type UNDEFINED-FUNCTION. This object is the return value of the function
+;; FUNCTION-UNBOUND. The return value of this function is always the same (in
+;; the sense of EQ) when it is passed the same (in the sense of EQUAL)
+;; function name and the same (in the sense of EQ) environment.
+(defgeneric function-cell (client environment function-name))
+
+;; A call to this function always succeeds. It returns a CONS cell, in which
+;; the CAR always holds the current definition of the variable named SYMBOL.
+;; When SYMBOL has no definition as a variable, the CAR of this cell will
+;; contain an object that indicates that the variable is unbound. This object
+;; is the return value of the function VARIABLE-UNBOUND. The return value of
+;; this function is always the same (in the sense of EQ) when it is passed the
+;; same symbol and the same environment.
+(defgeneric variable-cell (client environment symbol))
+
 
 (deftype function-name ()
   `(or symbol (cons (eql setf) (cons symbol null))))
@@ -109,13 +133,12 @@
 ;;; different storage. Better strategy would be to have a separate cell which
 ;;; contains all information about the object in its namespace.
 (defclass virtual-run-time-environment (env:run-time-environment)
-  ((special-operators
+  ((function-cells
+    :reader function-cells
+    :initform (make-hash-table :test #'equal))
+   (special-operators
     :initarg :special-operators
     :reader special-operators
-    :initform (make-storage 'function-name))
-   (functions
-    :initarg :functions
-    :reader functions
     :initform (make-storage 'function-name))
    (macro-functions
     :initarg :macro-functions
@@ -173,12 +196,31 @@
 
 ;;; Functions
 
+(defmethod function-cell ((client virtual-client)
+                          (env virtual-run-time-environment)
+                          function-name)
+  (check-type function-name function-name)
+  (alx:ensure-gethash
+   function-name (function-cells env)
+   (let ((unb (lambda (&rest args)
+                (declare (ignore args))
+                (error 'undefined-function :name function-name))))
+     (cons unb unb))))
+
+;;; Returns the function if bound, otherwise nil.
+(defun function-bound-p (env function-name)
+  (alx:when-let ((cell (gethash function-name (function-cells env))))
+    (let ((fun (car cell))
+          (unb (cdr cell)))
+      (and (not (eq fun unb))
+           fun))))
+
 (defmethod env:fboundp
     ((client virtual-client)
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
-  (if (or (access function-name (functions env))
+  (if (or (function-bound-p env function-name)
           (access function-name (special-operators env))
           (access function-name (macro-functions env)))
       t
@@ -189,7 +231,8 @@
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
-  (unbound function-name (functions env))
+  (let ((cell (function-cell client env function-name)))
+    (setf (car cell) (cdr cell)))
   (unbound function-name (special-operators env))
   (unbound function-name (macro-functions env))
   (unbound function-name (setf-expanders env))
@@ -211,7 +254,7 @@
   (if (null new-value)
       (unbound function-name (special-operators env))
       (cond
-        ((access function-name (functions env))
+        ((function-bound-p env function-name)
          (error "~s already names a function." function-name))
         ((access function-name (macro-functions env))
          (error "~s already names a macro." function-name))
@@ -223,7 +266,7 @@
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
-  (cond ((alx:when-let ((def (access function-name (functions env))))
+  (cond ((alx:when-let ((def (function-bound-p env function-name)))
            (values def 'cl:function)))
         ((alx:when-let ((def (access function-name (macro-functions env))))
            (values def 'cl:macro-function)))
@@ -243,7 +286,9 @@
   (when (access function-name (special-operators env))
     (error "~s already names a special operator." function-name))
   (unbound function-name (macro-functions env))
-  (update new-value function-name (functions env)))
+  (let ((cell (function-cell client env function-name)))
+    (setf (car cell)
+          (or new-value (cdr cell)))))
 
 (defmethod env:macro-function
     ((client virtual-client)
@@ -260,7 +305,8 @@
   (check-type symbol symbol)
   (check-type new-value (or function null))
   ;; The special operator is not modified.
-  (unbound symbol (functions env))
+  (let ((cell (function-cell client env symbol)))
+    (setf (car cell) (cdr cell)))
   (if (null new-value)
       (unbound symbol (macro-functions env))
       (update new-value symbol (macro-functions env))))
@@ -288,7 +334,7 @@
      function-name)
   (check-type function-name function-name)
   (or (access function-name (function-types env))
-      (not (null (access function-name (functions env))))))
+      (not (null (function-bound-p env function-name)))))
 
 (defmethod (setf env:function-type)
     (new-value
@@ -310,7 +356,7 @@
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
-  (if (access function-name (functions env))
+  (if (function-bound-p env function-name)
       (values (access function-name (function-inlines env)))
       nil))
 
@@ -321,7 +367,7 @@
      function-name)
   (check-type function-name function-name)
   (check-type new-value (member nil cl:inline cl:notinline))
-  (if (access function-name (functions env))
+  (if (function-bound-p env function-name)
       (update new-value function-name (function-inlines env))
       (error "The function ~s doesn't exist." function-name)))
 
@@ -330,9 +376,7 @@
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
-  (lambda (&rest args)
-    (declare (ignore args))
-    (error 'undefined-function :name function-name)))
+  (cdr (function-cell client env function-name)))
 
 (defmethod env:function-description
     ((client virtual-client)
@@ -512,9 +556,9 @@
   (check-type symbol symbol)
   (cond ((null new-value)
          (unbound symbol (setf-expanders env)))
-        ((or (access symbol (functions env))
+        ((or (function-bound-p env symbol)
              (access symbol (macro-functions env)))
-         (update new-value symbol (classes env)))
+         (update new-value symbol (setf-expanders env)))
         (t
          (error "~s is not a function nor a macro." symbol))))
 
