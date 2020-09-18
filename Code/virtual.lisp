@@ -70,60 +70,6 @@
 
 (defconstant +unbound+ 'unbound)
 
-;;; This is an unnecessary micro-optimization, yes. However having EQUAL hash
-;;; tables for sake of a single irregularity (that is #'(SETF FOO) functions)
-;;; is such a waste from aesthetical point of view... -- jd 2020-08-03
-
-(defun make-storage (key-type)
-  (ecase key-type
-    ((symbol variable-name class-name)
-     (make-hash-table :test 'eq))
-    (package-name
-     (make-hash-table :test 'equal))
-    (function-name
-     (cons (make-hash-table :test 'eq)
-           (make-hash-table :test 'eq)))))
-
-(defun access-storage (key ht)
-  (cond ((atom ht)
-         (values key ht))
-        ((atom key)
-         (values key (car ht)))
-        (t
-         (values (second key) (cdr ht)))))
-
-(defun access (key ht)
-  (multiple-value-bind (key ht)
-      (access-storage key ht)
-    (gethash key ht)))
-
-(defun update (value key ht)
-  (multiple-value-bind (key ht)
-      (access-storage key ht)
-    (setf (gethash key ht) value)))
-
-(defun unbound (key ht)
-  (multiple-value-bind (key ht)
-      (access-storage key ht)
-    (remhash key ht))
-  nil)
-
-(defmacro reference (key ht &optional default)
-  (alx:with-gensyms (key* ht* value foundp)
-    `(multiple-value-bind (,key* ,ht*)
-         (access-storage ,key ,ht)
-       (multiple-value-bind (,value ,foundp)
-           (gethash ,key* ,ht*)
-         (if ,foundp
-             ,value
-             ,default)))))
-
-(defmacro ensure (key ht &optional default)
-  (alx:with-gensyms (key* ht*)
-    `(multiple-value-bind (,key* ,ht*)
-         (access-storage ,key ,ht)
-       (alx:ensure-gethash ,key* ,ht* ,default))))
-
 ;;; Dummy client (for the specialization).
 (defclass virtual-client () ())
 
