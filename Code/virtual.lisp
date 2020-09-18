@@ -205,9 +205,8 @@
     :reader classes
     :initform (make-hash-table :test #'eq))
    (packages
-    :initarg :packages
-    :reader packages :initform
-    (make-storage 'package-name))
+    :reader packages
+    :initform (make-hash-table :test #'equal))
    (declarations
     :initarg :declarations
     :reader declarations
@@ -625,7 +624,7 @@
      (env virtual-run-time-environment)
      name)
   (check-type name package-name)
-  (values (access name (packages env))))
+  (values (gethash name (packages env))))
 
 (defmethod (setf env:find-package)
     (new-package
@@ -635,8 +634,8 @@
   (check-type name package-name)
   (check-type new-package (or null package))
   (if (null new-package)
-      (unbound name (packages env))
-      (update new-package name (packages env))))
+      (remhash name (packages env))
+      (setf (gethash name (packages env)) new-package)))
 
 
 ;;; Declarations
