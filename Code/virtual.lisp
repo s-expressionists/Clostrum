@@ -705,22 +705,22 @@
   ((function-descriptions
     :initarg :function-descriptions
     :reader function-descriptions
-    :initform (make-storage 'function-name))
+    :initform (make-hash-table :test #'equal))
    (variable-descriptions
     :initarg :variable-descriptions
     :reader variable-descriptions
-    :initform (make-storage 'variable-name))
+    :initform (make-hash-table :test #'eq))
    (class-descriptions
     :initarg :class-descriptions
     :reader class-descriptions
-    :initform (make-storage 'class-name))))
+    :initform (make-hash-table :test #'eq))))
 
 (defmethod env:function-description
     ((client virtual-client)
      (env virtual-compilation-environment)
      function-name)
   (check-type function-name function-name)
-  (or (access function-name (function-descriptions env))
+  (or (gethash function-name (function-descriptions env))
       (env:function-description client (env:parent env) function-name)))
 
 (defmethod (setf function-description)
@@ -729,14 +729,15 @@
      (env virtual-compilation-environment)
      function-name)
   (check-type function-name function-name)
-  (update description function-name (function-descriptions env)))
+  (setf (gethash function-name (function-descriptions env))
+        description))
 
 (defmethod variable-description
     ((client virtual-client)
      (env virtual-compilation-environment)
      symbol)
   (check-type symbol symbol)
-  (or (access symbol (variable-descriptions env))
+  (or (gethash symbol (variable-descriptions env))
       (env:variable-description client (env:parent env) symbol)))
 
 (defmethod (setf variable-description)
@@ -745,14 +746,15 @@
      (env virtual-compilation-environment)
      symbol)
   (check-type symbol symbol)
-  (update description symbol (variable-descriptions env)))
+  (setf (gethash symbol (variable-descriptions env))
+        description))
 
 (defmethod class-description
     ((client virtual-client)
      (env virtual-compilation-environment)
      symbol)
   (check-type symbol symbol)
-  (or (access symbol (class-descriptions env))
+  (or (gethash symbol (class-descriptions env))
       (env:class-description client (env:parent env) symbol)))
 
 (defmethod (setf class-description)
@@ -761,4 +763,5 @@
      (env virtual-compilation-environment)
      symbol)
   (check-type symbol symbol)
-  (update description symbol (class-descriptions env)))
+  (setf (gethash symbol (class-descriptions env))
+        description))
