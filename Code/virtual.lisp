@@ -102,45 +102,73 @@
 ;;; Dummy client (for the specialization).
 (defclass virtual-client () ())
 
-;;; RS is not gonna like it. -- jd 2020-08-03
-(defmacro define-class (name supers (&rest slot-names) &rest options)
-  `(defclass ,name ,supers
-     ,(mapcar (lambda (name)
-                (destructuring-bind (name &optional key-type)
-                    (alx:ensure-list name)
-                  (let ((initarg (alx:make-keyword name))
-                        (initform (if key-type
-                                      `(:initform (make-storage ',key-type))
-                                      nil)))
-                    `(,name :initarg ,initarg :reader ,name ,@initform))))
-       slot-names)
-     ,@options))
-
 
 ;;; Run-time environment
 
 ;;; Here we take a naive approach where each operator and variable type have a
 ;;; different storage. Better strategy would be to have a separate cell which
 ;;; contains all information about the object in its namespace.
-(define-class virtual-run-time-environment (env:run-time-environment)
-  (;; Operators
-   (special-operators function-name)
-   (functions function-name)
-   (macro-functions symbol)
-   (compiler-macro-functions function-name)
-   (function-types function-name)
-   (function-inlines function-name)
-   ;; Variables
-   (constants symbol)
-   (specials symbol)
-   (symbol-macros symbol)
-   (variable-types symbol)
-   ;; Other
-   (classes symbol)
-   (setf-expanders symbol)
-   (type-expanders symbol)
-   (packages package-name)
-   (declarations symbol)))
+(defclass virtual-run-time-environment (env:run-time-environment)
+  ((special-operators
+    :initarg :special-operators
+    :reader special-operators
+    :initform (make-storage 'function-name))
+   (functions
+    :initarg :functions
+    :reader functions
+    :initform (make-storage 'function-name))
+   (macro-functions
+    :initarg :macro-functions
+    :reader macro-functions
+    :initform (make-storage 'symbol))
+   (compiler-macro-functions
+    :initarg :compiler-macro-functions
+    :reader compiler-macro-functions
+    :initform (make-storage 'function-name))
+   (function-types
+    :initarg :function-types
+    :reader function-types
+    :initform (make-storage 'function-name))
+   (function-inlines
+    :initarg :function-inlines
+    :reader function-inlines
+    :initform (make-storage 'function-name))
+   (constants
+    :initarg :constants
+    :reader constants
+    :initform (make-storage 'symbol))
+   (specials
+    :initarg :specials
+    :reader specials
+    :initform (make-storage 'symbol))
+   (symbol-macros
+    :initarg :symbol-macros
+    :reader symbol-macros
+    :initform (make-storage 'symbol))
+   (variable-types
+    :initarg :variable-types
+    :reader variable-types
+    :initform (make-storage 'symbol))
+   (classes
+    :initarg :classes
+    :reader classes
+    :initform (make-storage 'symbol))
+   (setf-expanders
+    :initarg :setf-expanders
+    :reader setf-expanders
+    :initform (make-storage 'symbol))
+   (type-expanders
+    :initarg :type-expanders
+    :reader type-expanders
+    :initform (make-storage 'symbol))
+   (packages
+    :initarg :packages
+    :reader packages :initform
+    (make-storage 'package-name))
+   (declarations
+    :initarg :declarations
+    :reader declarations
+    :initform (make-storage 'symbol))))
 
 
 ;;; Functions
@@ -457,7 +485,7 @@
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
-  (check-type new-value classoid)
+  ;;(check-type new-value classoid)
   (if (null new-value)
       (unbound symbol (classes env))
       (update new-value symbol (classes env))))
@@ -588,10 +616,19 @@
 
 ;;; Compilation environment
 
-(define-class virtual-compilation-environment (env:compilation-environment)
-  ((function-descriptions function-name)
-   (variable-descriptions variable-name)
-   (class-descriptions class-name)))
+(defclass virtual-compilation-environment (env:compilation-environment)
+  ((function-descriptions
+    :initarg :function-descriptions
+    :reader function-descriptions
+    :initform (make-storage 'function-name))
+   (variable-descriptions
+    :initarg :variable-descriptions
+    :reader variable-descriptions
+    :initform (make-storage 'variable-name))
+   (class-descriptions
+    :initarg :class-descriptions
+    :reader class-descriptions
+    :initform (make-storage 'class-name))))
 
 (defmethod env:function-description
     ((client virtual-client)
