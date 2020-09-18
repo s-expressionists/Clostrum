@@ -208,9 +208,8 @@
     :reader packages
     :initform (make-hash-table :test #'equal))
    (declarations
-    :initarg :declarations
     :reader declarations
-    :initform (make-storage 'symbol))))
+    :initform (make-hash-table :test #'eq))))
 
 (defun get-function-entry (function-name env)
   (alx:ensure-gethash function-name (functions env)
@@ -645,7 +644,7 @@
      (env virtual-run-time-environment)
      name)
   (check-type name symbol)
-  (access name (declarations env)))
+  (values (gethash name (declarations env))))
 
 (defmethod (setf env:find-declaration)
     (new-value
@@ -654,9 +653,9 @@
      name)
   (check-type name symbol)
   (cond ((null new-value)
-         (unbound name (declarations env)))
-        ((member name (access 'cl:declaration (declarations env)))
-         (update new-value name (declarations env)))
+         (remhash name (declarations env)))
+        ((member name (gethash 'cl:declaration (declarations env)))
+         (setf (gethash name (declarations env)) new-value))
         (t
          (error "~s is not a known declaration name." name))))
 
@@ -673,14 +672,15 @@
   (check-type new-value list)
   (if (null new-value)
       ;; When the new-value is NIL then remove all qualities.
-      (unbound name (declarations env))
-      (loop with qualities = (access 'cl:optimize (declarations env))
+      (remhash name (declarations env))
+      (loop with qualities = (gethash 'cl:optimize (declarations env))
             for new-quality in new-value
             do (check-type new-quality optimize-quality)
                (destructuring-bind (name &optional (value 3))
                    (alx:ensure-list new-quality)
                  (setf (getf qualities name) value))
-            finally (update qualities 'cl:optimize (declarations env)))))
+            finally (setf (gethash 'cl:optimize (declarations env))
+                          qualities))))
 
 (defmethod (setf env:find-declaration)
     (new-value
@@ -690,12 +690,13 @@
   (check-type new-value list)
   (if (null new-value)
       ;; When the new-value is NIL then remove all declarations.
-      (unbound name (declarations env))
-      (loop with declarations = (access name (declarations env))
+      (remhash name (declarations env))
+      (loop with declarations = (gethash name (declarations env))
             for name in new-value
             do (check-type name symbol)
                (pushnew name declarations)
-            finally (update declarations 'cl:declaration (declarations env)))))
+            finally (setf (gethash 'cl:declaration (declarations env))
+                          declarations))))
 
 
 ;;; Compilation environment
