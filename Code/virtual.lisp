@@ -205,10 +205,6 @@
     :initarg :classes
     :reader classes
     :initform (make-storage 'symbol))
-   (type-expanders
-    :initarg :type-expanders
-    :reader type-expanders
-    :initform (make-storage 'symbol))
    (packages
     :initarg :packages
     :reader packages :initform
@@ -579,6 +575,23 @@
   (check-type symbol symbol)
   nil)
 
+(defmethod env:type-expander
+    ((client virtual-client)
+     (env virtual-run-time-environment)
+     symbol)
+  (check-type symbol symbol)
+  (let ((entry (get-variable-entry symbol env)))
+    (type-expander entry)))
+
+(defmethod (setf env:type-expander)
+    (new-value
+     (client virtual-client)
+     (env virtual-run-time-environment)
+     symbol)
+  (check-type symbol symbol)
+  (let ((entry (get-variable-entry symbol env)))
+    (setf (type-expander entry) new-value)))
+
 
 ;;; Other
 
@@ -606,23 +619,6 @@
      symbol)
   (check-type symbol symbol)
   nil)
-
-(defmethod env:type-expander
-    ((client virtual-client)
-     (env virtual-run-time-environment)
-     symbol)
-  (check-type symbol symbol)
-  (values (access symbol (type-expanders env))))
-
-(defmethod (setf env:type-expander)
-    (new-value
-     (client virtual-client)
-     (env virtual-run-time-environment)
-     symbol)
-  (check-type symbol symbol)
-  (if (null new-value)
-      (unbound symbol (type-expanders env))
-      (update new-value symbol (type-expanders env))))
 
 (defmethod env:find-package
     ((client virtual-client)
