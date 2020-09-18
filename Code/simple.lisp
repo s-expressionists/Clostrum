@@ -498,8 +498,8 @@
      symbol)
   (check-type symbol symbol)
   (if (null new-value)
-      (unbound symbol (setf-expanders env))
-      (update new-value symbol (classes env))))
+      (unbound symbol (type-expanders env))
+      (update new-value symbol (type-expanders env))))
 
 (defmethod env:find-package
     ((client simple-client)
