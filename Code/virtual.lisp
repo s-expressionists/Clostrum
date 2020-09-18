@@ -74,8 +74,7 @@
 (defclass virtual-client () ())
 
 
-;;; Run-time environment
-
+;;; Function and variable entries
 (defclass function-entry ()
   ((name
     :initarg :name
@@ -136,6 +135,10 @@
     :initform nil
     :accessor type-expander))
   (:default-initargs :name (error "The initarg :NAME is required.")))
+
+
+
+;;; Run-time environment
 
 ;;; Here we take a naive approach where each operator and variable type have a
 ;;; different storage. Better strategy would be to have a separate cell which
