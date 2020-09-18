@@ -174,9 +174,9 @@
    (cell
     :reader cell
     :initform (cons +unbound+ +unbound+))
-   (constant
+   (constant-variable
     :initform nil
-    :accessor constant)
+    :accessor constant-variable)
    (special-variable
     :initform nil
     :accessor special-variable)
@@ -456,7 +456,7 @@
   ;; not clearly defined what does bound mean in context of the symbol-macro,
   ;; but since it is expanded it is not a variable (so can't be bound).
   (let ((entry (get-variable-entry symbol env)))
-    (or (constant entry)
+    (or (constant-variable entry)
         (special-variable entry))))
 
 (defmethod env:constant-variable
@@ -465,7 +465,7 @@
      symbol)
   (check-type symbol symbol)
   (let ((entry (get-variable-entry symbol env)))
-    (values (constant entry) (car (cell entry)))))
+    (values (constant-variable entry) (car (cell entry)))))
 
 (defmethod (setf env:constant-variable)
     (new-value
@@ -475,7 +475,7 @@
   (check-type symbol symbol)
   (let* ((entry (get-variable-entry symbol env))
          (cell (cell entry)))
-    (if (constant entry)
+    (if (constant-variable entry)
         (let ((value (car cell)))
           (if (not (eql value new-value))
               (error "~s is already defined as a constant." symbol)
@@ -486,7 +486,7 @@
           ((symbol-macro entry)
            (error "~s is already defined as a symbol macro." symbol))
           (t
-           (setf (constant entry) t)
+           (setf (constant-variable entry) t)
            (setf (car cell) new-value))))))
 
 (defmethod env:special-variable
@@ -507,7 +507,7 @@
      init-p)
   (check-type symbol symbol)
   (let ((entry (get-variable-entry symbol env)))
-    (cond ((constant entry)
+    (cond ((constant-variable entry)
            (error "~s is already defined as a constant." symbol))
           ((symbol-macro entry)
            (error "~s is already defined as a symbol macro." symbol))
@@ -535,7 +535,7 @@
   (check-type symbol symbol)
   (let ((entry (get-variable-entry symbol env)))
     (cond
-      ((constant entry)
+      ((constant-variable entry)
        (error "~s is already defined as a constant." symbol))
       ((special-variable entry)
        (error "~s is already defined as a special variable." symbol))
@@ -549,7 +549,7 @@
      symbol)
   (check-type symbol symbol)
   (let ((entry (get-variable-entry symbol env)))
-    (if (constant entry)
+    (if (constant-variable entry)
         (type-of (car (cell entry)))
         (or (variable-type entry)
             t))))
@@ -561,7 +561,7 @@
      symbol)
   (check-type symbol symbol)
   (let ((entry (get-variable-entry symbol env)))
-    (if (constant entry)
+    (if (constant-variable entry)
         (error "Can't proclaim a type of a constant ~s." symbol)
         (setf (variable-type entry) new-value))))
 
