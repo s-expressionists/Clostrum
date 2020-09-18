@@ -202,9 +202,8 @@
     :reader variables
     :initform (make-hash-table :test #'eq))
    (classes
-    :initarg :classes
     :reader classes
-    :initform (make-storage 'symbol))
+    :initform (make-hash-table :test #'eq))
    (packages
     :initarg :packages
     :reader packages :initform
@@ -600,7 +599,7 @@
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
-  (values (access symbol (classes env))))
+  (values (gethash symbol (classes env))))
 
 (defmethod (setf env:find-class)
     (new-value
@@ -608,10 +607,11 @@
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
-  ;;(check-type new-value classoid)
+  #+ (or) (check-type new-value classoid)
   (if (null new-value)
-      (unbound symbol (classes env))
-      (update new-value symbol (classes env))))
+      (remhash symbol (classes env))
+      (setf (gethash symbol (classes env))
+            new-value)))
 
 (defmethod env:class-description
     ((client virtual-client)
