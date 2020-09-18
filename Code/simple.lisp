@@ -317,7 +317,8 @@
   (check-type symbol symbol)
   (if (or (nth-value 1 (access symbol (constants env)))
           (nth-value 1 (access symbol (specials env)))
-          (nth-value 1 (access symbol (symbol-macros env))))
+          ;; Symbol macro is not a variable.
+          #+ (or) (nth-value 1 (access symbol (symbol-macros env))))
       t
       nil))
 

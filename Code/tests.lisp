@@ -66,3 +66,7 @@
   (5am:is (null (env:function-type cli renv 'unknown)))
   (5am:is (null (env:function-inline cli renv 'unknown)))
   (5am:is (null (env:function-description cli renv 'unknown))))
+
+(5am:test (symbol-macro-not-boundp :fixture with-envs)
+  (5am:finishes (setf (env:symbol-macro cli renv 'symbol-macro) 42))
+  (5am:is (not (env:boundp cli renv 'symbol-macro))))
