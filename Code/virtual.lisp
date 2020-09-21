@@ -168,9 +168,12 @@
   (let ((cell (cell function-entry)))
     (not (eq (car cell) (cdr cell)))))
 
-(defun get-variable-entry (variable-name env)
-  (alx:ensure-gethash variable-name (variables env)
-                      (make-instance 'variable-entry :name variable-name)))
+(defun get-variable-entry (name env &optional createp)
+  (if createp
+      (alx:ensure-gethash name
+                          (variables env)
+                          (make-instance 'variable-entry :name name))
+      (gethash name (variables env) nil)))
 
 (defun variable-bound-p (variable-entry)
   (let ((cell (cell variable-entry)))
@@ -435,7 +438,7 @@
                           (env virtual-run-time-environment)
                           symbol)
   (check-type symbol symbol)
-  (cell (get-variable-entry symbol env)))
+  (cell (get-variable-entry symbol env t)))
 
 (defmethod env:boundp
     ((client virtual-client)
@@ -446,17 +449,19 @@
   ;; as a bound variable (following behavior of other implementations). It is
   ;; not clearly defined what does bound mean in context of the symbol-macro,
   ;; but since it is expanded it is not a variable (so can't be bound).
-  (let ((entry (get-variable-entry symbol env)))
+  (alx:if-let ((entry (get-variable-entry symbol env)))
     (or (constant-variable entry)
-        (special-variable entry))))
+        (special-variable entry))
+    nil))
 
 (defmethod env:constant-variable
     ((client virtual-client)
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
-  (let ((entry (get-variable-entry symbol env)))
-    (values (constant-variable entry) (car (cell entry)))))
+  (alx:if-let ((entry (get-variable-entry symbol env)))
+    (values (constant-variable entry) (car (cell entry)))
+    (values nil nil)))
 
 (defmethod (setf env:constant-variable)
     (new-value
@@ -464,7 +469,7 @@
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
-  (let* ((entry (get-variable-entry symbol env))
+  (let* ((entry (get-variable-entry symbol env t))
          (cell (cell entry)))
     (if (constant-variable entry)
         (let ((value (car cell)))
@@ -485,10 +490,9 @@
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
-  (let ((entry (get-variable-entry symbol env)))
-    (if (special-variable entry)
-        (values t (car (cell entry)))
-        (values nil nil))))
+  (alx:if-let ((entry (get-variable-entry symbol env)))
+    (values (special-variable entry) (car (cell entry)))
+    (values nil nil)))
 
 (defmethod (setf env:special-variable)
     (new-value
@@ -497,7 +501,7 @@
      symbol
      init-p)
   (check-type symbol symbol)
-  (let ((entry (get-variable-entry symbol env)))
+  (let ((entry (get-variable-entry symbol env t)))
     (cond ((constant-variable entry)
            (error "~s is already defined as a constant." symbol))
           ((symbol-macro entry)
@@ -512,11 +516,12 @@
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
-  (let ((entry (get-variable-entry symbol env)))
+  (alx:if-let ((entry (get-variable-entry symbol env)))
     (if (symbol-macro entry)
         (let ((def (car (cell entry))))
           (values def (funcall def symbol env)))
-        (values nil nil))))
+        (values nil nil))
+    (values nil nil)))
 
 (defmethod (setf env:symbol-macro)
     (new-value
@@ -524,7 +529,7 @@
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
-  (let ((entry (get-variable-entry symbol env)))
+  (let ((entry (get-variable-entry symbol env t)))
     (cond
       ((constant-variable entry)
        (error "~s is already defined as a constant." symbol))
@@ -539,11 +544,12 @@
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
-  (let ((entry (get-variable-entry symbol env)))
+  (alx:if-let ((entry (get-variable-entry symbol env)))
     (if (constant-variable entry)
         (type-of (car (cell entry)))
         (or (variable-type entry)
-            t))))
+            t))
+    t))
 
 (defmethod (setf env:variable-type)
     (new-value
@@ -551,7 +557,7 @@
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
-  (let ((entry (get-variable-entry symbol env)))
+  (let ((entry (get-variable-entry symbol env t)))
     (if (constant-variable entry)
         (error "Can't proclaim a type of a constant ~s." symbol)
         (setf (variable-type entry) new-value))))
@@ -575,7 +581,7 @@
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
-  (let ((entry (get-variable-entry symbol env)))
+  (alx:when-let ((entry (get-variable-entry symbol env)))
     (type-expander entry)))
 
 (defmethod (setf env:type-expander)
@@ -584,7 +590,7 @@
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
-  (let ((entry (get-variable-entry symbol env)))
+  (let ((entry (get-variable-entry symbol env t)))
     (setf (type-expander entry) new-value)))
 
 
