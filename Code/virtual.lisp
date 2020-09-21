@@ -140,9 +140,6 @@
 
 ;;; Run-time environment
 
-;;; Here we take a naive approach where each operator and variable type have a
-;;; different storage. Better strategy would be to have a separate cell which
-;;; contains all information about the object in its namespace.
 (defclass virtual-run-time-environment (env:run-time-environment)
   ((functions
     :reader functions
@@ -160,9 +157,12 @@
     :reader declarations
     :initform (make-hash-table :test #'eq))))
 
-(defun get-function-entry (function-name env)
-  (alx:ensure-gethash function-name (functions env)
-                      (make-instance 'function-entry :name function-name)))
+(defun get-function-entry (name env &optional createp)
+  (if createp
+      (alx:ensure-gethash name
+                          (functions env)
+                          (make-instance 'function-entry :name name))
+      (gethash name (functions env) nil)))
 
 (defun function-bound-p (function-entry)
   (let ((cell (cell function-entry)))
@@ -182,31 +182,31 @@
                           (env virtual-run-time-environment)
                           function-name)
   (check-type function-name function-name)
-  (cell (get-function-entry function-name env)))
+  (cell (get-function-entry function-name env t)))
 
 (defmethod env:fboundp
     ((client virtual-client)
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
-  (let ((entry (get-function-entry function-name env)))
-    (if (or (function-bound-p entry)
-            (special-operator entry)
-            (macro-function entry))
-        t
-        nil)))
+  (alx:if-let ((entry (get-function-entry function-name env)))
+    (and (or (function-bound-p entry)
+             (special-operator entry)
+             (macro-function entry))
+         t)
+    nil))
 
 (defmethod env:fmakunbound
     ((client virtual-client)
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
-  (let* ((entry (get-function-entry function-name env))
-         (cell (cell entry)))
-    (setf (car cell) (cdr cell))
-    (setf (special-operator entry) nil)
-    (setf (macro-function entry) nil)
-    (setf (setf-expander entry) nil))
+  (alx:when-let ((entry (get-function-entry function-name env)))
+    (let ((cell (cell entry)))
+      (setf (car cell) (cdr cell))
+      (setf (special-operator entry) nil)
+      (setf (macro-function entry) nil)
+      (setf (setf-expander entry) nil)))
   t)
 
 (defmethod env:special-operator
@@ -214,7 +214,9 @@
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
-  (special-operator (get-function-entry function-name env)))
+  (alx:if-let ((entry (get-function-entry function-name env)))
+    (special-operator entry)
+    nil))
 
 (defmethod (setf env:special-operator)
     (new-value
@@ -222,32 +224,37 @@
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
-  (let ((entry (get-function-entry function-name env)))
-    (if (null new-value)
-        (setf (special-operator entry) nil)
-        (cond
-          ((function-bound-p entry)
-           (error "~s already names a function." function-name))
-          ((macro-function entry)
-           (error "~s already names a macro." function-name))
-          (t
-           (setf (special-operator entry) new-value))))))
+  (when (null new-value)
+    (alx:when-let ((entry (get-function-entry function-name env)))
+      (setf (special-operator entry) nil))
+    (return-from env:special-operator))
+  (let ((entry (get-function-entry function-name env t)))
+    (cond
+      ((function-bound-p entry)
+       (error "~s already names a function." function-name))
+      ((macro-function entry)
+       (error "~s already names a macro." function-name))
+      (t
+       (setf (special-operator entry) new-value)))))
 
 (defmethod env:fdefinition
     ((client virtual-client)
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
-  (let* ((entry (get-function-entry function-name env))
-         (cell (cell entry)))
+  (alx:if-let ((entry (get-function-entry function-name env)))
     (cond ((function-bound-p entry)
-           (values (car cell) 'cl:function))
+           (values (car (cell entry)) 'cl:function))
           ((alx:when-let ((def (macro-function entry)))
              (values def 'cl:macro-function)))
           ((alx:when-let ((def (macro-function entry)))
              (values def 'cl:special)))
           (t
-           (values (cdr cell) 'cl:undefined-function)))))
+           (values (cdr (cell entry)) 'cl:undefined-function)))
+    (values (lambda (&rest args)
+              (declare (ignore args))
+              (error 'undefined-function :name function-name))
+            'cl:undefined-function)))
 
 (defmethod (setf env:fdefinition)
     (new-value
@@ -256,19 +263,28 @@
      function-name)
   (check-type function-name function-name)
   (check-type new-value function)
-  (let* ((entry (get-function-entry function-name env))
-         (cell (cell entry)))
+  (when (null new-value)
+    (alx:when-let ((entry (get-function-entry function-name env)))
+      (when (special-operator entry)
+        (error "~s already names a special operator." function-name))
+      (setf (macro-function entry) nil)
+      (let ((cell (cell entry)))
+        (setf (car cell) (cdr cell))))
+    (return-from env:fdefinition))
+  (let ((entry (get-function-entry function-name env t)))
     (when (special-operator entry)
       (error "~s already names a special operator." function-name))
     (setf (macro-function entry) nil)
-    (setf (car cell) (or new-value (cdr cell)))))
+    (let ((cell (cell entry)))
+      (setf (car cell) new-value))))
 
 (defmethod env:macro-function
     ((client virtual-client)
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
-  (macro-function (get-function-entry symbol env)))
+  (alx:when-let ((entry (get-function-entry symbol env)))
+    (macro-function entry)))
 
 (defmethod (setf env:macro-function)
     (new-value
@@ -277,10 +293,17 @@
      symbol)
   (check-type symbol symbol)
   (check-type new-value (or function null))
-  (let* ((entry (get-function-entry symbol env))
+  (when (null new-value)
+    (alx:when-let ((entry (get-function-entry symbol env)))
+      (let ((cell (cell entry)))
+        (setf (car cell) (cdr cell)))
+      ;; The special operator is not modified.
+      (setf (macro-function entry) nil))
+    (return-from env:macro-function))
+  (let* ((entry (get-function-entry symbol env t))
          (cell (cell entry)))
-    ;; The special operator is not modified.
     (setf (car cell) (cdr cell))
+    ;; The special operator is not modified.
     (setf (macro-function entry) new-value)))
 
 (defmethod env:compiler-macro-function
@@ -288,7 +311,8 @@
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
-  (compiler-macro-function (get-function-entry function-name env)))
+  (alx:when-let ((entry (get-function-entry function-name env)))
+    (compiler-macro-function entry)))
 
 (defmethod (setf env:compiler-macro-function)
     (new-value
@@ -296,7 +320,11 @@
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
-  (let ((entry (get-function-entry function-name env)))
+  (when (null new-value)
+    (alx:when-let ((entry (get-function-entry function-name env)))
+      (setf (compiler-macro-function entry) nil))
+    (return-from env:compiler-macro-function))
+  (let ((entry (get-function-entry function-name env t)))
     (setf (compiler-macro-function entry) new-value)))
 
 (defmethod env:function-type
@@ -304,9 +332,10 @@
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
-  (let ((entry (get-function-entry function-name env)))
+  (alx:if-let ((entry (get-function-entry function-name env)))
     (or (function-type entry)
-        (function-bound-p entry))))
+        (function-bound-p entry))
+    nil))
 
 (defmethod (setf env:function-type)
     (new-value
@@ -314,7 +343,17 @@
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
-  (let ((entry (get-function-entry function-name env)))
+  (when (null new-value)
+    (alx:when-let ((entry (get-function-entry function-name env)))
+      (cond
+        ((special-operator entry)
+         (error "~s can't be a special operator." function-name))
+        ((macro-function entry)
+         (error "~s can't be a macro." function-name))
+        (t
+         (setf (function-type entry) nil))))
+    (return-from env:function-type))
+  (let ((entry (get-function-entry function-name env t)))
     (cond
       ((special-operator entry)
        (error "~s can't be a special operator." function-name))
@@ -323,15 +362,15 @@
       (t
        (setf (function-type entry) new-value)))))
 
-
 (defmethod env:function-inline
     ((client virtual-client)
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
-  (let ((entry (get-function-entry function-name env)))
+  (alx:if-let ((entry (get-function-entry function-name env)))
     (and (function-bound-p entry)
-         (function-inline entry))))
+         (function-inline entry))
+    nil))
 
 (defmethod (setf env:function-inline)
     (new-value
@@ -340,7 +379,13 @@
      function-name)
   (check-type function-name function-name)
   (check-type new-value (member nil cl:inline cl:notinline))
-  (let ((entry (get-function-entry function-name env)))
+  (when (null new-value)
+    (alx:when-let ((entry (get-function-entry function-name env)))
+      (if (function-bound-p entry)
+          (setf (function-inline entry) nil)
+          (error "The function ~s doesn't exist." function-name)))
+    (return-from env:function-inline))
+  (let ((entry (get-function-entry function-name env t)))
     (if (function-bound-p entry)
         (setf (function-inline entry) new-value)
         (error "The function ~s doesn't exist." function-name))))
@@ -350,7 +395,7 @@
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
-  (cdr (cell (get-function-entry function-name env))))
+  (cdr (cell (get-function-entry function-name env t))))
 
 (defmethod env:function-description
     ((client virtual-client)
@@ -364,7 +409,8 @@
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
-  (setf-expander (get-function-entry symbol env)))
+  (alx:when-let ((entry (get-function-entry symbol env)))
+    (setf-expander entry)))
 
 (defmethod (setf env:setf-expander)
     (new-value
@@ -372,13 +418,16 @@
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
-  (let ((entry (get-function-entry symbol env)))
-    (cond ((or (null new-value)
-               (function-bound-p entry)
-               (macro-function entry))
-           (setf (setf-expander entry) new-value))
-          (t
-           (error "~s is not a function nor a macro." symbol)))))
+  (when (null new-value)
+    (alx:when-let ((entry (get-function-entry symbol env)))
+      (setf (setf-expander entry) nil))
+    (return-from env:setf-expander))
+  (alx:if-let ((entry (get-function-entry symbol env)))
+    (if (or (function-bound-p entry)
+            (macro-function entry))
+        (setf (setf-expander entry) new-value)
+        (error "~s is not a function nor a macro." symbol))
+    (error "~s is not a function nor a macro." symbol)))
 
 
 ;;; Variables
