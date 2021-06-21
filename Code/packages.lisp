@@ -15,7 +15,7 @@
    #:variable-type #:variable-unbound #:variable-description
    ;;
    #:find-class #:class-description #:setf-expander #:type-expander
-   #:find-package #:find-declaration)
+   #:find-package #:proclamation)
   ;; compilation environment operators
   (:export
    #:function-description

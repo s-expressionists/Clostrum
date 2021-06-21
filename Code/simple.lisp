@@ -521,16 +521,16 @@
       (update new-package name (packages env))))
 
 
-;;; Declarations
+;;; Proclamations
 
-(defmethod env:find-declaration
+(defmethod env:proclamation
     ((client simple-client)
      (env simple-run-time-environment)
      name)
   (check-type name symbol)
   (access name (declarations env)))
 
-(defmethod (setf env:find-declaration)
+(defmethod (setf env:proclamation)
     (new-value
      (client simple-client)
      (env simple-run-time-environment)
@@ -538,48 +538,8 @@
   (check-type name symbol)
   (cond ((null new-value)
          (unbound name (declarations env)))
-        ((member name (access 'cl:declaration (declarations env)))
-         (update new-value name (declarations env)))
-        (t
-         (error "~s is not a known declaration name." name))))
-
-;;; Undefined behavior: it is not specified whether new optimization qualities
-;;; merge with previous ones or maybe rather replace them. This implementation
-;;; merges optimization qualities, however alternative approach might be more
-;;; useful in some contexts. In that case it would be enough to remove this
-;;; method, a default method replaces the declaration value. -- jd 2020-08-24
-(defmethod (setf env:find-declaration)
-    (new-value
-     (client simple-client)
-     (env simple-run-time-environment)
-     (name (eql 'cl:optimize)))
-  (check-type new-value list)
-  (if (null new-value)
-      ;; When the new-value is NIL then remove all qualities.
-      (unbound name (declarations env))
-      (loop with qualities = (access 'cl:optimize (declarations env))
-            for new-quality in new-value
-            do (check-type new-quality optimize-quality)
-               (destructuring-bind (name &optional (value 3))
-                   (alx:ensure-list new-quality)
-                 (setf (getf qualities name) value))
-            finally (update qualities 'cl:optimize (declarations env)))))
-
-(defmethod (setf env:find-declaration)
-    (new-value
-     (client simple-client)
-     (env simple-run-time-environment)
-     (name (eql 'cl:declaration)))
-  (check-type new-value list)
-  (if (null new-value)
-      ;; When the new-value is NIL then remove all declarations.
-      (unbound name (declarations env))
-      (loop with declarations = (access name (declarations env))
-            for name in new-value
-            do (check-type name symbol)
-               (pushnew name declarations)
-            finally (update declarations 'cl:declaration (declarations env)))))
-
+        (t 
+         (update new-value name (declarations env)))))
 
 ;;; Compilation environment
 

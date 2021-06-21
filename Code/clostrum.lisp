@@ -73,7 +73,7 @@
 (define-accessor env:setf-expander (client environment symbol))
 (define-accessor env:type-expander (client environment symbol))
 (define-accessor env:find-package (client environment name))
-(define-accessor env:find-declaration (client environment name))
+(define-accessor env:proclamation (client environment name))
 
 (define-operator env:function-description (client environment function-name))
 (define-operator env:variable-description (client environment symbol))
@@ -110,13 +110,13 @@
   (funcall #'(setf env:macro-function) function
            client (env:parent environment) symbol))
 
-(defmethod env:find-declaration
+(defmethod env:proclamation
     (client (environment env:compilation-environment) symbol)
-  (env:find-declaration client (env:parent environment) symbol))
+  (env:proclamation client (env:parent environment) symbol))
 
-(defmethod (setf env:find-declaration)
+(defmethod (setf env:proclamation)
     (function client (environment env:compilation-environment) symbol)
-  (funcall #'(setf env:find-declaration) function
+  (funcall #'(setf env:proclamation) function
            client (env:parent environment) symbol))
 
 ;;; evaluation-environment-mixin trampolines
