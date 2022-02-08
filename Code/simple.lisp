@@ -143,7 +143,6 @@
     ((client simple-client)
      (env simple-run-time-environment)
      function-name)
-  (check-type function-name function-name)
   (if (or (access function-name (functions env))
           (access function-name (special-operators env))
           (access function-name (macro-functions env)))
@@ -154,7 +153,6 @@
     ((client simple-client)
      (env simple-run-time-environment)
      function-name)
-  (check-type function-name function-name)
   (unbound function-name (functions env))
   (unbound function-name (special-operators env))
   (unbound function-name (macro-functions env))
@@ -165,7 +163,6 @@
     ((client simple-client)
      (env simple-run-time-environment)
      function-name)
-  (check-type function-name function-name)
   (access function-name (special-operators env)))
 
 (defmethod (setf env:special-operator)
@@ -173,7 +170,6 @@
      (client simple-client)
      (env simple-run-time-environment)
      function-name)
-  (check-type function-name function-name)
   (if (null new-value)
       (unbound function-name (special-operators env))
       (cond
@@ -188,7 +184,6 @@
     ((client simple-client)
      (env simple-run-time-environment)
      function-name)
-  (check-type function-name function-name)
   (cond ((alx:when-let ((def (access function-name (functions env))))
            (values def 'cl:function)))
         ((alx:when-let ((def (access function-name (macro-functions env))))
@@ -204,8 +199,6 @@
      (client simple-client)
      (env simple-run-time-environment)
      function-name)
-  (check-type function-name function-name)
-  (check-type new-value function)
   (when (access function-name (special-operators env))
     (error "~s already names a special operator." function-name))
   (unbound function-name (macro-functions env))
@@ -215,7 +208,6 @@
     ((client simple-client)
      (env simple-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   (access symbol (macro-functions env)))
 
 (defmethod (setf env:macro-function)
@@ -223,8 +215,6 @@
      (client simple-client)
      (env simple-run-time-environment)
      symbol)
-  (check-type symbol symbol)
-  (check-type new-value (or function null))
   ;; The special operator is not modified.
   (unbound symbol (functions env))
   (if (null new-value)
@@ -235,7 +225,6 @@
     ((client simple-client)
      (env simple-run-time-environment)
      function-name)
-  (check-type function-name function-name)
   (access function-name (compiler-macro-functions env)))
 
 (defmethod (setf env:compiler-macro-function)
@@ -243,7 +232,6 @@
      (client simple-client)
      (env simple-run-time-environment)
      function-name)
-  (check-type function-name function-name)
   (if (null new-value)
       (unbound function-name (compiler-macro-functions env))
       (update new-value function-name (compiler-macro-functions env))))
@@ -252,7 +240,6 @@
     ((client simple-client)
      (env simple-run-time-environment)
      function-name)
-  (check-type function-name function-name)
   (or (access function-name (function-types env))
       (not (null (access function-name (functions env))))))
 
@@ -261,7 +248,6 @@
      (client simple-client)
      (env simple-run-time-environment)
      function-name)
-  (check-type function-name function-name)
   (cond
     ((access function-name (special-operators env))
      (error "~s can't be a special operator." function-name))
@@ -275,7 +261,6 @@
     ((client simple-client)
      (env simple-run-time-environment)
      function-name)
-  (check-type function-name function-name)
   (if (access function-name (functions env))
       (values (access function-name (function-inlines env)))
       nil))
@@ -285,8 +270,6 @@
      (client simple-client)
      (env simple-run-time-environment)
      function-name)
-  (check-type function-name function-name)
-  (check-type new-value (member nil cl:inline cl:notinline))
   (if (access function-name (functions env))
       (update new-value function-name (function-inlines env))
       (error "The function ~s doesn't exist." function-name)))
@@ -295,7 +278,6 @@
     ((client simple-client)
      (env simple-run-time-environment)
      function-name)
-  (check-type function-name function-name)
   (lambda (&rest args)
     (declare (ignore args))
     (error 'undefined-function :name function-name)))
@@ -304,7 +286,6 @@
     ((client simple-client)
      (env simple-run-time-environment)
      function-name)
-  (check-type function-name function-name)
   nil)
 
 
@@ -314,7 +295,6 @@
     ((client simple-client)
      (env simple-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   (if (or (nth-value 1 (access symbol (constants env)))
           (nth-value 1 (access symbol (specials env)))
           ;; Symbol macro is not a variable.
@@ -326,7 +306,6 @@
     ((client simple-client)
      (env simple-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   (multiple-value-bind (value foundp)
       (access symbol (constants env))
     (values foundp value)))
@@ -336,7 +315,6 @@
      (client simple-client)
      (env simple-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   (multiple-value-bind (value foundp)
       (access symbol (constants env))
     (if foundp
@@ -355,7 +333,6 @@
     ((client simple-client)
      (env simple-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   (multiple-value-bind (value foundp)
       (access symbol (specials env))
     (values foundp value)))
@@ -366,7 +343,6 @@
      (env simple-run-time-environment)
      symbol
      init-p)
-  (check-type symbol symbol)
   (cond
     ((nth-value 1 (access symbol (constants env)))
      (error "~s is already defined as a constant." symbol))
@@ -381,7 +357,6 @@
     ((client simple-client)
      (env simple-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   (alx:if-let ((def (access symbol (symbol-macros env))))
     (values def (funcall def symbol env))
     (values nil nil)))
@@ -391,7 +366,6 @@
      (client simple-client)
      (env simple-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   (cond
     ((nth-value 1 (access symbol (constants env)))
      (error "~s is already defined as a constant." symbol))
@@ -404,7 +378,6 @@
     ((client simple-client)
      (env simple-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   (multiple-value-bind (value foundp)
       (access symbol (constants env))
     (if foundp
@@ -417,7 +390,6 @@
      (client simple-client)
      (env simple-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   (if (nth-value 1 (access symbol (constants env)))
       (error "Can't proclaim a type of a constant ~s." symbol)
       (update new-value symbol (variable-types env))))
@@ -426,14 +398,12 @@
     ((client simple-client)
      (env simple-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   +unbound+)
 
 (defmethod env:variable-description
     ((client simple-client)
      (env simple-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   nil)
 
 
@@ -443,7 +413,6 @@
     ((client simple-client)
      (env simple-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   (values (access symbol (classes env))))
 
 (defmethod (setf env:find-class)
@@ -451,8 +420,6 @@
      (client simple-client)
      (env simple-run-time-environment)
      symbol)
-  (check-type symbol symbol)
-  (check-type new-value classoid)
   (if (null new-value)
       (unbound symbol (classes env))
       (update new-value symbol (classes env))))
@@ -461,14 +428,12 @@
     ((client simple-client)
      (env simple-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   nil)
 
 (defmethod env:setf-expander
     ((client simple-client)
      (env simple-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   (values (access symbol (setf-expanders env))))
 
 (defmethod (setf env:setf-expander)
@@ -476,7 +441,6 @@
      (client simple-client)
      (env simple-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   (cond ((null new-value)
          (unbound symbol (setf-expanders env)))
         ((or (access symbol (functions env))
@@ -489,7 +453,6 @@
     ((client simple-client)
      (env simple-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   (values (access symbol (type-expanders env))))
 
 (defmethod (setf env:type-expander)
@@ -497,7 +460,6 @@
      (client simple-client)
      (env simple-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   (if (null new-value)
       (unbound symbol (type-expanders env))
       (update new-value symbol (type-expanders env))))
@@ -506,7 +468,6 @@
     ((client simple-client)
      (env simple-run-time-environment)
      name)
-  (check-type name package-name)
   (values (access name (packages env))))
 
 (defmethod (setf env:find-package)
@@ -514,8 +475,6 @@
      (client simple-client)
      (env simple-run-time-environment)
      name)
-  (check-type name package-name)
-  (check-type new-package (or null package))
   (if (null new-package)
       (unbound name (packages env))
       (update new-package name (packages env))))
@@ -527,7 +486,6 @@
     ((client simple-client)
      (env simple-run-time-environment)
      name)
-  (check-type name symbol)
   (access name (declarations env)))
 
 (defmethod (setf env:proclamation)
@@ -535,7 +493,6 @@
      (client simple-client)
      (env simple-run-time-environment)
      name)
-  (check-type name symbol)
   (cond ((null new-value)
          (unbound name (declarations env)))
         (t 
@@ -552,7 +509,6 @@
     ((client simple-client)
      (env simple-compilation-environment)
      function-name)
-  (check-type function-name function-name)
   (or (access function-name (function-descriptions env))
       (env:function-description client (env:parent env) function-name)))
 
@@ -561,14 +517,12 @@
      (client simple-client)
      (env simple-compilation-environment)
      function-name)
-  (check-type function-name function-name)
   (update description function-name (function-descriptions env)))
 
 (defmethod variable-description
     ((client simple-client)
      (env simple-compilation-environment)
      symbol)
-  (check-type symbol symbol)
   (or (access symbol (variable-descriptions env))
       (env:variable-description client (env:parent env) symbol)))
 
@@ -577,14 +531,12 @@
      (client simple-client)
      (env simple-compilation-environment)
      symbol)
-  (check-type symbol symbol)
   (update description symbol (variable-descriptions env)))
 
 (defmethod class-description
     ((client simple-client)
      (env simple-compilation-environment)
      symbol)
-  (check-type symbol symbol)
   (or (access symbol (class-descriptions env))
       (env:class-description client (env:parent env) symbol)))
 
@@ -593,5 +545,4 @@
      (client simple-client)
      (env simple-compilation-environment)
      symbol)
-  (check-type symbol symbol)
   (update description symbol (class-descriptions env)))
