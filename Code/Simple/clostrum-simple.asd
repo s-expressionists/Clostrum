@@ -1,5 +1,13 @@
 (cl:in-package #:asdf-user)
 
+;;; This system contains an example naive implementation of the
+;;; clostrum protocol using hash tables.
+
+;;; TODO
+;;;
+;;; - add entries like function-inline in the compilation environment
+;;; - specify error conditions in documentation and use them
+
 (defsystem "clostrum-simple"
   :description "Example naive implementation of the Clostrum protocol."
   :depends-on ("clostrum" "alexandria")

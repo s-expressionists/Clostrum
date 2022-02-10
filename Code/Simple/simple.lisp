@@ -1,11 +1,3 @@
-;;; This file contains an example naive implementation of the clostrum
-;;; protocol using hash tables.
-
-;;; TODO
-;;;
-;;; - add entries like function-inline in the compilation environment
-;;; - specify error conditions in documentation and use them
-
 (defpackage #:clostrum/simple
   (:use #:cl)
   (:local-nicknames (#:env #:clostrum)
