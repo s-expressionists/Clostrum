@@ -23,7 +23,8 @@
    #:class-description)
   ;; Condition types.
   (:export
-   #:attempt-to-define-special-operator-for-existing-function)
+   #:attempt-to-define-special-operator-for-existing-function
+   #:attempt-to-define-special-operator-for-existing-macro)
   ;; Shared readers.
   (:export
    #:parent))
