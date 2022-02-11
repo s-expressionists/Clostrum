@@ -1,4 +1,4 @@
-(in-package #:clostrum/simple)
+(cl:in-package #:clostrum/simple)
 
 (deftype function-name ()
   `(or symbol (cons (eql setf) (cons symbol null))))

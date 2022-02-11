@@ -1,4 +1,4 @@
-(in-package #:clostrum-implementation)
+(cl:in-package #:clostrum-implementation)
 
 (defgeneric env:parent (environment)
   (:documentation "Environment's parent environment."))

@@ -4,7 +4,7 @@
                     (#:alx #:alexandria))
   (:export #:run-tests))
 
-(in-package #:clostrum/test)
+(cl:in-package #:clostrum/test)
 
 (defvar *client-class*)
 (defvar *run-time-environment-class*)

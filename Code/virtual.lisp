@@ -18,7 +18,7 @@
            #:virtual-compilation-environment)
   (:export #:function-cell
            #:variable-cell))
-(in-package #:clostrum/virtual)
+(cl:in-package #:clostrum/virtual)
 
 ;;; Cell functions are _not_ part of the clostrum protocol.
 
