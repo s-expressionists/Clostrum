@@ -21,6 +21,9 @@
    #:function-description
    #:variable-description
    #:class-description)
+  ;; Condition types.
+  (:export
+   #:attempt-to-define-special-operator-for-existing-function)
   ;; Shared readers.
   (:export
    #:parent))
