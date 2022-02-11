@@ -1,11 +1,11 @@
 (defpackage #:clostrum
   (:use)
-  ;; protocol classes
+  ;; Protocol classes.
   (:export
    #:run-time-environment
    #:evaluation-environment-mixin
    #:compilation-environment)
-  ;; run-time operators
+  ;; Run-time operators.
   (:export
    #:fboundp #:fmakunbound #:special-operator #:fdefinition #:macro-function
    #:compiler-macro-function #:function-type #:function-inline
@@ -16,12 +16,12 @@
    ;;
    #:find-class #:class-description #:setf-expander #:type-expander
    #:find-package #:proclamation)
-  ;; compilation environment operators
+  ;; Compilation environment operators.
   (:export
    #:function-description
    #:variable-description
    #:class-description)
-  ;; shared readers
+  ;; Shared readers.
   (:export
    #:parent))
 
