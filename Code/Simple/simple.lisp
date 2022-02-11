@@ -160,7 +160,8 @@
          (error 'env:attempt-to-define-special-operator-for-existing-function
                 :function-name function-name))
         ((access function-name (macro-functions env))
-         (error "~s already names a macro." function-name))
+         (error 'env:attempt-to-define-special-operator-for-existing-macro
+                :function-name function-name))
         (t
          (update new-value function-name (special-operators env))))))
 
