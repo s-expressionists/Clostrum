@@ -1,6 +1,6 @@
 (cl:in-package #:clostrum-implementation)
 
-(define-condition attempt-to-define-special-operator-for-existing-function
+(define-condition env:attempt-to-define-special-operator-for-existing-function
     (error)
   ((%function-name :initarg :function-name :reader function-name))
   (:report (lambda (condition stream)
