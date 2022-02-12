@@ -24,7 +24,8 @@
   ;; Condition types.
   (:export
    #:attempt-to-define-special-operator-for-existing-function
-   #:attempt-to-define-special-operator-for-existing-macro)
+   #:attempt-to-define-special-operator-for-existing-macro
+   #:attempt-to-define-function-for-existing-special-operator)
   ;; Shared readers.
   (:export
    #:parent))
