@@ -239,10 +239,10 @@
      (error 'env:attempt-to-set-function-type-of-special-operator
             :function-name function-name))
     ((access function-name (macro-functions env))
-     (error "~s can't be a macro." function-name))
+     (error 'env:attempt-to-set-function-type-of-macro
+            :function-name function-name))
     (t
      (update new-value function-name (function-types env)))))
-
 
 (defmethod env:function-inline
     ((client simple-client)
