@@ -185,7 +185,8 @@
      (env simple-run-time-environment)
      function-name)
   (when (access function-name (special-operators env))
-    (error "~s already names a special operator." function-name))
+    (error 'env:attempt-to-define-function-for-existing-special-operator
+           :function-name function-name))
   (unbound function-name (macro-functions env))
   (update new-value function-name (functions env)))
 
