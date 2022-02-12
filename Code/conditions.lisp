@@ -44,3 +44,12 @@
                      "Attempt to set the function type of ~s~@
                       but it already names a macro."
                      (function-name condition)))))
+
+(define-condition env:attempt-to-declare-inline-a-non-existing-function
+    (error)
+  ((%function-name :initarg :function-name :reader function-name))
+  (:report (lambda (condition stream)
+             (format stream
+                     "Attempt to declare the function ~s INLINE~@
+                      but there is no function with that name."
+                     (function-name condition)))))
