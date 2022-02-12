@@ -26,3 +26,12 @@
                      "Attempt to define ~s as a function,~@
                       but it already names a special operator."
                      (function-name condition)))))
+
+(define-condition env:attempt-to-set-function-type-of-special-operator
+    (error)
+  ((%function-name :initarg :function-name :reader function-name))
+  (:report (lambda (condition stream)
+             (format stream
+                     "Attempt to set the function type of ~s~@
+                      but it already names a special operator."
+                     (function-name condition)))))
