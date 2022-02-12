@@ -259,7 +259,8 @@
      function-name)
   (if (access function-name (functions env))
       (update new-value function-name (function-inlines env))
-      (error "The function ~s doesn't exist." function-name)))
+      (error 'env:attempt-to-declare-inline-a-non-existing-function
+             :function-name function-name)))
 
 (defmethod env:function-unbound
     ((client simple-client)
