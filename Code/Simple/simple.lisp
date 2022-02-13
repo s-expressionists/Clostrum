@@ -336,7 +336,8 @@
      init-p)
   (cond
     ((nth-value 1 (access symbol (constants env)))
-     (error "~s is already defined as a constant." symbol))
+     (error 'env:attempt-to-define-special-variable-for-existing-constant
+            :name symbol))
     ((nth-value 1 (access symbol (symbol-macros env)))
      (error "~s is already defined as a symbol macro." symbol))
     (t
