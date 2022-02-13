@@ -307,7 +307,8 @@
       (access symbol (constants env))
     (if foundp
         (if (not (eql value new-value))
-            (error "~s is already defined as a constant." symbol)
+            (error 'env:attempt-to-define-constant-for-existing-constant
+                   :name symbol)
             value)
         (cond
           ((nth-value 1 (access symbol (specials env)))
