@@ -31,7 +31,8 @@
    #:attempt-to-declare-inline-a-non-existing-function
    #:attempt-to-define-constant-for-existing-constant
    #:attempt-to-define-constant-for-existing-special-variable
-   #:attempt-to-define-constant-for-existing-symbol-macro)
+   #:attempt-to-define-constant-for-existing-symbol-macro
+   #:attempt-to-define-special-variable-for-existing-constant)
   ;; Shared readers.
   (:export
    #:parent))
