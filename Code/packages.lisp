@@ -29,7 +29,8 @@
    #:attempt-to-set-function-type-of-special-operator
    #:attempt-to-set-function-type-of-macro
    #:attempt-to-declare-inline-a-non-existing-function
-   #:attempt-to-define-constant-for-existing-constant)
+   #:attempt-to-define-constant-for-existing-constant
+   #:attempt-to-define-constant-for-existing-special-variable)
   ;; Shared readers.
   (:export
    #:parent))
