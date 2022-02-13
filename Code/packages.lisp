@@ -28,7 +28,8 @@
    #:attempt-to-define-function-for-existing-special-operator
    #:attempt-to-set-function-type-of-special-operator
    #:attempt-to-set-function-type-of-macro
-   #:attempt-to-declare-inline-a-non-existing-function)
+   #:attempt-to-declare-inline-a-non-existing-function
+   #:attempt-to-define-constant-for-existing-constant)
   ;; Shared readers.
   (:export
    #:parent))
