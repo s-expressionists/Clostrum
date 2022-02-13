@@ -80,3 +80,12 @@
                      "Attempt to define ~s as a constant,~@
                       but it already names a symbol macro."
                      (name condition)))))
+
+(define-condition env:attempt-to-define-special-variable-for-existing-constant
+    (error)
+  ((%name :initarg :name :reader name))
+  (:report (lambda (condition stream)
+             (format stream
+                     "Attempt to define ~s as a constant,~@
+                      but it already names a special variable."
+                     (name condition)))))
