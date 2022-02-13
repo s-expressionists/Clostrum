@@ -62,3 +62,12 @@
                      "Attempt to define ~s as a constant,~@
                       but it already names a constant."
                      (name condition)))))
+
+(define-condition env:attempt-to-define-constant-for-existing-special-variable
+    (error)
+  ((%name :initarg :name :reader name))
+  (:report (lambda (condition stream)
+             (format stream
+                     "Attempt to define ~s as a constant,~@
+                      but it already names a special variable."
+                     (name condition)))))
