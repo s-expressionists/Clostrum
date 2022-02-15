@@ -339,7 +339,8 @@
      (error 'env:attempt-to-define-special-variable-for-existing-constant
             :name symbol))
     ((nth-value 1 (access symbol (symbol-macros env)))
-     (error "~s is already defined as a symbol macro." symbol))
+     (error 'env:attempt-to-define-special-variable-for-existing-symbol-macro
+            :name symbol))
     (t
      (if init-p
          (update new-value symbol (specials env))
