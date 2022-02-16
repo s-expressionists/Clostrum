@@ -34,7 +34,8 @@
    #:attempt-to-define-constant-for-existing-symbol-macro
    #:attempt-to-define-special-variable-for-existing-constant
    #:attempt-to-define-special-variable-for-existing-symbol-macro
-   #:attempt-to-define-symbol-macro-for-existing-constant)
+   #:attempt-to-define-symbol-macro-for-existing-constant
+   #:attempt-to-define-symbol-macro-for-existing-special-variable)
   ;; Shared readers.
   (:export
    #:parent))
