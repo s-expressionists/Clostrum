@@ -361,7 +361,8 @@
      symbol)
   (cond
     ((nth-value 1 (access symbol (constants env)))
-     (error "~s is already defined as a constant." symbol))
+     (error 'env:attempt-to-define-symbol-macro-for-existing-constant
+            :name symbol))
     ((nth-value 1 (access symbol (specials env)))
      (error "~s is already defined as a special variable." symbol))
     (t
