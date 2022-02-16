@@ -98,3 +98,12 @@
                      "Attempt to define ~s as a constant,~@
                       but it already names a symbol macro."
                      (name condition)))))
+
+(define-condition env:attempt-to-define-symbol-macro-for-existing-constant
+    (error)
+  ((%name :initarg :name :reader name))
+  (:report (lambda (condition stream)
+             (format stream
+                     "Attempt to define ~s as a symbol macro,~@
+                      but it already names a constant."
+                     (name condition)))))
