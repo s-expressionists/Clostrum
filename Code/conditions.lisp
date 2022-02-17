@@ -116,3 +116,12 @@
                      "Attempt to define ~s as a symbol macro,~@
                       but it already names a special variable."
                      (name condition)))))
+
+(define-condition env:attempt-to-proclaim-the-type-of-a-constant-variable
+    (error)
+  ((%name :initarg :name :reader name))
+  (:report (lambda (condition stream)
+             (format stream
+                     "Attempt to proclaim the type of ~s,~@
+                      but it names a constant variable."
+                     (name condition)))))
