@@ -386,7 +386,8 @@
      (env simple-run-time-environment)
      symbol)
   (if (nth-value 1 (access symbol (constants env)))
-      (error "Can't proclaim a type of a constant ~s." symbol)
+      (error 'env:attempt-to-proclaim-the-type-of-a-constant-variable
+             :name symbol)
       (update new-value symbol (variable-types env))))
 
 (defmethod env:variable-unbound
