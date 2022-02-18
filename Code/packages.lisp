@@ -36,7 +36,8 @@
    #:attempt-to-define-special-variable-for-existing-symbol-macro
    #:attempt-to-define-symbol-macro-for-existing-constant
    #:attempt-to-define-symbol-macro-for-existing-special-variable
-   #:attempt-to-proclaim-the-type-of-a-constant-variable)
+   #:attempt-to-proclaim-the-type-of-a-constant-variable
+   #:attempt-to-define-a-setf-expander-of-non-existing-function-or-macro)
   ;; Shared readers.
   (:export
    #:parent))
