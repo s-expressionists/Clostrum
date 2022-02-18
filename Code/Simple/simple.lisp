@@ -441,7 +441,7 @@
          (unbound symbol (setf-expanders env)))
         ((or (access symbol (functions env))
              (access symbol (macro-functions env)))
-         (update new-value symbol (classes env)))
+         (update new-value symbol (setf-expanders env)))
         (t
          (error "~s is not a function nor a macro." symbol))))
 
