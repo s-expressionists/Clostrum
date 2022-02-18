@@ -125,3 +125,13 @@
                      "Attempt to proclaim the type of ~s,~@
                       but it names a constant variable."
                      (name condition)))))
+
+(define-condition env:attempt-to-define-a-setf-expander-of-non-existing-function-or-macro
+    (error)
+  ((%name :initarg :name :reader name))
+  (:report (lambda (condition stream)
+             (format stream
+                     "Attempt to define a SETF expander for ~s,~@
+                      but the name is not defined as a function~@
+                      or a macro."
+                     (name condition)))))
