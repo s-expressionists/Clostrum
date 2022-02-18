@@ -443,7 +443,8 @@
              (access symbol (macro-functions env)))
          (update new-value symbol (setf-expanders env)))
         (t
-         (error "~s is not a function nor a macro." symbol))))
+         (error 'env:attempt-to-define-a-setf-expander-of-non-existing-function-or-macro
+                :name symbol))))
 
 (defmethod env:type-expander
     ((client simple-client)
