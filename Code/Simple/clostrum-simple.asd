@@ -14,7 +14,7 @@
   :components
   ((:file "packages")
    (:file "simple"))
-  :in-order-to ((test-op (load-op "clostrum/test")))
+  :in-order-to ((test-op (load-op "clostrum-test")))
   :perform (test-op (operation component)
              (flet ((s (name) (uiop:find-symbol* name '#:clostrum/simple)))
                (uiop:symbol-call

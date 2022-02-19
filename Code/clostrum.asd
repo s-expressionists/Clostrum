@@ -6,14 +6,14 @@
   ((:file "packages")
    (:file "clostrum")
    (:file "conditions"))
-  :in-order-to ((test-op (test-op "clostrum/test"))))
+  :in-order-to ((test-op (test-op "clostrum-test"))))
 
 (defsystem "clostrum/virtual"
   :description "Example implementation of the Clostrum protocol."
   :depends-on ("clostrum" "alexandria")
   :components
   ((:file "virtual"))
-  :in-order-to ((test-op (load-op "clostrum/test")))
+  :in-order-to ((test-op (load-op "clostrum-test")))
   :perform (test-op (operation component)
              (flet ((s (name) (uiop:find-symbol* name '#:clostrum/virtual)))
                (uiop:symbol-call
