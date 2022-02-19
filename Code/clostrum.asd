@@ -22,9 +22,3 @@
                 (s '#:virtual-run-time-environment)
                 nil
                 (s '#:virtual-compilation-environment)))))
-
-(defsystem "clostrum/test"
-  :description "Test suite for a Clostrum implementation."
-  :depends-on ("clostrum" "fiveam")
-  :components
-  ((:file "tests")))
