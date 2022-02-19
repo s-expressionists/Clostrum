@@ -1,9 +1,3 @@
-(defpackage #:clostrum/test
-  (:use #:cl #:5am)
-  (:local-nicknames (#:env #:clostrum)
-                    (#:alx #:alexandria))
-  (:export #:run-tests))
-
 (cl:in-package #:clostrum/test)
 
 (defvar *client-class*)

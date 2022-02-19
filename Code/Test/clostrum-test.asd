@@ -4,4 +4,5 @@
   :description "Test suite for a Clostrum implementation."
   :depends-on ("clostrum" "fiveam")
   :components
-  ((:file "tests")))
+  ((:file "packages")
+   (:file "tests")))
