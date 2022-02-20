@@ -108,7 +108,7 @@
 
 ;;; Run-time environment
 
-(defclass virtual-run-time-environment (env:run-time-environment)
+(defclass run-time-environment (env:run-time-environment)
   ((functions
     :reader functions
     :initform (make-hash-table :test #'equal))
@@ -151,13 +151,13 @@
 ;;; Functions
 (defmethod function-cell
     (client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      function-name)
   (cell (get-function-entry function-name env t)))
 
 (defmethod env:fboundp
     (client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      function-name)
   (alx:if-let ((entry (get-function-entry function-name env)))
     (and (or (function-bound-p entry)
@@ -168,7 +168,7 @@
 
 (defmethod env:fmakunbound
     (client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      function-name)
   (alx:when-let ((entry (get-function-entry function-name env)))
     (let ((cell (cell entry)))
@@ -180,7 +180,7 @@
 
 (defmethod env:special-operator
     (client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      function-name)
   (alx:if-let ((entry (get-function-entry function-name env)))
     (special-operator entry)
@@ -189,7 +189,7 @@
 (defmethod (setf env:special-operator)
     (new-value
      client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      function-name)
   (when (null new-value)
     (alx:when-let ((entry (get-function-entry function-name env)))
@@ -206,7 +206,7 @@
 
 (defmethod env:fdefinition
     (client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      function-name)
   (alx:if-let ((entry (get-function-entry function-name env)))
     (cond ((function-bound-p entry)
@@ -225,7 +225,7 @@
 (defmethod (setf env:fdefinition)
     (new-value
      client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      function-name)
   (when (null new-value)
     (alx:when-let ((entry (get-function-entry function-name env)))
@@ -244,7 +244,7 @@
 
 (defmethod env:macro-function
     (client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      symbol)
   (alx:when-let ((entry (get-function-entry symbol env)))
     (macro-function entry)))
@@ -252,7 +252,7 @@
 (defmethod (setf env:macro-function)
     (new-value
      client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      symbol)
   (when (null new-value)
     (alx:when-let ((entry (get-function-entry symbol env)))
@@ -269,7 +269,7 @@
 
 (defmethod env:compiler-macro-function
     (client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      function-name)
   (alx:when-let ((entry (get-function-entry function-name env)))
     (compiler-macro-function entry)))
@@ -277,7 +277,7 @@
 (defmethod (setf env:compiler-macro-function)
     (new-value
      client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      function-name)
   (when (null new-value)
     (alx:when-let ((entry (get-function-entry function-name env)))
@@ -288,7 +288,7 @@
 
 (defmethod env:function-type
     (client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      function-name)
   (alx:if-let ((entry (get-function-entry function-name env)))
     (or (function-type entry)
@@ -298,7 +298,7 @@
 (defmethod (setf env:function-type)
     (new-value
      client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      function-name)
   (when (null new-value)
     (alx:when-let ((entry (get-function-entry function-name env)))
@@ -321,7 +321,7 @@
 
 (defmethod env:function-inline
     (client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      function-name)
   (alx:if-let ((entry (get-function-entry function-name env)))
     (and (function-bound-p entry)
@@ -331,7 +331,7 @@
 (defmethod (setf env:function-inline)
     (new-value
      client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      function-name)
   (when (null new-value)
     (alx:when-let ((entry (get-function-entry function-name env)))
@@ -346,19 +346,19 @@
 
 (defmethod env:function-unbound
     (client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      function-name)
   (cdr (cell (get-function-entry function-name env t))))
 
 (defmethod env:function-description
     (client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      function-name)
   nil)
 
 (defmethod env:setf-expander
     (client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      symbol)
   (alx:when-let ((entry (get-function-entry symbol env)))
     (setf-expander entry)))
@@ -366,7 +366,7 @@
 (defmethod (setf env:setf-expander)
     (new-value
      client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      symbol)
   (when (null new-value)
     (alx:when-let ((entry (get-function-entry symbol env)))
@@ -383,13 +383,13 @@
 ;;; Variables
 (defmethod variable-cell
     (client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      symbol)
   (cell (get-variable-entry symbol env t)))
 
 (defmethod env:boundp
     (client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      symbol)
   ;; SYMBOL-MACRO has a value in the variable cell, however it is not treated
   ;; as a bound variable (following behavior of other implementations). It is
@@ -402,7 +402,7 @@
 
 (defmethod env:constant-variable
     (client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      symbol)
   (alx:if-let ((entry (get-variable-entry symbol env)))
     (values (constant-variable entry) (car (cell entry)))
@@ -411,7 +411,7 @@
 (defmethod (setf env:constant-variable)
     (new-value
      client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      symbol)
   (let* ((entry (get-variable-entry symbol env t))
          (cell (cell entry)))
@@ -431,7 +431,7 @@
 
 (defmethod env:special-variable
     (client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      symbol)
   (alx:if-let ((entry (get-variable-entry symbol env)))
     (values (special-variable entry) (car (cell entry)))
@@ -440,7 +440,7 @@
 (defmethod (setf env:special-variable)
     (new-value
      client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      symbol
      init-p)
   (let ((entry (get-variable-entry symbol env t)))
@@ -455,7 +455,7 @@
 
 (defmethod env:symbol-macro
     (client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      symbol)
   (alx:if-let ((entry (get-variable-entry symbol env)))
     (if (symbol-macro entry)
@@ -467,7 +467,7 @@
 (defmethod (setf env:symbol-macro)
     (new-value
      client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      symbol)
   (let ((entry (get-variable-entry symbol env t)))
     (cond
@@ -481,7 +481,7 @@
 
 (defmethod env:variable-type
     (client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      symbol)
   (alx:if-let ((entry (get-variable-entry symbol env)))
     (if (constant-variable entry)
@@ -493,7 +493,7 @@
 (defmethod (setf env:variable-type)
     (new-value
      client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      symbol)
   (let ((entry (get-variable-entry symbol env t)))
     (if (constant-variable entry)
@@ -502,19 +502,19 @@
 
 (defmethod env:variable-unbound
     (client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      symbol)
   +unbound+)
 
 (defmethod env:variable-description
     (client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      symbol)
   nil)
 
 (defmethod env:type-expander
     (client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      symbol)
   (alx:when-let ((entry (get-variable-entry symbol env)))
     (type-expander entry)))
@@ -522,7 +522,7 @@
 (defmethod (setf env:type-expander)
     (new-value
      client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      symbol)
   (let ((entry (get-variable-entry symbol env t)))
     (setf (type-expander entry) new-value)))
@@ -532,14 +532,14 @@
 
 (defmethod env:find-class
     (client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      symbol)
   (values (gethash symbol (classes env))))
 
 (defmethod (setf env:find-class)
     (new-value
      client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      symbol)
   (if (null new-value)
       (remhash symbol (classes env))
@@ -548,20 +548,20 @@
 
 (defmethod env:class-description
     (client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      symbol)
   nil)
 
 (defmethod env:find-package
     (client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      name)
   (values (gethash name (packages env))))
 
 (defmethod (setf env:find-package)
     (new-package
      client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      name)
   (if (null new-package)
       (remhash name (packages env))
@@ -572,14 +572,14 @@
 
 (defmethod env:proclamation
     (client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      name)
   (values (gethash name (declarations env))))
 
 (defmethod (setf env:proclamation)
     (new-value
      client
-     (env virtual-run-time-environment)
+     (env run-time-environment)
      name)
   (cond ((null new-value)
          (remhash name (declarations env)))
