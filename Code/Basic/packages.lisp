@@ -8,6 +8,6 @@
            #:macro-function #:compiler-macro-function)
   (:export #:run-time-environment
            #:evaluation-environment
-           #:virtual-compilation-environment)
+           #:compilation-environment)
   (:export #:function-cell
            #:variable-cell))

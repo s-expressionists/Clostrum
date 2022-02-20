@@ -588,7 +588,7 @@
 
 ;;; Compilation environment
 
-(defclass virtual-compilation-environment (env:compilation-environment)
+(defclass compilation-environment (env:compilation-environment)
   ((function-descriptions
     :initarg :function-descriptions
     :reader function-descriptions
@@ -604,7 +604,7 @@
 
 (defmethod env:function-description
     (client
-     (env virtual-compilation-environment)
+     (env compilation-environment)
      function-name)
   (or (gethash function-name (function-descriptions env))
       (env:function-description client (env:parent env) function-name)))
@@ -612,14 +612,14 @@
 (defmethod (setf function-description)
     (description
      client
-     (env virtual-compilation-environment)
+     (env compilation-environment)
      function-name)
   (setf (gethash function-name (function-descriptions env))
         description))
 
 (defmethod variable-description
     (client
-     (env virtual-compilation-environment)
+     (env compilation-environment)
      symbol)
   (or (gethash symbol (variable-descriptions env))
       (env:variable-description client (env:parent env) symbol)))
@@ -627,14 +627,14 @@
 (defmethod (setf variable-description)
     (description
      client
-     (env virtual-compilation-environment)
+     (env compilation-environment)
      symbol)
   (setf (gethash symbol (variable-descriptions env))
         description))
 
 (defmethod class-description
     (client
-     (env virtual-compilation-environment)
+     (env compilation-environment)
      symbol)
   (or (gethash symbol (class-descriptions env))
       (env:class-description client (env:parent env) symbol)))
@@ -642,7 +642,7 @@
 (defmethod (setf class-description)
     (description
      client
-     (env virtual-compilation-environment)
+     (env compilation-environment)
      symbol)
   (setf (gethash symbol (class-descriptions env))
         description))
