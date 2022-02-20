@@ -6,8 +6,7 @@
                     (#:alx #:alexandria))
   (:shadow #:class-name #:package-name
            #:macro-function #:compiler-macro-function)
-  (:export #:virtual-client
-           #:virtual-run-time-environment
+  (:export #:virtual-run-time-environment
            #:virtual-evaluation-environment
            #:virtual-compilation-environment)
   (:export #:function-cell

@@ -20,7 +20,7 @@
              (flet ((s (name) (uiop:find-symbol* name '#:clostrum-basic)))
                (uiop:symbol-call
                 '#:clostrum/test '#:run-tests
-                (s '#:virtual-client)
+                nil
                 (s '#:virtual-run-time-environment)
                 nil
                 (s '#:virtual-compilation-environment)))))

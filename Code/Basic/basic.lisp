@@ -50,9 +50,6 @@
 
 (defconstant +unbound+ 'unbound)
 
-;;; Dummy client (for the specialization).
-(defclass virtual-client () ())
-
 
 ;;; Function and variable entries
 (defclass function-entry ()
