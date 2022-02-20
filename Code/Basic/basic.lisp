@@ -161,9 +161,10 @@
 
 
 ;;; Functions
-(defmethod function-cell ((client virtual-client)
-                          (env virtual-run-time-environment)
-                          function-name)
+(defmethod function-cell
+    ((client virtual-client)
+     (env virtual-run-time-environment)
+     function-name)
   (check-type function-name function-name)
   (cell (get-function-entry function-name env t)))
 
@@ -414,9 +415,10 @@
 
 
 ;;; Variables
-(defmethod variable-cell ((client virtual-client)
-                          (env virtual-run-time-environment)
-                          symbol)
+(defmethod variable-cell
+    ((client virtual-client)
+     (env virtual-run-time-environment)
+     symbol)
   (check-type symbol symbol)
   (cell (get-variable-entry symbol env t)))
 
