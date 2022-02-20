@@ -153,14 +153,12 @@
     (client
      (env virtual-run-time-environment)
      function-name)
-  (check-type function-name function-name)
   (cell (get-function-entry function-name env t)))
 
 (defmethod env:fboundp
     (client
      (env virtual-run-time-environment)
      function-name)
-  (check-type function-name function-name)
   (alx:if-let ((entry (get-function-entry function-name env)))
     (and (or (function-bound-p entry)
              (special-operator entry)
@@ -172,7 +170,6 @@
     (client
      (env virtual-run-time-environment)
      function-name)
-  (check-type function-name function-name)
   (alx:when-let ((entry (get-function-entry function-name env)))
     (let ((cell (cell entry)))
       (setf (car cell) (cdr cell))
@@ -185,7 +182,6 @@
     (client
      (env virtual-run-time-environment)
      function-name)
-  (check-type function-name function-name)
   (alx:if-let ((entry (get-function-entry function-name env)))
     (special-operator entry)
     nil))
@@ -195,7 +191,6 @@
      client
      (env virtual-run-time-environment)
      function-name)
-  (check-type function-name function-name)
   (when (null new-value)
     (alx:when-let ((entry (get-function-entry function-name env)))
       (setf (special-operator entry) nil))
@@ -213,7 +208,6 @@
     (client
      (env virtual-run-time-environment)
      function-name)
-  (check-type function-name function-name)
   (alx:if-let ((entry (get-function-entry function-name env)))
     (cond ((function-bound-p entry)
            (values (car (cell entry)) 'cl:function))
@@ -233,8 +227,6 @@
      client
      (env virtual-run-time-environment)
      function-name)
-  (check-type function-name function-name)
-  (check-type new-value function)
   (when (null new-value)
     (alx:when-let ((entry (get-function-entry function-name env)))
       (when (special-operator entry)
@@ -254,7 +246,6 @@
     (client
      (env virtual-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   (alx:when-let ((entry (get-function-entry symbol env)))
     (macro-function entry)))
 
@@ -263,8 +254,6 @@
      client
      (env virtual-run-time-environment)
      symbol)
-  (check-type symbol symbol)
-  (check-type new-value (or function null))
   (when (null new-value)
     (alx:when-let ((entry (get-function-entry symbol env)))
       (let ((cell (cell entry)))
@@ -282,7 +271,6 @@
     (client
      (env virtual-run-time-environment)
      function-name)
-  (check-type function-name function-name)
   (alx:when-let ((entry (get-function-entry function-name env)))
     (compiler-macro-function entry)))
 
@@ -291,7 +279,6 @@
      client
      (env virtual-run-time-environment)
      function-name)
-  (check-type function-name function-name)
   (when (null new-value)
     (alx:when-let ((entry (get-function-entry function-name env)))
       (setf (compiler-macro-function entry) nil))
@@ -303,7 +290,6 @@
     (client
      (env virtual-run-time-environment)
      function-name)
-  (check-type function-name function-name)
   (alx:if-let ((entry (get-function-entry function-name env)))
     (or (function-type entry)
         (function-bound-p entry))
@@ -314,7 +300,6 @@
      client
      (env virtual-run-time-environment)
      function-name)
-  (check-type function-name function-name)
   (when (null new-value)
     (alx:when-let ((entry (get-function-entry function-name env)))
       (cond
@@ -338,7 +323,6 @@
     (client
      (env virtual-run-time-environment)
      function-name)
-  (check-type function-name function-name)
   (alx:if-let ((entry (get-function-entry function-name env)))
     (and (function-bound-p entry)
          (function-inline entry))
@@ -349,8 +333,6 @@
      client
      (env virtual-run-time-environment)
      function-name)
-  (check-type function-name function-name)
-  (check-type new-value (member nil cl:inline cl:notinline))
   (when (null new-value)
     (alx:when-let ((entry (get-function-entry function-name env)))
       (if (function-bound-p entry)
@@ -366,21 +348,18 @@
     (client
      (env virtual-run-time-environment)
      function-name)
-  (check-type function-name function-name)
   (cdr (cell (get-function-entry function-name env t))))
 
 (defmethod env:function-description
     (client
      (env virtual-run-time-environment)
      function-name)
-  (check-type function-name function-name)
   nil)
 
 (defmethod env:setf-expander
     (client
      (env virtual-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   (alx:when-let ((entry (get-function-entry symbol env)))
     (setf-expander entry)))
 
@@ -389,7 +368,6 @@
      client
      (env virtual-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   (when (null new-value)
     (alx:when-let ((entry (get-function-entry symbol env)))
       (setf (setf-expander entry) nil))
@@ -407,14 +385,12 @@
     (client
      (env virtual-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   (cell (get-variable-entry symbol env t)))
 
 (defmethod env:boundp
     (client
      (env virtual-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   ;; SYMBOL-MACRO has a value in the variable cell, however it is not treated
   ;; as a bound variable (following behavior of other implementations). It is
   ;; not clearly defined what does bound mean in context of the symbol-macro,
@@ -428,7 +404,6 @@
     (client
      (env virtual-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   (alx:if-let ((entry (get-variable-entry symbol env)))
     (values (constant-variable entry) (car (cell entry)))
     (values nil nil)))
@@ -438,7 +413,6 @@
      client
      (env virtual-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   (let* ((entry (get-variable-entry symbol env t))
          (cell (cell entry)))
     (if (constant-variable entry)
@@ -459,7 +433,6 @@
     (client
      (env virtual-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   (alx:if-let ((entry (get-variable-entry symbol env)))
     (values (special-variable entry) (car (cell entry)))
     (values nil nil)))
@@ -470,7 +443,6 @@
      (env virtual-run-time-environment)
      symbol
      init-p)
-  (check-type symbol symbol)
   (let ((entry (get-variable-entry symbol env t)))
     (cond ((constant-variable entry)
            (error "~s is already defined as a constant." symbol))
@@ -485,7 +457,6 @@
     (client
      (env virtual-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   (alx:if-let ((entry (get-variable-entry symbol env)))
     (if (symbol-macro entry)
         (let ((def (car (cell entry))))
@@ -498,7 +469,6 @@
      client
      (env virtual-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   (let ((entry (get-variable-entry symbol env t)))
     (cond
       ((constant-variable entry)
@@ -513,7 +483,6 @@
     (client
      (env virtual-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   (alx:if-let ((entry (get-variable-entry symbol env)))
     (if (constant-variable entry)
         (type-of (car (cell entry)))
@@ -526,7 +495,6 @@
      client
      (env virtual-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   (let ((entry (get-variable-entry symbol env t)))
     (if (constant-variable entry)
         (error "Can't proclaim a type of a constant ~s." symbol)
@@ -536,21 +504,18 @@
     (client
      (env virtual-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   +unbound+)
 
 (defmethod env:variable-description
     (client
      (env virtual-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   nil)
 
 (defmethod env:type-expander
     (client
      (env virtual-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   (alx:when-let ((entry (get-variable-entry symbol env)))
     (type-expander entry)))
 
@@ -559,7 +524,6 @@
      client
      (env virtual-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   (let ((entry (get-variable-entry symbol env t)))
     (setf (type-expander entry) new-value)))
 
@@ -570,7 +534,6 @@
     (client
      (env virtual-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   (values (gethash symbol (classes env))))
 
 (defmethod (setf env:find-class)
@@ -578,7 +541,6 @@
      client
      (env virtual-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   (if (null new-value)
       (remhash symbol (classes env))
       (setf (gethash symbol (classes env))
@@ -588,14 +550,12 @@
     (client
      (env virtual-run-time-environment)
      symbol)
-  (check-type symbol symbol)
   nil)
 
 (defmethod env:find-package
     (client
      (env virtual-run-time-environment)
      name)
-  (check-type name package-name)
   (values (gethash name (packages env))))
 
 (defmethod (setf env:find-package)
@@ -603,8 +563,6 @@
      client
      (env virtual-run-time-environment)
      name)
-  (check-type name package-name)
-  (check-type new-package (or null package))
   (if (null new-package)
       (remhash name (packages env))
       (setf (gethash name (packages env)) new-package)))
@@ -616,7 +574,6 @@
     (client
      (env virtual-run-time-environment)
      name)
-  (check-type name symbol)
   (values (gethash name (declarations env))))
 
 (defmethod (setf env:proclamation)
@@ -624,7 +581,6 @@
      client
      (env virtual-run-time-environment)
      name)
-  (check-type name symbol)
   (cond ((null new-value)
          (remhash name (declarations env)))
         (t
@@ -650,7 +606,6 @@
     (client
      (env virtual-compilation-environment)
      function-name)
-  (check-type function-name function-name)
   (or (gethash function-name (function-descriptions env))
       (env:function-description client (env:parent env) function-name)))
 
@@ -659,7 +614,6 @@
      client
      (env virtual-compilation-environment)
      function-name)
-  (check-type function-name function-name)
   (setf (gethash function-name (function-descriptions env))
         description))
 
@@ -667,7 +621,6 @@
     (client
      (env virtual-compilation-environment)
      symbol)
-  (check-type symbol symbol)
   (or (gethash symbol (variable-descriptions env))
       (env:variable-description client (env:parent env) symbol)))
 
@@ -676,7 +629,6 @@
      client
      (env virtual-compilation-environment)
      symbol)
-  (check-type symbol symbol)
   (setf (gethash symbol (variable-descriptions env))
         description))
 
@@ -684,7 +636,6 @@
     (client
      (env virtual-compilation-environment)
      symbol)
-  (check-type symbol symbol)
   (or (gethash symbol (class-descriptions env))
       (env:class-description client (env:parent env) symbol)))
 
@@ -693,6 +644,5 @@
      client
      (env virtual-compilation-environment)
      symbol)
-  (check-type symbol symbol)
   (setf (gethash symbol (class-descriptions env))
         description))
