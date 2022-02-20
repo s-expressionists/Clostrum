@@ -31,15 +31,6 @@
 (deftype class-name ()
   `symbol)
 
-;;; KLUDGE SICL likes to assign anything to the class during bootstrap, so it
-;;; is defined as T.
-(deftype classoid ()
-  t)
-
-#+ (or)
-(deftype classoid ()
-  `(or class null))
-
 (deftype package-name ()
   `string)
 
@@ -588,7 +579,6 @@
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
-  #+ (or) (check-type new-value classoid)
   (if (null new-value)
       (remhash symbol (classes env))
       (setf (gethash symbol (classes env))
