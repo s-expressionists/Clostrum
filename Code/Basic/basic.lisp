@@ -162,14 +162,14 @@
 
 ;;; Functions
 (defmethod function-cell
-    ((client virtual-client)
+    (client
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
   (cell (get-function-entry function-name env t)))
 
 (defmethod env:fboundp
-    ((client virtual-client)
+    (client
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
@@ -181,7 +181,7 @@
     nil))
 
 (defmethod env:fmakunbound
-    ((client virtual-client)
+    (client
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
@@ -194,7 +194,7 @@
   t)
 
 (defmethod env:special-operator
-    ((client virtual-client)
+    (client
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
@@ -204,7 +204,7 @@
 
 (defmethod (setf env:special-operator)
     (new-value
-     (client virtual-client)
+     client
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
@@ -222,7 +222,7 @@
        (setf (special-operator entry) new-value)))))
 
 (defmethod env:fdefinition
-    ((client virtual-client)
+    (client
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
@@ -242,7 +242,7 @@
 
 (defmethod (setf env:fdefinition)
     (new-value
-     (client virtual-client)
+     client
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
@@ -263,7 +263,7 @@
       (setf (car cell) new-value))))
 
 (defmethod env:macro-function
-    ((client virtual-client)
+    (client
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
@@ -272,7 +272,7 @@
 
 (defmethod (setf env:macro-function)
     (new-value
-     (client virtual-client)
+     client
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
@@ -291,7 +291,7 @@
     (setf (macro-function entry) new-value)))
 
 (defmethod env:compiler-macro-function
-    ((client virtual-client)
+    (client
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
@@ -300,7 +300,7 @@
 
 (defmethod (setf env:compiler-macro-function)
     (new-value
-     (client virtual-client)
+     client
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
@@ -312,7 +312,7 @@
     (setf (compiler-macro-function entry) new-value)))
 
 (defmethod env:function-type
-    ((client virtual-client)
+    (client
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
@@ -323,7 +323,7 @@
 
 (defmethod (setf env:function-type)
     (new-value
-     (client virtual-client)
+     client
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
@@ -347,7 +347,7 @@
        (setf (function-type entry) new-value)))))
 
 (defmethod env:function-inline
-    ((client virtual-client)
+    (client
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
@@ -358,7 +358,7 @@
 
 (defmethod (setf env:function-inline)
     (new-value
-     (client virtual-client)
+     client
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
@@ -375,21 +375,21 @@
         (error "The function ~s doesn't exist." function-name))))
 
 (defmethod env:function-unbound
-    ((client virtual-client)
+    (client
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
   (cdr (cell (get-function-entry function-name env t))))
 
 (defmethod env:function-description
-    ((client virtual-client)
+    (client
      (env virtual-run-time-environment)
      function-name)
   (check-type function-name function-name)
   nil)
 
 (defmethod env:setf-expander
-    ((client virtual-client)
+    (client
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
@@ -398,7 +398,7 @@
 
 (defmethod (setf env:setf-expander)
     (new-value
-     (client virtual-client)
+     client
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
@@ -416,14 +416,14 @@
 
 ;;; Variables
 (defmethod variable-cell
-    ((client virtual-client)
+    (client
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
   (cell (get-variable-entry symbol env t)))
 
 (defmethod env:boundp
-    ((client virtual-client)
+    (client
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
@@ -437,7 +437,7 @@
     nil))
 
 (defmethod env:constant-variable
-    ((client virtual-client)
+    (client
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
@@ -447,7 +447,7 @@
 
 (defmethod (setf env:constant-variable)
     (new-value
-     (client virtual-client)
+     client
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
@@ -468,7 +468,7 @@
            (setf (car cell) new-value))))))
 
 (defmethod env:special-variable
-    ((client virtual-client)
+    (client
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
@@ -478,7 +478,7 @@
 
 (defmethod (setf env:special-variable)
     (new-value
-     (client virtual-client)
+     client
      (env virtual-run-time-environment)
      symbol
      init-p)
@@ -494,7 +494,7 @@
              (setf (car (cell entry)) new-value))))))
 
 (defmethod env:symbol-macro
-    ((client virtual-client)
+    (client
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
@@ -507,7 +507,7 @@
 
 (defmethod (setf env:symbol-macro)
     (new-value
-     (client virtual-client)
+     client
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
@@ -522,7 +522,7 @@
        (setf (car (cell entry)) (constantly new-value))))))
 
 (defmethod env:variable-type
-    ((client virtual-client)
+    (client
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
@@ -535,7 +535,7 @@
 
 (defmethod (setf env:variable-type)
     (new-value
-     (client virtual-client)
+     client
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
@@ -545,21 +545,21 @@
         (setf (variable-type entry) new-value))))
 
 (defmethod env:variable-unbound
-    ((client virtual-client)
+    (client
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
   +unbound+)
 
 (defmethod env:variable-description
-    ((client virtual-client)
+    (client
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
   nil)
 
 (defmethod env:type-expander
-    ((client virtual-client)
+    (client
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
@@ -568,7 +568,7 @@
 
 (defmethod (setf env:type-expander)
     (new-value
-     (client virtual-client)
+     client
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
@@ -579,7 +579,7 @@
 ;;; Other
 
 (defmethod env:find-class
-    ((client virtual-client)
+    (client
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
@@ -587,7 +587,7 @@
 
 (defmethod (setf env:find-class)
     (new-value
-     (client virtual-client)
+     client
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
@@ -598,14 +598,14 @@
             new-value)))
 
 (defmethod env:class-description
-    ((client virtual-client)
+    (client
      (env virtual-run-time-environment)
      symbol)
   (check-type symbol symbol)
   nil)
 
 (defmethod env:find-package
-    ((client virtual-client)
+    (client
      (env virtual-run-time-environment)
      name)
   (check-type name package-name)
@@ -613,7 +613,7 @@
 
 (defmethod (setf env:find-package)
     (new-package
-     (client virtual-client)
+     client
      (env virtual-run-time-environment)
      name)
   (check-type name package-name)
@@ -626,7 +626,7 @@
 ;;; Declarations
 
 (defmethod env:proclamation
-    ((client virtual-client)
+    (client
      (env virtual-run-time-environment)
      name)
   (check-type name symbol)
@@ -634,7 +634,7 @@
 
 (defmethod (setf env:proclamation)
     (new-value
-     (client virtual-client)
+     client
      (env virtual-run-time-environment)
      name)
   (check-type name symbol)
@@ -660,7 +660,7 @@
     :initform (make-hash-table :test #'eq))))
 
 (defmethod env:function-description
-    ((client virtual-client)
+    (client
      (env virtual-compilation-environment)
      function-name)
   (check-type function-name function-name)
@@ -669,7 +669,7 @@
 
 (defmethod (setf function-description)
     (description
-     (client virtual-client)
+     client
      (env virtual-compilation-environment)
      function-name)
   (check-type function-name function-name)
@@ -677,7 +677,7 @@
         description))
 
 (defmethod variable-description
-    ((client virtual-client)
+    (client
      (env virtual-compilation-environment)
      symbol)
   (check-type symbol symbol)
@@ -686,7 +686,7 @@
 
 (defmethod (setf variable-description)
     (description
-     (client virtual-client)
+     client
      (env virtual-compilation-environment)
      symbol)
   (check-type symbol symbol)
@@ -694,7 +694,7 @@
         description))
 
 (defmethod class-description
-    ((client virtual-client)
+    (client
      (env virtual-compilation-environment)
      symbol)
   (check-type symbol symbol)
@@ -703,7 +703,7 @@
 
 (defmethod (setf class-description)
     (description
-     (client virtual-client)
+     client
      (env virtual-compilation-environment)
      symbol)
   (check-type symbol symbol)
