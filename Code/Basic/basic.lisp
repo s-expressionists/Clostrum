@@ -198,9 +198,11 @@
   (let ((entry (get-function-entry function-name env t)))
     (cond
       ((function-bound-p entry)
-       (error "~s already names a function." function-name))
+       (error 'env:attempt-to-define-special-operator-for-existing-function
+              :function-name function-name))
       ((macro-function entry)
-       (error "~s already names a macro." function-name))
+       (error 'env:attempt-to-define-special-operator-for-existing-macro
+              :function-name function-name))
       (t
        (setf (special-operator entry) new-value)))))
 
@@ -230,14 +232,16 @@
   (when (null new-value)
     (alx:when-let ((entry (get-function-entry function-name env)))
       (when (special-operator entry)
-        (error "~s already names a special operator." function-name))
+        (error 'env:attempt-to-define-function-for-existing-special-operator
+               :function-name function-name))
       (setf (macro-function entry) nil)
       (let ((cell (cell entry)))
         (setf (car cell) (cdr cell))))
     (return-from env:fdefinition))
   (let ((entry (get-function-entry function-name env t)))
     (when (special-operator entry)
-      (error "~s already names a special operator." function-name))
+      (error 'env:attempt-to-define-function-for-existing-special-operator
+             :function-name function-name))
     (setf (macro-function entry) nil)
     (let ((cell (cell entry)))
       (setf (car cell) new-value))))
@@ -304,18 +308,22 @@
     (alx:when-let ((entry (get-function-entry function-name env)))
       (cond
         ((special-operator entry)
-         (error "~s can't be a special operator." function-name))
+         (error 'env:attempt-to-set-function-type-of-special-operator
+                :function-name function-name))
         ((macro-function entry)
-         (error "~s can't be a macro." function-name))
+         (error 'env:attempt-to-set-function-type-of-macro
+                :function-name function-name))
         (t
          (setf (function-type entry) nil))))
     (return-from env:function-type))
   (let ((entry (get-function-entry function-name env t)))
     (cond
       ((special-operator entry)
-       (error "~s can't be a special operator." function-name))
+       (error 'env:attempt-to-set-function-type-of-special-operator
+              :function-name function-name))
       ((macro-function entry)
-       (error "~s can't be a macro." function-name))
+       (error 'env:attempt-to-set-function-type-of-macro
+              :function-name function-name))
       (t
        (setf (function-type entry) new-value)))))
 
@@ -337,12 +345,14 @@
     (alx:when-let ((entry (get-function-entry function-name env)))
       (if (function-bound-p entry)
           (setf (function-inline entry) nil)
-          (error "The function ~s doesn't exist." function-name)))
+          (error 'env:attempt-to-declare-inline-a-non-existing-function
+                 :function-name function-name)))
     (return-from env:function-inline))
   (let ((entry (get-function-entry function-name env t)))
     (if (function-bound-p entry)
         (setf (function-inline entry) new-value)
-        (error "The function ~s doesn't exist." function-name))))
+        (error 'env:attempt-to-declare-inline-a-non-existing-function
+               :function-name function-name))))
 
 (defmethod env:function-unbound
     (client
@@ -376,8 +386,10 @@
     (if (or (function-bound-p entry)
             (macro-function entry))
         (setf (setf-expander entry) new-value)
-        (error "~s is not a function nor a macro." symbol))
-    (error "~s is not a function nor a macro." symbol)))
+        (error 'env:attempt-to-define-a-setf-expander-of-non-existing-function-or-macro
+               :name symbol))
+    (error 'env:attempt-to-define-a-setf-expander-of-non-existing-function-or-macro
+           :name symbol)))
 
 
 ;;; Variables
