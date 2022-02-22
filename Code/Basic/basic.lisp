@@ -210,19 +210,12 @@
     (client
      (env run-time-environment)
      function-name)
-  (alx:if-let ((entry (get-function-entry function-name env)))
-    (cond ((function-bound-p entry)
-           (values (car (cell entry)) 'cl:function))
-          ((alx:when-let ((def (macro-function entry)))
-             (values def 'cl:macro-function)))
-          ((alx:when-let ((def (macro-function entry)))
-             (values def 'cl:special)))
+  (let ((entry (get-function-entry function-name env)))
+    (cond ((null entry) nil)
+          ((function-bound-p entry)
+           (car (cell entry)))
           (t
-           (values (cdr (cell entry)) 'cl:undefined-function)))
-    (values (lambda (&rest args)
-              (declare (ignore args))
-              (error 'undefined-function :name function-name))
-            'cl:undefined-function)))
+           nil))))
 
 (defmethod (setf env:fdefinition)
     (new-value
