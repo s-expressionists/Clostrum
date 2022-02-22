@@ -63,13 +63,10 @@ set first.
 This generic function is a generic version of the \commonlisp{}
 function named \texttt{(setf cl:fdefinition)}.
 
-This function returns two values. If \textit{function-name} has a definition
-in the function namespace of \textit{environment} (i.e., if \texttt{fboundp}
-returns true), then the first value is the object representing the
-definition. The second value is the function definition type, that is:
-\texttt{cl:function}, \texttt{cl:macro-function} or
-\texttt{cl:special}. Otherwise a function which signals
-\texttt{undefined-error} and \texttt{cl:undefined-function} are returned.
+If \textit{function-name} has a definition as a function in
+\textit{environment}, then that definition is returned.  If no
+definition exists, or a definition exists, but it is a special
+operator or a macro, then \texttt{nil} is returned.
 
 \Defgeneric {(setf fdefinition)} {new-def client environment function-name}
 
