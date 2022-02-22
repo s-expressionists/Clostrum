@@ -430,13 +430,16 @@
     (if (constant-variable entry)
         (let ((value (car cell)))
           (if (not (eql value new-value))
-              (error "~s is already defined as a constant." symbol)
+              (error 'env:attempt-to-define-constant-for-existing-constant
+                     :name symbol)
               value))
         (cond
           ((special-variable entry)
-           (error "~s is already defined as a special variable." symbol))
+           (error 'env:attempt-to-define-constant-for-existing-special-variable
+                  :name symbol))
           ((symbol-macro entry)
-           (error "~s is already defined as a symbol macro." symbol))
+           (error 'env:attempt-to-define-constant-for-existing-symbol-macro
+                  :name symbol))
           (t
            (setf (constant-variable entry) t)
            (setf (car cell) new-value))))))
@@ -457,9 +460,11 @@
      init-p)
   (let ((entry (get-variable-entry symbol env t)))
     (cond ((constant-variable entry)
-           (error "~s is already defined as a constant." symbol))
+           (error 'env:attempt-to-define-special-variable-for-existing-constant
+                  :name symbol))
           ((symbol-macro entry)
-           (error "~s is already defined as a symbol macro." symbol))
+           (error 'env:attempt-to-define-special-variable-for-existing-symbol-macro
+                  :name symbol))
           (t
            (setf (special-variable entry) t)
            (when init-p
@@ -484,9 +489,11 @@
   (let ((entry (get-variable-entry symbol env t)))
     (cond
       ((constant-variable entry)
-       (error "~s is already defined as a constant." symbol))
+       (error 'env:attempt-to-define-symbol-macro-for-existing-constant
+              :name symbol))
       ((special-variable entry)
-       (error "~s is already defined as a special variable." symbol))
+       (error 'env:attempt-to-define-symbol-macro-for-existing-special-variable
+              :name symbol))
       (t
        (setf (symbol-macro entry) t)
        (setf (car (cell entry)) (constantly new-value))))))
@@ -509,7 +516,8 @@
      symbol)
   (let ((entry (get-variable-entry symbol env t)))
     (if (constant-variable entry)
-        (error "Can't proclaim a type of a constant ~s." symbol)
+        (error 'env:attempt-to-proclaim-the-type-of-a-constant-variable
+               :name symbol)
         (setf (variable-type entry) new-value))))
 
 (defmethod env:variable-unbound
