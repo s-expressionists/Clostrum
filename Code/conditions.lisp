@@ -27,6 +27,15 @@
                       but it already names a special operator."
                      (function-name condition)))))
 
+(define-condition env:attempt-to-define-function-for-existing-macro
+    (error)
+  ((%function-name :initarg :function-name :reader function-name))
+  (:report (lambda (condition stream)
+             (format stream
+                     "Attempt to define ~s as a function,~@
+                      but it already names a macro."
+                     (function-name condition)))))
+
 (define-condition env:attempt-to-set-function-type-of-special-operator
     (error)
   ((%function-name :initarg :function-name :reader function-name))
