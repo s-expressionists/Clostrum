@@ -57,6 +57,7 @@
 (define-accessor env:function-type (client environment function-name))
 (define-accessor env:function-inline (client environment function-name))
 (define-operator env:function-unbound (client environment function-name))
+(define-operator env:map-defined-functions (client environment function))
 
 (define-operator env:boundp (client environment symbol))
 (define-accessor env:constant-variable (client environment symbol))
