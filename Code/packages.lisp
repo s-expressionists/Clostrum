@@ -10,6 +10,7 @@
    #:fboundp #:fmakunbound #:special-operator #:fdefinition #:macro-function
    #:compiler-macro-function #:function-type #:function-inline
    #:function-unbound #:function-description
+   #:map-defined-functions
    ;;
    #:boundp #:constant-variable #:special-variable #:symbol-macro
    #:variable-type #:variable-unbound #:variable-description
