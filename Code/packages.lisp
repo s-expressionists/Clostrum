@@ -25,6 +25,7 @@
   (:export
    #:attempt-to-define-special-operator-for-existing-function
    #:attempt-to-define-special-operator-for-existing-macro
+   #:attempt-to-define-macro-for-existing-function
    #:attempt-to-define-function-for-existing-special-operator
    #:attempt-to-define-function-for-existing-macro
    #:attempt-to-set-function-type-of-special-operator
