@@ -68,6 +68,12 @@ If \textit{function-name} has a definition as a function in
 definition exists, or a definition exists, but it is a special
 operator or a macro, then \texttt{nil} is returned.
 
+Notice that this definition implies that a \commonlisp{}
+implementation can not implement \texttt{cl:fdefinition} as a simple call
+to \texttt{clostrum:fdefinition}, since the \commonlisp{} function
+returns \textit{true} when the name is defined as a macro or a special
+operator.
+
 \Defgeneric {(setf fdefinition)} {new-def client environment function-name}
 
 This generic function is a generic version of the \commonlisp{}
