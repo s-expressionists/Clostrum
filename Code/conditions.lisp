@@ -18,6 +18,15 @@
                       but it already names a macro."
                      (function-name condition)))))
 
+(define-condition env:attempt-to-define-macro-for-existing-function
+    (error)
+  ((%function-name :initarg :function-name :reader function-name))
+  (:report (lambda (condition stream)
+             (format stream
+                     "Attempt to define ~s as a macro,~@
+                      but it already names a function."
+                     (function-name condition)))))
+
 (define-condition env:attempt-to-define-function-for-existing-special-operator
     (error)
   ((%function-name :initarg :function-name :reader function-name))
