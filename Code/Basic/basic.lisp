@@ -610,6 +610,16 @@
          (remhash name (declarations env)))
         (t
          (setf (gethash name (declarations env)) new-value))))
+
+(defmethod env:map-defined-functions
+    (client
+     (env run-time-environment)
+     function)
+  (maphash (lambda (name function-entry)
+             (when (function-bound-p function-entry)
+               (funcall function name (car (cell function-entry)))))
+           (functions env)))
+
 
 ;;; Compilation environment
 
