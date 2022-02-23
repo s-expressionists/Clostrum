@@ -222,22 +222,30 @@
      client
      (env run-time-environment)
      function-name)
-  (when (null new-value)
-    (alx:when-let ((entry (get-function-entry function-name env)))
-      (when (special-operator entry)
-        (error 'env:attempt-to-define-function-for-existing-special-operator
-               :function-name function-name))
-      (setf (macro-function entry) nil)
-      (let ((cell (cell entry)))
-        (setf (car cell) (cdr cell))))
-    (return-from env:fdefinition))
-  (let ((entry (get-function-entry function-name env t)))
-    (when (special-operator entry)
-      (error 'env:attempt-to-define-function-for-existing-special-operator
-             :function-name function-name))
-    (setf (macro-function entry) nil)
-    (let ((cell (cell entry)))
-      (setf (car cell) new-value))))
+  (let ((entry (get-function-entry function-name env)))
+    ;; Check for error situations.  We consider it an error to call
+    ;; this function, whether with NEW-VALUE being NIL or not, if
+    ;; there is an existing definition of the name either as a special
+    ;; operator or as a macro.
+    (unless (null entry)
+      (cond ((special-operator entry)
+             (error 'env:attempt-to-define-function-for-existing-special-operator
+                    :function-name function-name))
+            ((not (null (macro-function entry)))
+             (error 'env:attempt-to-define-function-for-existing-macro
+                    :function-name function-name))
+            (t
+             nil)))
+    (if (null new-value)
+        ;; Avoid creating a new entry if NEW-VALUE is NIL.
+        (unless (null entry)
+          (let ((cell (cell entry)))
+            (setf (car cell) (cdr cell))))
+        (progn
+          ;; Ensure that the entry exists.
+          (setf entry (get-function-entry function-name env t))
+          (let ((cell (cell entry)))
+            (setf (car cell) new-value))))))
 
 (defmethod env:macro-function
     (client
