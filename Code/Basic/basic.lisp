@@ -259,18 +259,22 @@
      client
      (env run-time-environment)
      symbol)
-  (when (null new-value)
-    (alx:when-let ((entry (get-function-entry symbol env)))
-      (let ((cell (cell entry)))
-        (setf (car cell) (cdr cell)))
-      ;; The special operator is not modified.
-      (setf (macro-function entry) nil))
-    (return-from env:macro-function))
-  (let* ((entry (get-function-entry symbol env t))
-         (cell (cell entry)))
-    (setf (car cell) (cdr cell))
-    ;; The special operator is not modified.
-    (setf (macro-function entry) new-value)))
+  (let ((entry (get-function-entry symbol env)))
+    ;; Check for error situations.  We consider it an error to call
+    ;; this function, whether with NEW-VALUE being NIL or not, if
+    ;; there is an existing definition of the name as a function.
+    (unless (null entry)
+      (when (function-bound-p entry)
+        (error 'env:attempt-to-define-macro-for-existing-function
+               :function-name symbol)))
+    (if (null new-value)
+        ;; Avoid creating a new entry if NEW-VALUE is NIL.
+        (unless (null entry)
+          (setf (macro-function entry) nil))
+        (progn
+          ;; Ensure that the entry exists.
+          (setf entry (get-function-entry symbol env t))
+          (setf (macro-function entry) new-value)))))
 
 (defmethod env:compiler-macro-function
     (client
