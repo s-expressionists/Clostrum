@@ -105,12 +105,13 @@ function returns \texttt{nil}.
 This generic function is a generic version of the \commonlisp{}
 function \texttt{(setf cl:macro-function)}.
 
-\textit{new-def} must be a macro expansion function or \texttt{nil}.
-A call to this function then always succeeds.  A value of \texttt{nil}
-means that the \textit{symbol} no longer has a macro function
-associated with it.  If \textit{symbol} already names a macro or a
-function, then the previous definition is lost.  If \textit{symbol}
-already names a special operator, that definition is kept.
+\textit{new-def} must be a macro function or \texttt{nil}.  A value of
+\texttt{nil} means that the \textit{symbol} no longer has a macro
+function associated with it.  If \textit{symbol} already names a
+macro, then the previous definition is lost.  If \textit{symbol}
+already names a function, then the an error is signaled.  If
+\textit{symbol} already names a special operator, that definition is
+kept.
 
 If \textit{symbol} has an associated \texttt{setf} expander, then that
 \texttt{setf} expander is preserved.
