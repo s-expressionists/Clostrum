@@ -26,6 +26,7 @@
    #:attempt-to-define-special-operator-for-existing-function
    #:attempt-to-define-special-operator-for-existing-macro
    #:attempt-to-define-function-for-existing-special-operator
+   #:attempt-to-define-function-for-existing-macro
    #:attempt-to-set-function-type-of-special-operator
    #:attempt-to-set-function-type-of-macro
    #:attempt-to-declare-inline-a-non-existing-function
