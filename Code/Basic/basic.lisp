@@ -620,6 +620,12 @@
                (funcall function name (car (cell function-entry)))))
            (functions env)))
 
+(defmethod env:map-defined-classes
+    (client
+     (env run-time-environment)
+     function)
+  (maphash function (classes env)))
+
 
 ;;; Compilation environment
 
