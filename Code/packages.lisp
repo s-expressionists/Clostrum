@@ -11,6 +11,7 @@
    #:compiler-macro-function #:function-type #:function-inline
    #:function-unbound #:function-description
    #:map-defined-functions
+   #:map-defined-classes
    ;;
    #:boundp #:constant-variable #:special-variable #:symbol-macro
    #:variable-type #:variable-unbound #:variable-description
