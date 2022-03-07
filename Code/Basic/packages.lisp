@@ -4,8 +4,7 @@
   (:use #:cl)
   (:local-nicknames (#:env #:clostrum)
                     (#:alx #:alexandria))
-  (:shadow #:class-name #:package-name
-           #:macro-function #:compiler-macro-function)
+  (:shadow #:macro-function #:compiler-macro-function)
   (:export #:run-time-environment
            #:evaluation-environment
            #:compilation-environment)
