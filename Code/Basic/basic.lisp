@@ -21,24 +21,6 @@
 ;; same symbol and the same environment.
 (defgeneric variable-cell (client environment symbol))
 
-
-(deftype function-name ()
-  `(or symbol (cons (eql setf) (cons symbol null))))
-
-(deftype variable-name ()
-  `symbol)
-
-(deftype class-name ()
-  `symbol)
-
-(deftype package-name ()
-  `string)
-
-(deftype optimize-quality ()
-  `(or symbol
-       (cons symbol
-             (cons (integer 0 3) null))))
-
 (defconstant +unbound+ 'unbound)
 
 
