@@ -2,23 +2,25 @@
 
 ;;; Cell functions are _not_ part of the clostrum protocol.
 
-;; A call to this function always succeeds.  It returns a CONS cell, in which
-;; the CAR always holds the current definition of the function named
-;; FUNCTION-NAME. When FUNCTION-NAME has no definition as a function, the CAR
-;; of this cell will contain a function that, when called, signals an error of
-;; type UNDEFINED-FUNCTION. This object is the return value of the function
-;; FUNCTION-UNBOUND. The return value of this function is always the same (in
-;; the sense of EQ) when it is passed the same (in the sense of EQUAL)
-;; function name and the same (in the sense of EQ) environment.
+;;; A call to this function always succeeds.  It returns a CONS cell,
+;;; in which the CAR always holds the current definition of the
+;;; function named FUNCTION-NAME. When FUNCTION-NAME has no definition
+;;; as a function, the CAR of this cell will contain a function that,
+;;; when called, signals an error of type UNDEFINED-FUNCTION. This
+;;; object is the return value of the function FUNCTION-UNBOUND. The
+;;; return value of this function is always the same (in the sense of
+;;; EQ) when it is passed the same (in the sense of EQUAL) function
+;;; name and the same (in the sense of EQ) environment.
 (defgeneric function-cell (client environment function-name))
 
-;; A call to this function always succeeds. It returns a CONS cell, in which
-;; the CAR always holds the current definition of the variable named SYMBOL.
-;; When SYMBOL has no definition as a variable, the CAR of this cell will
-;; contain an object that indicates that the variable is unbound. This object
-;; is the return value of the function VARIABLE-UNBOUND. The return value of
-;; this function is always the same (in the sense of EQ) when it is passed the
-;; same symbol and the same environment.
+;;; A call to this function always succeeds. It returns a CONS cell,
+;;; in which the CAR always holds the current definition of the
+;;; variable named SYMBOL.  When SYMBOL has no definition as a
+;;; variable, the CAR of this cell will contain an object that
+;;; indicates that the variable is unbound. This object is the return
+;;; value of the function VARIABLE-UNBOUND. The return value of this
+;;; function is always the same (in the sense of EQ) when it is passed
+;;; the same symbol and the same environment.
 (defgeneric variable-cell (client environment symbol))
 
 (defconstant +unbound+ 'unbound)
