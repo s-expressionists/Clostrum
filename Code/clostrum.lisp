@@ -112,6 +112,15 @@
   (funcall #'(setf env:macro-function) function
            client (env:parent environment) symbol))
 
+(defmethod env:fdefinition
+    (client (environment env:compilation-environment) symbol)
+  (env:fdefinition client (env:parent environment) symbol))
+
+(defmethod (setf env:fdefinition)
+    (function client (environment env:compilation-environment) symbol)
+  (funcall #'(setf env:fdefinition) function
+           client (env:parent environment) symbol))
+
 (defmethod env:proclamation
     (client (environment env:compilation-environment) symbol)
   (env:proclamation client (env:parent environment) symbol))
