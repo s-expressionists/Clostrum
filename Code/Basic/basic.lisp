@@ -634,7 +634,7 @@
   (or (gethash function-name (function-descriptions env))
       (env:function-description client (env:parent env) function-name)))
 
-(defmethod (setf function-description)
+(defmethod (setf env:function-description)
     (description
      client
      (env compilation-environment)
@@ -642,14 +642,14 @@
   (setf (gethash function-name (function-descriptions env))
         description))
 
-(defmethod variable-description
+(defmethod env:variable-description
     (client
      (env compilation-environment)
      symbol)
   (or (gethash symbol (variable-descriptions env))
       (env:variable-description client (env:parent env) symbol)))
 
-(defmethod (setf variable-description)
+(defmethod (setf env:variable-description)
     (description
      client
      (env compilation-environment)
@@ -657,14 +657,14 @@
   (setf (gethash symbol (variable-descriptions env))
         description))
 
-(defmethod class-description
+(defmethod env:class-description
     (client
      (env compilation-environment)
      symbol)
   (or (gethash symbol (class-descriptions env))
       (env:class-description client (env:parent env) symbol)))
 
-(defmethod (setf class-description)
+(defmethod (setf env:class-description)
     (description
      client
      (env compilation-environment)
