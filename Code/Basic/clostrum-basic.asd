@@ -14,7 +14,8 @@
   :depends-on ("clostrum" "alexandria")
   :components
   ((:file "packages")
-   (:file "basic"))
+   (:file "basic")
+   (:file "compilation-environment"))
   :in-order-to ((test-op (load-op "clostrum-test")))
   :perform (test-op (operation component)
              (flet ((s (name) (uiop:find-symbol* name '#:clostrum-basic)))
