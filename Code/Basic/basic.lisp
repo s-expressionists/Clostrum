@@ -573,7 +573,7 @@
                 (class entry)))))
 
 (defmacro update-class-information
-    (name-var environment-var entry-var new-value-var create-form update-form)
+    ((name-var environment-var entry-var new-value-var) create-form update-form)
   `(let ((,entry-var (gethash ,name-var (classes ,environment-var))))
      (if (null ,entry-var)
          (unless (null ,new-value-var)
