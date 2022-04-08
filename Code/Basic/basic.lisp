@@ -573,23 +573,22 @@
                 (class entry)))))
 
 (defmacro update-class-information
-    ((name-var environment-var entry-var new-value-var) create-form update-form)
-  `(let ((,entry-var (gethash ,name-var (classes ,environment-var))))
-     (if (null ,entry-var)
-         (unless (null ,new-value-var)
-           ,create-form)
-         ,update-form)
-     ,new-value-var))
+    ((name-var environment-var new-value-var) &body arguments)
+  (let ((entry-var (gensym)))
+    `(let ((,entry-var (gethash ,name-var (classes ,environment-var))))
+       (if (null ,entry-var)
+           (unless (null ,new-value-var)
+             (ensure-class-entry ,name-var ,environment-var ,@arguments))
+           (reinitialize-instance ,entry-var ,@arguments))
+       ,new-value-var)))
 
 (defmethod (setf env:find-class)
     (new-value
      client
      (env run-time-environment)
      symbol)
-  (update-class-information
-      (symbol env entry new-value)
-      (ensure-class-entry symbol env :class new-value)
-      (setf (class entry) new-value)))
+  (update-class-information (symbol env new-value)
+    :class new-value))
 
 (defmethod env:class-description
     (client
