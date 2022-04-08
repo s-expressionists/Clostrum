@@ -88,6 +88,13 @@
     :accessor type-expander))
   (:default-initargs :name (error "The initarg :NAME is required.")))
 
+;;; We need a class entry because this entry would be the unit of
+;;; sharing of classes between environments.  For now, the entry acts
+;;; as a simple indirection, but we may attach more information to it
+;;; in the future.
+(defclass class-entry ()
+  ((%name :initarg :name :reader name)
+   (%class :initform nil :initarg :class :accessor class)))
 
 
 ;;; Run-time environment
@@ -543,17 +550,27 @@
     (client
      (env run-time-environment)
      symbol)
-  (values (gethash symbol (classes env))))
+  (let ((entry (gethash symbol (classes env))))
+    (values (if (null entry)
+                nil
+                (class entry)))))
 
 (defmethod (setf env:find-class)
     (new-value
      client
      (env run-time-environment)
      symbol)
-  (if (null new-value)
-      (remhash symbol (classes env))
-      (setf (gethash symbol (classes env))
-            new-value)))
+  (let ((entry (gethash symbol (classes env))))
+    (if (null entry)
+        (unless (null new-value)
+          (setf entry
+                (make-instance 'class-entry
+                  :name symbol
+                  :class new-value))
+          (setf (gethash symbol (classes env))
+                entry)
+          new-value)
+        (setf (class entry) new-value))))
 
 (defmethod env:class-description
     (client
@@ -608,4 +625,8 @@
     (client
      (env run-time-environment)
      function)
-  (maphash function (classes env)))
+  (maphash (lambda (name entry)
+             (let ((class (class entry)))
+               (unless (null class)
+                 (funcall function name class))))
+           (classes env)))
