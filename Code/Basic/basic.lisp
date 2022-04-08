@@ -586,12 +586,10 @@
      client
      (env run-time-environment)
      symbol)
-  (let ((entry (gethash symbol (classes env))))
-    (if (null entry)
-        (unless (null new-value)
-          (ensure-class-entry symbol env :class new-value))
-        (setf (class entry) new-value)))
-  new-value)
+  (update-class-information
+      (symbol env entry new-value)
+      (ensure-class-entry symbol env :class new-value)
+      (setf (class entry) new-value)))
 
 (defmethod env:class-description
     (client
