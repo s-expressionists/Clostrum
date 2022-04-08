@@ -96,6 +96,23 @@
   ((%name :initarg :name :reader name)
    (%class :initform nil :initarg :class :accessor class)))
 
+;;; Make sure NAME names a class entry in ENVIRONMENT.  If the :CLASS
+;;; keyword argument is given, then the class of the entry (whether it
+;;; exists or not) is set to the value of that argument.  If the
+;;; :CLASS keyword argument is not given, and the entry exists, then
+;;; the existing class of the entry is not modified.  If the :CLASS
+;;; keyword argument is not given, and the entry does not exists, then
+;;; the class of the entry is set to NIL, meaning there is no class
+;;; with the name NAME in ENVIRONMENT.  The existing entry or the
+;;; entry being created is returned.
+(defun ensure-class-entry (name environment &key (class nil class-p))
+  (let ((entry (gethash name (classes environment))))
+    (if (null entry)
+        (setf entry (make-instance 'class-entry :name name :class class)
+              (gethash name (classes environment)) entry)
+        (when class-p
+          (setf (class entry) class)))
+    entry))
 
 ;;; Run-time environment
 
