@@ -580,14 +580,9 @@
   (let ((entry (gethash symbol (classes env))))
     (if (null entry)
         (unless (null new-value)
-          (setf entry
-                (make-instance 'class-entry
-                  :name symbol
-                  :class new-value))
-          (setf (gethash symbol (classes env))
-                entry)
-          new-value)
-        (setf (class entry) new-value))))
+          (ensure-class-entry symbol env :class new-value))
+        (setf (class entry) new-value)))
+  new-value)
 
 (defmethod env:class-description
     (client
