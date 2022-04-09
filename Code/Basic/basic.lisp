@@ -55,6 +55,24 @@
     :accessor setf-expander))
   (:default-initargs :name (error "The initarg :NAME is required.")))
 
+;;; Make sure NAME names a function entry in ENVIRONMENT.
+;;; KEYWORD-ARGUMENTS are keyword/value pairs that will be passed
+;;; either to MAKE-INSTANCE in order create a new entry if no entry
+;;; exists, or will be passed to REINITIALIZE-INSTANCE to modify the
+;;; existing entry if one does exist.  The existing entry or the entry
+;;; being created is returned.
+(defun ensure-function-entry (name environment &rest keyword-arguments)
+  (let ((entry (gethash name (functions environment))))
+    (if (null entry)
+        (progn
+          (setf entry
+                (apply #'make-instance 'function-entry
+                       :name name keyword-arguments))
+          (setf (gethash name (functions environment))
+                entry))
+        (apply #'reinitialize-instance entry keyword-arguments))
+    entry))
+
 (defmethod initialize-instance :after ((instance function-entry) &key name)
   (let ((funb (lambda (&rest args)
                 (declare (ignore args))
