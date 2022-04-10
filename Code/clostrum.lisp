@@ -162,3 +162,5 @@
 
 (define-operator-trampolines env:evaluation-environment-mixin)
 (define-accessor-trampolines env:evaluation-environment-mixin)
+
+(defgeneric env:import-function (client from-environment name to-environment))
