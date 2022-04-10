@@ -12,6 +12,7 @@
    #:function-unbound #:function-description
    #:map-defined-functions
    #:map-defined-classes
+   #:import-function
    ;;
    #:boundp #:constant-variable #:special-variable #:symbol-macro
    #:variable-type #:variable-unbound #:variable-description
