@@ -666,3 +666,12 @@
                (unless (null class)
                  (funcall function name class))))
            (classes env)))
+
+(defmethod env:import-function
+    (client
+     (from-environment run-time-environment)
+     name
+     (to-environment run-time-environment))
+  (let ((entry (ensure-function-entry name from-environment)))
+    (setf (gethash name (functions to-environment))
+          entry)))
