@@ -87,8 +87,14 @@
   ((name
     :initarg :name
     :reader name)
-   ;; CAR contains the value, CDR contains the unbound marker. CDR is
-   ;; redundant and not used in the code.
+   ;; The CAR of the cell contains the value of the variable
+   ;; determined by the entry.  The CDR of the cell contains a value
+   ;; that indicates that the variable is unbound.  When the variable
+   ;; is unbound, the CAR and the CDR contain the same value.  Since
+   ;; CL:MAKUNBOUND (which should really be called something else like
+   ;; MAKE-TO-HAVE-NO-VALUE) must take into account dynamic bindings
+   ;; of the variable, we do not supply code for MAKUNBOUND here.  It
+   ;; must be implemented by the client.
    (cell
     :reader cell
     :initform (cons +unbound+ +unbound+))
