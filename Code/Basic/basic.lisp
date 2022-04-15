@@ -31,8 +31,11 @@
   ((name
     :initarg :name
     :reader name)
-   ;; CAR contains the function, CDR contains unbound function substitute
-   ;; which signals the error.
+   ;; The CAR of the cell contains the function determined by the
+   ;; entry.  The CDR of the cell contains a function that, when
+   ;; called, signals an error.  When the function determined by the
+   ;; entry is undefined, the CAR of the cell is the same as the CDR
+   ;; of the cell.
    (cell
     :reader cell)
    (special-operator
