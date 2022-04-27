@@ -79,13 +79,16 @@ operator.
 This generic function is a generic version of the \commonlisp{}
 function named \texttt{(setf cl:fdefinition)}.
 
-\textit{new-def} must be an ordinary function or a generic function.
-If \textit{function-name} already names a function, then
-the previous definition is lost.  If \textit{function-name} already
-names a macro or a special operator, then an error is signaled.
+No checks are made for the validity of \textit{new-def}.  Only the
+definition of \texttt{function-name} as a real function (and not as a
+macro or a special operator) is influenced. 
 
-If \textit{function-name} is a symbol and it has an associated \texttt{setf}
-expander, then that \texttt{setf} expander is preserved.
+If \textit{function-name} already names a function, then the previous
+definition is lost.  If \texttt{new-def} is \texttt{nil} then
+\texttt{function-name} will be made undefined.
+
+If \textit{function-name} is a symbol and it has an associated
+\texttt{setf} expander, then that \texttt{setf} expander is preserved.
 
 \Defgeneric {macro-function} {client environment symbol}
 
