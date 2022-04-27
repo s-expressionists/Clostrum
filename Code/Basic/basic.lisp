@@ -201,18 +201,6 @@
          t)
     nil))
 
-(defmethod env:fmakunbound
-    (client
-     (env run-time-environment)
-     function-name)
-  (alx:when-let ((entry (get-function-entry function-name env)))
-    (let ((cell (cell entry)))
-      (setf (car cell) (cdr cell))
-      (setf (special-operator entry) nil)
-      (setf (macro-function entry) nil)
-      (setf (setf-expander entry) nil)))
-  t)
-
 (defmethod env:special-operator
     (client
      (env run-time-environment)

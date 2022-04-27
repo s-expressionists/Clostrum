@@ -48,7 +48,6 @@
   (is (null (env:special-operator          cli renv 'unknown)))
   (is (null (env:macro-function            cli renv 'unknown)))
   (is (null (env:compiler-macro-function   cli renv 'unknown)))
-  (finishes (env:fmakunbound               cli renv 'unknown))
   (multiple-value-bind (fun type)
       (finishes (env:fdefinition cli renv 'unknown))
     (is (eq type 'cl:undefined-function))

@@ -132,16 +132,6 @@
       t
       nil))
 
-(defmethod env:fmakunbound
-    ((client simple-client)
-     (env simple-run-time-environment)
-     function-name)
-  (unbound function-name (functions env))
-  (unbound function-name (special-operators env))
-  (unbound function-name (macro-functions env))
-  (unbound function-name (setf-expanders env))
-  t)
-
 (defmethod env:special-operator
     ((client simple-client)
      (env simple-run-time-environment)
