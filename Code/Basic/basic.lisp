@@ -26,7 +26,7 @@
 (defconstant +unbound+ 'unbound)
 
 
-;;; Function and variable entries
+;;; Function and variable entries.
 (defclass function-entry ()
   ((name
     :initarg :name
@@ -141,7 +141,7 @@
           (setf (class entry) class)))
     entry))
 
-;;; Run-time environment
+;;; Run-time environment.
 
 (defclass run-time-environment (env:run-time-environment)
   ((functions
@@ -183,7 +183,7 @@
     (not (eq (car cell) +unbound+))))
 
 
-;;; Functions
+;;; Functions.
 (defmethod function-cell
     (client
      (env run-time-environment)
@@ -407,7 +407,7 @@
            :name symbol)))
 
 
-;;; Variables
+;;; Variables.
 (defmethod variable-cell
     (client
      (env run-time-environment)
@@ -564,7 +564,7 @@
     (setf (type-expander entry) new-value)))
 
 
-;;; Other
+;;; Other.
 
 (defmethod env:find-class
     (client
@@ -615,7 +615,7 @@
       (setf (gethash name (packages env)) new-package)))
 
 
-;;; Declarations
+;;; Declarations.
 
 (defmethod env:proclamation
     (client
