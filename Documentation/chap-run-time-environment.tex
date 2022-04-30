@@ -9,15 +9,6 @@ This is the base class for run-time environments.
 \section{Protocol functions}
 \label{sec-run-time-protocol-functions}
 
-\Defgeneric {fboundp} {client environment function-name}
-
-This generic function is a generic version of the \commonlisp{}
-function \texttt{fboundp}.
-
-It returns true if \textit{function-name} has a definition in
-\textit{environment} as an ordinary function, a generic function, a
-macro, or a special operator.
-
 \Defgeneric {special-operator} {client environment function-name}
 
 If \textit{function-name} has a definition as a special operator in

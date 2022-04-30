@@ -44,7 +44,6 @@
 
 (test (function-undefined :fixture with-envs)
   ;; Symbol without a function definition.
-  (is (null (env:fboundp                   cli renv 'unknown)))
   (is (null (env:special-operator          cli renv 'unknown)))
   (is (null (env:macro-function            cli renv 'unknown)))
   (is (null (env:compiler-macro-function   cli renv 'unknown)))

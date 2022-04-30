@@ -7,7 +7,7 @@
    #:compilation-environment)
   ;; Run-time operators.
   (:export
-   #:fboundp #:special-operator #:fdefinition #:macro-function
+   #:special-operator #:fdefinition #:macro-function
    #:compiler-macro-function #:function-type #:function-inline
    #:function-unbound #:function-description
    #:map-defined-functions

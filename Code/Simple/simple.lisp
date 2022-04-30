@@ -122,16 +122,6 @@
 
 ;;; Functions
 
-(defmethod env:fboundp
-    ((client simple-client)
-     (env simple-run-time-environment)
-     function-name)
-  (if (or (access function-name (functions env))
-          (access function-name (special-operators env))
-          (access function-name (macro-functions env)))
-      t
-      nil))
-
 (defmethod env:special-operator
     ((client simple-client)
      (env simple-run-time-environment)

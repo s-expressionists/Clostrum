@@ -48,7 +48,6 @@
             (push (list* ',name ',args) *compilation-operators*))))
 
 ;;; run time
-(define-operator env:fboundp (client environment function-name))
 (define-accessor env:special-operator (client environment function-name))
 (define-accessor env:fdefinition (client environment function-name))
 (define-accessor env:macro-function (client environment symbol))

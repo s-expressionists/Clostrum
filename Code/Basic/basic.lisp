@@ -190,17 +190,6 @@
      function-name)
   (cell (get-function-entry function-name env t)))
 
-(defmethod env:fboundp
-    (client
-     (env run-time-environment)
-     function-name)
-  (alx:if-let ((entry (get-function-entry function-name env)))
-    (and (or (function-bound-p entry)
-             (special-operator entry)
-             (macro-function entry))
-         t)
-    nil))
-
 (defmethod env:special-operator
     (client
      (env run-time-environment)
