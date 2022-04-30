@@ -14,7 +14,7 @@
    #:map-defined-classes
    #:import-function
    ;;
-   #:boundp #:constant-variable #:special-variable #:symbol-macro
+   #:constant-variable #:special-variable #:symbol-macro
    #:variable-type #:variable-unbound #:variable-description
    ;;
    #:find-class #:class-description #:setf-expander #:type-expander

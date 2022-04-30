@@ -59,7 +59,3 @@
   (is (null (env:function-type cli renv 'unknown)))
   (is (null (env:function-inline cli renv 'unknown)))
   (is (null (env:function-description cli renv 'unknown))))
-
-(test (symbol-macro-not-boundp :fixture with-envs)
-  (finishes (setf (env:symbol-macro cli renv 'symbol-macro) 42))
-  (is (not (env:boundp cli renv 'symbol-macro))))

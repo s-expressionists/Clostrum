@@ -59,7 +59,6 @@
 (define-operator env:map-defined-functions (client environment function))
 (define-operator env:map-defined-classes (client environment function))
 
-(define-operator env:boundp (client environment symbol))
 (define-accessor env:constant-variable (client environment symbol))
 ;;; The accessor ENV:SPECIAL-VARIABLE is defined as two operators, because it
 ;;; has an irregular lambda list.

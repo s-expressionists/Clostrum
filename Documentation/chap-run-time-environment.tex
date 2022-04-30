@@ -193,12 +193,6 @@ This generic function returns the function description. If no function
 description is available, then \texttt{nil} is returned. Result of this
 function may be used by the compiler and for introspection.
 
-\Defgeneric {boundp} {client environment symbol}
-
-It returns true if \textit{symbol} has a definition in \textit{environment} as
-a constant variable, or as a special variable. Otherwise, it returns
-\texttt{nil}.
-
 \Defgeneric {constant-variable} {client environment symbol}
 
 This function returns two values. The first value is true if \textit{symbol}

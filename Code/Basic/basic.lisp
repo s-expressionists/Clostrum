@@ -414,20 +414,6 @@
      symbol)
   (cell (get-variable-entry symbol env t)))
 
-(defmethod env:boundp
-    (client
-     (env run-time-environment)
-     symbol)
-  ;; SYMBOL-MACRO has a value in the variable cell, however it is not
-  ;; treated as a bound variable (following behavior of other
-  ;; implementations). It is not clearly defined what bound means in
-  ;; context of the symbol-macro, but since it is expanded, it is not
-  ;; a variable (so it can't be bound).
-  (alx:if-let ((entry (get-variable-entry symbol env)))
-    (or (constant-variable entry)
-        (special-variable entry))
-    nil))
-
 (defmethod env:constant-variable
     (client
      (env run-time-environment)

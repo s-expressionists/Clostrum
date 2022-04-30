@@ -269,17 +269,6 @@
 
 ;;; Variables
 
-(defmethod env:boundp
-    ((client simple-client)
-     (env simple-run-time-environment)
-     symbol)
-  (if (or (nth-value 1 (access symbol (constants env)))
-          (nth-value 1 (access symbol (specials env)))
-          ;; Symbol macro is not a variable.
-          #+ (or) (nth-value 1 (access symbol (symbol-macros env))))
-      t
-      nil))
-
 (defmethod env:constant-variable
     ((client simple-client)
      (env simple-run-time-environment)
