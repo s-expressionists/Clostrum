@@ -16,36 +16,35 @@
 
 ;;; Macros DEFINE-FUNCTION and DEFINE-ACCESSOR are used to define
 ;;; run-time-environment protocol functions, so it is possible to generate
-;;; trampolines for the evaluation-environment-mixin automatically. They also
-;;; ensure that each protocol function has parameters environment and client.
+;;; trampolines for the evaluation-environment-mixin automatically.
 
-(eval-when (:compile-toplevel)
-  (defparameter *run-time-operators* nil)
-  (defparameter *run-time-accessors* nil)
-  (defparameter *compilation-operators* nil))
+(defmacro define-operator (name lambda-list &rest options)
+  (let* ((mixin-class-name 'env:evaluation-environment-mixin)
+         (specialized-parameter `(environment ,mixin-class-name))
+         (method-lambda-list
+           (subst specialized-parameter 'environment lambda-list)))
+    `(progn (defgeneric ,name ,lambda-list ,@options)
+            (defmethod ,name ,method-lambda-list
+              (let ((environment (env:parent environment)))
+                (funcall (function ,name) ,@lambda-list))))))
 
-(defmacro define-operator (name args &rest options)
-  (assert (member 'environment args))
-  (assert (member 'client args))
-  `(progn (defgeneric ,name ,args ,@options)
-          (eval-when (:compile-toplevel)
-            (push (list* ',name ',args) *run-time-operators*))))
-
-(defmacro define-accessor (name args &rest options)
-  (assert (member 'environment args))
-  (assert (member 'client args))
-  (let ((new-value (gensym "NEW-VALUE")))
-    `(progn (defgeneric ,name ,args ,@options)
-            (defgeneric (setf ,name) (,new-value ,@args) ,@options)
-            (eval-when (:compile-toplevel)
-              (push (list* ',name ',args) *run-time-accessors*)))))
+(defmacro define-accessor (name lambda-list &rest options)
+  (let* ((mixin-class-name 'env:evaluation-environment-mixin)
+         (specialized-parameter `(environment ,mixin-class-name))
+         (method-lambda-list
+           (subst specialized-parameter 'environment lambda-list))
+         (new-value (gensym "NEW-VALUE")))
+    `(progn (defgeneric ,name ,lambda-list ,@options)
+            (defgeneric (setf ,name) (,new-value ,@lambda-list) ,@options)
+            (defmethod ,name ,method-lambda-list
+              (let ((environment (env:parent environment)))
+                (,name ,@lambda-list)))
+            (defmethod (setf ,name) (,new-value ,@method-lambda-list)
+              (let ((environment (env:parent environment)))
+                (setf (,name ,@lambda-list) ,new-value))))))
 
 (defmacro define-operator* (name args &rest options)
-  (assert (member 'environment args))
-  (assert (member 'client args))
-  `(progn (defgeneric ,name (,@args) ,@options)
-          (eval-when (:compile-toplevel)
-            (push (list* ',name ',args) *compilation-operators*))))
+  `(defgeneric ,name (,@args) ,@options))
 
 ;;; run time
 (define-accessor env:special-operator (client environment function-name))
@@ -126,38 +125,5 @@
     (function client (environment env:compilation-environment) symbol)
   (funcall #'(setf env:proclamation) function
            client (env:parent environment) symbol))
-
-;;; evaluation-environment-mixin trampolines
-;;;
-;;; To minimize possibility of a typo trampolines are generated
-;;; automatically. That also reduce amount of code in the module.
-(defmacro define-operator-trampolines (env-class)
-  (let ((methods
-          (loop with spec = `(environment ,env-class)
-                for (name . arg-names) in *run-time-operators*
-                collect
-                `(defmethod ,name ,(subst spec 'environment arg-names)
-                   (let ((environment (env:parent environment)))
-                     (funcall (function ,name) ,@arg-names))))))
-    `(progn ,@methods)))
-
-(defmacro define-accessor-trampolines (env-class)
-  (let ((methods
-          (loop with spec = `(environment ,env-class)
-                with nval = (gensym "NEW-VALUE")
-                for (name . arg-names) in *run-time-accessors*
-                collect
-                `(defmethod ,name ,(subst spec 'environment arg-names)
-                   (let ((environment (env:parent environment)))
-                     (funcall (function ,name) ,@arg-names)))
-                collect
-                `(defmethod (setf ,name)
-                     ,(list* nval (subst spec 'environment arg-names))
-                   (let ((environment (env:parent environment)))
-                     (funcall (function (setf ,name)) ,nval ,@arg-names))))))
-    `(progn ,@methods)))
-
-(define-operator-trampolines env:evaluation-environment-mixin)
-(define-accessor-trampolines env:evaluation-environment-mixin)
 
 (defgeneric env:import-function (client from-environment name to-environment))
