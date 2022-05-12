@@ -15,8 +15,9 @@
   (:default-initargs :parent (error "~s is required." :parent)))
 
 ;;; Macros DEFINE-FUNCTION and DEFINE-ACCESSOR are used to define
-;;; run-time-environment protocol functions, so it is possible to generate
-;;; trampolines for the evaluation-environment-mixin automatically.
+;;; run-time-environment protocol functions, so it is possible to
+;;; generate trampolines for the evaluation-environment-mixin
+;;; automatically.
 
 (defmacro define-operator (name lambda-list &rest options)
   (let* ((mixin-class-name 'env:evaluation-environment-mixin)
@@ -58,8 +59,8 @@
 (define-operator env:map-defined-classes (client environment function))
 
 (define-accessor env:constant-variable (client environment symbol))
-;;; The accessor ENV:SPECIAL-VARIABLE is defined as two operators, because it
-;;; has an irregular lambda list.
+;;; The accessor ENV:SPECIAL-VARIABLE is defined as two operators,
+;;; because it has an irregular lambda list.
 (define-operator env:special-variable (client environment symbol))
 (define-operator (setf env:special-variable)
     (new-value client environment symbol init-p))
@@ -77,7 +78,7 @@
 (define-operator env:variable-description (client environment symbol))
 (define-operator env:class-description (client environment symbol))
 
-;;; compilation time
+;;; Compilation time.
 (define-operator* (setf env:function-description)
     (new-value client environment funciton-name))
 
