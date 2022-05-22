@@ -38,6 +38,11 @@
    ;; of the cell.
    (cell
     :reader cell)
+   ;; We do not check what client code puts in this slot.  Any non-NIL
+   ;; value means that the name represents a special operator.  Some
+   ;; clients might just store T in the slot.  Others might store a
+   ;; function to be used for compiling a special form using the
+   ;; operator.
    (special-operator
     :initform nil
     :accessor special-operator)
