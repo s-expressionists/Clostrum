@@ -82,11 +82,12 @@
     entry))
 
 (defmethod initialize-instance :after ((instance function-entry) &key name)
-  (let ((funb (lambda (&rest args)
-                (declare (ignore args))
-                (error 'undefined-function :name name))))
+  (let ((unbound-function
+          (lambda (&rest args)
+            (declare (ignore args))
+            (error 'undefined-function :name name))))
     (setf (slot-value instance 'cell)
-          (cons funb funb))))
+          (cons unbound-function unbound-function))))
 
 (defclass variable-entry ()
   ((name
