@@ -82,6 +82,15 @@
     entry))
 
 (defmethod initialize-instance :after ((instance function-entry) &key name)
+  ;; We indicate that a function name is FUNBOUND by storing a
+  ;; function in the CAR of the cell that, when called, signals an
+  ;; UNDEFINED-FUNCTION error.  This way, there is no need for an
+  ;; explicit test to verify that the name is FBOUND before calling
+  ;; the function.  We store the same, as in EQ, function in the CDR
+  ;; of the cell.  That way, testing whether the function is unbound
+  ;; is an EQ comparison between the CAR and the CDR of the cell, and
+  ;; FMAKUNBOUND is implemented by copying the CDR of the cell to the
+  ;; CAR.
   (let ((unbound-function
           (lambda (&rest args)
             (declare (ignore args))
