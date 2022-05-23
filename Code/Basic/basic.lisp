@@ -124,9 +124,9 @@
    ;; represents a special variable.  The value of the constant
    ;; variable is then contained in the CAR of the CONS cell in the
    ;; slot CELL.
-   (special-variable
+   (special-variable-p
     :initform nil
-    :accessor special-variable)
+    :accessor special-variable-p)
    (symbol-macro
     :initform nil
     :accessor symbol-macro)
@@ -449,7 +449,7 @@
                      :name symbol)
               value))
         (cond
-          ((special-variable entry)
+          ((special-variable-p entry)
            (error 'env:attempt-to-define-constant-for-existing-special-variable
                   :name symbol))
           ((symbol-macro entry)
@@ -464,7 +464,7 @@
      (env run-time-environment)
      symbol)
   (alx:if-let ((entry (get-variable-entry symbol env)))
-    (values (special-variable entry) (car (cell entry)))
+    (values (special-variable-p entry) (car (cell entry)))
     (values nil nil)))
 
 (defmethod (setf env:special-variable)
@@ -481,7 +481,7 @@
            (error 'env:attempt-to-define-special-variable-for-existing-symbol-macro
                   :name symbol))
           (t
-           (setf (special-variable entry) t)
+           (setf (special-variable-p entry) t)
            (when init-p
              (setf (car (cell entry)) new-value))))))
 
@@ -506,7 +506,7 @@
       ((constant-variable-p entry)
        (error 'env:attempt-to-define-symbol-macro-for-existing-constant
               :name symbol))
-      ((special-variable entry)
+      ((special-variable-p entry)
        (error 'env:attempt-to-define-symbol-macro-for-existing-special-variable
               :name symbol))
       (t
