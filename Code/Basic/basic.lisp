@@ -113,6 +113,10 @@
    (cell
     :reader cell
     :initform (cons +unbound+ +unbound+))
+   ;; This slot contains a true value if and only if the entry
+   ;; represents a constant variable.  The value of the constant
+   ;; variable is then contained in the CAR of the CONS cell in the
+   ;; slot CELL.
    (constant-variable
     :initform nil
     :accessor constant-variable)
