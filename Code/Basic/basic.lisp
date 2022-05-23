@@ -117,9 +117,9 @@
    ;; represents a constant variable.  The value of the constant
    ;; variable is then contained in the CAR of the CONS cell in the
    ;; slot CELL.
-   (constant-variable
+   (constant-variable-p
     :initform nil
-    :accessor constant-variable)
+    :accessor constant-variable-p)
    (special-variable
     :initform nil
     :accessor special-variable)
@@ -426,9 +426,10 @@
     (client
      (env run-time-environment)
      symbol)
-  (alx:if-let ((entry (get-variable-entry symbol env)))
-    (values (constant-variable entry) (car (cell entry)))
-    (values nil nil)))
+  (let ((entry (get-variable-entry symbol env)))
+    (if (or (null entry) (not (constant-variable-p entry)))
+        (values nil nil)
+        (values (constant-variable-p entry) (car (cell entry))))))
 
 (defmethod (setf env:constant-variable)
     (new-value
@@ -437,7 +438,7 @@
      symbol)
   (let* ((entry (get-variable-entry symbol env t))
          (cell (cell entry)))
-    (if (constant-variable entry)
+    (if (constant-variable-p entry)
         (let ((value (car cell)))
           (if (not (eql value new-value))
               (error 'env:attempt-to-define-constant-for-existing-constant
@@ -451,7 +452,7 @@
            (error 'env:attempt-to-define-constant-for-existing-symbol-macro
                   :name symbol))
           (t
-           (setf (constant-variable entry) t)
+           (setf (constant-variable-p entry) t)
            (setf (car cell) new-value))))))
 
 (defmethod env:special-variable
@@ -469,7 +470,7 @@
      symbol
      init-p)
   (let ((entry (get-variable-entry symbol env t)))
-    (cond ((constant-variable entry)
+    (cond ((constant-variable-p entry)
            (error 'env:attempt-to-define-special-variable-for-existing-constant
                   :name symbol))
           ((symbol-macro entry)
@@ -498,7 +499,7 @@
      symbol)
   (let ((entry (get-variable-entry symbol env t)))
     (cond
-      ((constant-variable entry)
+      ((constant-variable-p entry)
        (error 'env:attempt-to-define-symbol-macro-for-existing-constant
               :name symbol))
       ((special-variable entry)
@@ -513,7 +514,7 @@
      (env run-time-environment)
      symbol)
   (alx:if-let ((entry (get-variable-entry symbol env)))
-    (if (constant-variable entry)
+    (if (constant-variable-p entry)
         (type-of (car (cell entry)))
         (or (variable-type entry)
             t))
@@ -525,7 +526,7 @@
      (env run-time-environment)
      symbol)
   (let ((entry (get-variable-entry symbol env t)))
-    (if (constant-variable entry)
+    (if (constant-variable-p entry)
         (error 'env:attempt-to-proclaim-the-type-of-a-constant-variable
                :name symbol)
         (setf (variable-type entry) new-value))))
