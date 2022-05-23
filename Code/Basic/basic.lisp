@@ -120,6 +120,10 @@
    (constant-variable-p
     :initform nil
     :accessor constant-variable-p)
+   ;; This slot contains a true value if and only if the entry
+   ;; represents a special variable.  The value of the constant
+   ;; variable is then contained in the CAR of the CONS cell in the
+   ;; slot CELL.
    (special-variable
     :initform nil
     :accessor special-variable)
