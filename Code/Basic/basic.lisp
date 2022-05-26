@@ -127,6 +127,10 @@
    (special-variable-p
     :initform nil
     :accessor special-variable-p)
+   ;; This slot contains a true value if and only if hte entry
+   ;; represents a symbol macro.  A function that, when called,
+   ;; returns the expansion of the symbol macro is then contained in
+   ;; the CAR of the CONS cell in the slot CELL.
    (symbol-macro-p
     :initform nil
     :accessor symbol-macro-p)
