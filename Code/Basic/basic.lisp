@@ -489,12 +489,11 @@
     (client
      (env run-time-environment)
      symbol)
-  (alx:if-let ((entry (get-variable-entry symbol env)))
-    (if (symbol-macro-p entry)
-        (let ((def (car (cell entry))))
-          (values def (funcall def symbol env)))
-        (values nil nil))
-    (values nil nil)))
+  (let ((entry (get-variable-entry symbol env)))
+    (if (or (null entry) (not (symbol-macro-p entry)))
+        (values nil nil)
+        (let ((expander (car (cell entry))))
+          (values expander (funcall expander symbol env))))))
 
 (defmethod (setf env:symbol-macro)
     (new-value
