@@ -127,9 +127,9 @@
    (special-variable-p
     :initform nil
     :accessor special-variable-p)
-   (symbol-macro
+   (symbol-macro-p
     :initform nil
-    :accessor symbol-macro)
+    :accessor symbol-macro-p)
    (variable-type
     :initform nil
     :accessor variable-type)
@@ -452,7 +452,7 @@
           ((special-variable-p entry)
            (error 'env:attempt-to-define-constant-for-existing-special-variable
                   :name symbol))
-          ((symbol-macro entry)
+          ((symbol-macro-p entry)
            (error 'env:attempt-to-define-constant-for-existing-symbol-macro
                   :name symbol))
           (t
@@ -477,7 +477,7 @@
     (cond ((constant-variable-p entry)
            (error 'env:attempt-to-define-special-variable-for-existing-constant
                   :name symbol))
-          ((symbol-macro entry)
+          ((symbol-macro-p entry)
            (error 'env:attempt-to-define-special-variable-for-existing-symbol-macro
                   :name symbol))
           (t
@@ -490,7 +490,7 @@
      (env run-time-environment)
      symbol)
   (alx:if-let ((entry (get-variable-entry symbol env)))
-    (if (symbol-macro entry)
+    (if (symbol-macro-p entry)
         (let ((def (car (cell entry))))
           (values def (funcall def symbol env)))
         (values nil nil))
@@ -510,7 +510,7 @@
        (error 'env:attempt-to-define-symbol-macro-for-existing-special-variable
               :name symbol))
       (t
-       (setf (symbol-macro entry) t)
+       (setf (symbol-macro-p entry) t)
        (setf (car (cell entry)) (constantly new-value))))))
 
 (defmethod env:variable-type
