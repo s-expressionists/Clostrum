@@ -13,9 +13,11 @@
    #:map-defined-functions
    #:map-defined-classes
    #:import-function
+   #:function-cell
    ;;
    #:constant-variable #:special-variable #:symbol-macro
    #:variable-type #:variable-unbound #:variable-description
+   #:variable-cell
    ;;
    #:find-class #:class-description #:setf-expander #:type-expander
    #:find-package #:proclamation)
