@@ -186,6 +186,16 @@ signaled.
 A call to this function always succeeds.  It returns a function that, when
 called, signals an error of type \texttt{undefined-function}.
 
+\Defgeneric {function-cell} {client environment function-name}
+
+This generic function returns a \texttt{cons} cell.  The \texttt{cdr}
+slot of the cell contains a function that, when called, signals an
+\texttt{undefined-function} error.  If \texttt{function-name} has a
+definition as a function, then the \texttt{car} slot of the \texttt{cons}
+cell contains the function object.  If \texttt{function-name} does not
+have a definition as a function, then the \texttt{car} slot contains
+the same function object as the \texttt{cdr} slot.
+
 \Defgeneric {function-description} {client environment function-name}
 
 This generic function returns the function description. If no function
