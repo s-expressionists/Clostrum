@@ -149,4 +149,3 @@
 ;;; function is always the same (in the sense of EQ) when it is passed
 ;;; the same symbol and the same environment.
 (defgeneric env:variable-cell (client environment symbol))
-
