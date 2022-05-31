@@ -22,6 +22,6 @@
                (uiop:symbol-call
                 '#:clostrum/test '#:run-tests
                 nil
-                (s '#:virtual-run-time-environment)
+                (s '#:run-time-environment)
                 nil
-                (s '#:virtual-compilation-environment)))))
+                (s '#:compilation-environment)))))
