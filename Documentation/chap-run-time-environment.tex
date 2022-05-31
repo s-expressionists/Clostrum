@@ -65,7 +65,7 @@ function named \texttt{(setf cl:fdefinition)}.
 
 No checks are made for the validity of \textit{new-def}.  Only the
 definition of \texttt{function-name} as a real function (and not as a
-macro or a special operator) is influenced. 
+macro or a special operator) is influenced.
 
 If \textit{function-name} already names a function, then the previous
 definition is lost.  If \texttt{new-def} is \texttt{nil} then
@@ -198,9 +198,29 @@ the same function object as the \texttt{cdr} slot.
 
 \Defgeneric {function-description} {client environment function-name}
 
-This generic function returns the function description. If no function
-description is available, then \texttt{nil} is returned. Result of this
-function may be used by the compiler and for introspection.
+This generic function returns the function description, which is an
+object that is entirely defined by client code.  Clostrum does not
+provide any methods specialized to \texttt{run-time-environment}, so
+client code must provide a method specialized to its specific
+\texttt{client} class, and to (a subclass of)
+\texttt{run-time-environment}.  It is recommended that this method
+return \texttt{nil} if no function named \textit{function-name} exists
+in \textit{environment}.  Similarly, Clostrum does not provide any
+methods specialized to \texttt{evaluation-environment}, so client code
+must provide a method specialized to its specific \texttt{client}
+class, and to (a subclass of) \texttt{evaluation-environment}.
+
+Normally, this generic function will be called with an instance of
+\texttt{compilation-environment} rather than
+\texttt{run-time-environment}.  Clostrum provides methods on
+\texttt{(setf function-description)} and \texttt{function-description}
+specialized to \texttt{compilation-environment}.  The method on
+\texttt{(setf function-description)} simply stores the object supplied
+as an argument.  The method on \texttt{function-description} checks
+whether an object has been stored, and if so, it returns that object.
+If not, it trampolines to a call to itself, passing the \emph{parent}
+of the compilation environment as an argument.  This parent is
+typically an instance of \texttt{evaluation-environment}.
 
 \Defgeneric {constant-variable} {client environment symbol}
 
