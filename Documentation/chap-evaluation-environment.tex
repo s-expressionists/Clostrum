@@ -115,9 +115,21 @@ name in the run-time environment.
       evaluation-environment-mixin}) \\ function-name}
 }
 
-This method calls \texttt{function-type} with the same \textit{client}
-argument, a second argument resulting from calling \texttt{(parent}
-\textit{environment}\texttt{)} and the same \textit{function-name}
-argument.
+This method first executes \texttt{(call-next-method)}.  If the return
+value of that call is non-\texttt{nil}, it is returned.  If the return
+value of the call \texttt{(call-next-method)} is \texttt{nil}, then
+this method recursively calls \texttt{function-type} with the same
+\textit{client} argument, a second argument resulting from calling
+\texttt{(parent} \textit{environment}\texttt{)}, and the same
+\textit{symbol} argument.  The return value of the recursive
+call is then returned.
+
+As a result of this behavior, if a type proclamation is made at
+compile time (presumably by a call to \texttt{(setf function-type)} on
+an instance of the client-specific \texttt{evaluation-environment}
+class), then a subsequent call to \texttt{function-type} will return
+that type proclaimed at compile-time, effectively overriding a
+possible type proclamaiton using the same name in the run-time
+environment.
 
 MORE METHODS HERE...
