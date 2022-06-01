@@ -9,7 +9,7 @@
   (:export
    #:special-operator #:fdefinition #:macro-function
    #:compiler-macro-function #:function-type #:function-inline
-   #:function-unbound #:function-description
+   #:function-description
    #:map-defined-functions
    #:map-defined-classes
    #:import-function
