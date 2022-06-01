@@ -4,13 +4,14 @@
 
 \Defclass {evaluation-environment-mixin}
 
-This class should be used in order to create an evaluation environment
-class that has this mixin class and a run-time environment class as
-superclasses \emph{in that order}.  It is important that this mixin
-class precede the run-time environment class in the list of
-superclasses, so that the methods described in this chapter
-(specialized to \texttt{evaluation-environment-mixin}) are more
-specific than the methods specialized to
+This class should be used by client code to create a client-specific
+evaluation environment class (say \texttt{evaluation-environment})
+that has a subclass of this mixin class and a subclass of
+\texttt{run-time-environment} as superclasses \emph{in that order}.
+It is important that this mixin class precede the run-time environment
+class in the list of superclasses, so that the methods described in
+this chapter (specialized to \texttt{evaluation-environment-mixin})
+are more specific than the methods specialized to
 \texttt{run-time-environment}.
 
 \Definitarg {:parent}
@@ -37,11 +38,11 @@ as the \texttt{:parent} initialization argument when
 This method first executes \texttt{(call-next-method)}.  If the return
 value of that call is non-\texttt{nil}, it is returned.  If the return
 value of the call \texttt{(call-next-method)} is \texttt{nil}, then
-this method calls \texttt{special-operator} with the same
+this method recursively calls \texttt{special-operator} with the same
 \textit{client} argument, a second argument resulting from calling
-\texttt{(parent} \textit{environment}\texttt{)} and the same
-\textit{function-name} argument, and it returns the value of that
-call.
+\texttt{(parent} \textit{environment}\texttt{)}, and the same
+\textit{function-name} argument.  The return value of the recursive
+call is then returned.
 
 In a typical system, there are no provisions for adding new special
 operators at compile time to be used only at compile time, so the call
@@ -53,10 +54,21 @@ operators at compile time in case some clients need such a feature.
       evaluation-environment-mixin}) \\ function-name}
 }
 
-This method calls \texttt{fdefinition} with the same \textit{client}
-argument, a second argument resulting from calling \texttt{(parent}
-\textit{environment}\texttt{)} and the same \textit{function-name}
-argument.
+This method first executes \texttt{(call-next-method)}.  If the return
+value of that call is non-\texttt{nil}, it is returned.  If the return
+value of the call \texttt{(call-next-method)} is \texttt{nil}, then
+this method recursively calls \texttt{fdefinition} with the same
+\textit{client} argument, a second argument resulting from calling
+\texttt{(parent} \textit{environment}\texttt{)}, and the same
+\textit{function-name} argument.  The return value of the recursive
+call is then returned.
+
+As a result of this behavior, if a function definition is made at
+compile time (presumably by a call to \texttt{(setf fdefinition)} on
+an instance of the client-specific \texttt{evaluation-environment}
+class), then a subsequent call to \texttt{fdefinition} will return
+that compile-time definition, effectively overriding a possible
+definition by the same name in the run-time environment.
 
 {\small\Defmethod {macro-function} {client (environment {\tt
       evaluation-environment-mixin}) \\ symbol}
