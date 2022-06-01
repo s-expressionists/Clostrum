@@ -362,12 +362,6 @@
         (error 'env:attempt-to-declare-inline-a-non-existing-function
                :function-name function-name))))
 
-(defmethod env:function-unbound
-    (client
-     (env run-time-environment)
-     function-name)
-  (cdr (cell (get-function-entry function-name env t))))
-
 (defmethod env:function-description
     (client
      (env run-time-environment)
