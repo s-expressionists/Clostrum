@@ -34,10 +34,20 @@ as the \texttt{:parent} initialization argument when
       evaluation-environment-mixin}) \\ function-name}
 }
 
-The default method calls \texttt{special-operator} with the same
+This method first executes \texttt{(call-next-method)}.  If the return
+value of that call is non-\texttt{nil}, it is returned.  If the return
+value of the call \texttt{(call-next-method)} is \texttt{nil}, then
+this method calls \texttt{special-operator} with the same
 \textit{client} argument, a second argument resulting from calling
 \texttt{(parent} \textit{environment}\texttt{)} and the same
-\textit{function-name} argument.
+\textit{function-name} argument, and it returns the value of that
+call.
+
+In a typical system, there are no provisions for adding new special
+operators at compile time to be used only at compile time, so the call
+to \texttt{(call-next-method)} would then return \texttt{nil}.  But we
+see no reason to disallow the possibility of adding new special
+operators at compile time in case some clients need such a feature.
 
 {\small\Defmethod {fdefinition} {client (environment {\tt
       evaluation-environment-mixin}) \\ function-name}
