@@ -54,7 +54,6 @@
 (define-accessor env:compiler-macro-function (client environment function-name))
 (define-accessor env:function-type (client environment function-name))
 (define-accessor env:function-inline (client environment function-name))
-(define-operator env:function-unbound (client environment function-name))
 (define-operator env:map-defined-functions (client environment function))
 (define-operator env:map-defined-classes (client environment function))
 
@@ -130,14 +129,15 @@
 (defgeneric env:import-function (client from-environment name to-environment))
 
 ;;; A call to this function always succeeds.  It returns a CONS cell,
-;;; in which the CAR always holds the current definition of the
-;;; function named FUNCTION-NAME. When FUNCTION-NAME has no definition
-;;; as a function, the CAR of this cell will contain a function that,
-;;; when called, signals an error of type UNDEFINED-FUNCTION. This
-;;; object is the return value of the function FUNCTION-UNBOUND. The
-;;; return value of this function is always the same (in the sense of
-;;; EQ) when it is passed the same (in the sense of EQUAL) function
-;;; name and the same (in the sense of EQ) environment.
+;;; of which the CDR slot contains a function that, when called,
+;;; signals an error of type UNDEFINED-FUNCTION.  If FUNCTION-NAME has
+;;; no definition as a function, then the CAR slot of this cell
+;;; contains the same function object as is contained in the CDR slot.
+;;; If FUNCTION-NAME has a definition as a function, then the CAR slot
+;;; of this cell contains the defined function object.  The return
+;;; value of this function is always the same (in the sense of EQ)
+;;; when it is passed the same (in the sense of EQUAL) function name
+;;; and the same (in the sense of EQ) environment.
 (defgeneric env:function-cell (client environment function-name))
 
 ;;; A call to this function always succeeds. It returns a CONS cell,
