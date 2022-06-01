@@ -74,10 +74,21 @@ definition by the same name in the run-time environment.
       evaluation-environment-mixin}) \\ symbol}
 }
 
-This method calls \texttt{macro-function} with the same
+This method first executes \texttt{(call-next-method)}.  If the return
+value of that call is non-\texttt{nil}, it is returned.  If the return
+value of the call \texttt{(call-next-method)} is \texttt{nil}, then
+this method recursively calls \texttt{macro-function} with the same
 \textit{client} argument, a second argument resulting from calling
-\texttt{(parent} \textit{environment}\texttt{)} and the same
-\textit{symbol} argument.
+\texttt{(parent} \textit{environment}\texttt{)}, and the same
+\textit{symbol} argument.  The return value of the recursive
+call is then returned.
+
+As a result of this behavior, if a macro definition is made at compile
+time (presumably by a call to \texttt{(setf macro-function)} on an
+instance of the client-specific \texttt{evaluation-environment}
+class), then a subsequent call to \texttt{macro-function} will return
+that compile-time definition, effectively overriding a possible
+definition by the same name in the run-time environment.
 
 {\small\Defmethod {compiler-macro-function} {client (environment {\tt
       evaluation-environment-mixin}) \\ function-name}
