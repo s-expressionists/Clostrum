@@ -181,11 +181,6 @@ If \textit{function-name} is not associated with an ordinary function
 or a generic function in \textit{environment}, then an error is
 signaled.
 
-\Defgeneric {function-unbound} {client environment function-name}
-
-A call to this function always succeeds.  It returns a function that, when
-called, signals an error of type \texttt{undefined-function}.
-
 \Defgeneric {function-cell} {client environment function-name}
 
 This generic function returns a \texttt{cons} cell.  The \texttt{cdr}
