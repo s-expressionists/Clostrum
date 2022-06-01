@@ -19,7 +19,7 @@ class \texttt{run-time-environment}.
 
 \Defmethod {parent} {(environment {\tt evaluation-environment-mixin})}
 
-This generic function returns the environment objection that was passed
+This generic function returns the environment object that was passed
 as the \texttt{:parent} initialization argument when
 \textit{environment} was created.
 
@@ -30,8 +30,9 @@ as the \texttt{:parent} initialization argument when
 }
 
 The default method calls \texttt{special-operator} with the same
-\texttt{client} argument, a second argument resulting from calling
-\texttt{(parent environment)} and the same \texttt{function-name} argument.
+\textit{client} argument, a second argument resulting from calling
+\texttt{(parent} \textit{environment}\texttt{)} and the same
+\textit{function-name} argument.
 
 {\small\Defmethod {fdefinition} {client (environment {\tt
       evaluation-environment-mixin}) \\ function-name}
