@@ -47,24 +47,27 @@ argument.
       evaluation-environment-mixin}) \\ symbol}
 }
 
-This method calls \texttt{macro-function} with the same \texttt{client}
-argument, a second argument resulting from calling \texttt{(parent
-  environment)} and the same \texttt{symbol} argument.
+This method calls \texttt{macro-function} with the same
+\textit{client} argument, a second argument resulting from calling
+\texttt{(parent} \textit{environment}\texttt{)} and the same
+\textit{symbol} argument.
 
 {\small\Defmethod {compiler-macro-function} {client (environment {\tt
       evaluation-environment-mixin}) \\ function-name}
 }
 
 This method calls \texttt{compiler-macro-function} with the same
-\texttt{client} argument, a second argument resulting from calling
-\texttt{(parent environment)} and the same \texttt{function-name} argument.
+\textit{client} argument, a second argument resulting from calling
+\texttt{(parent} \textit{environment}\texttt{)} and the same
+  \textit{function-name} argument.
 
 {\small\Defmethod {function-type} {client (environment {\tt
       evaluation-environment-mixin}) \\ function-name}
 }
 
-This method calls \texttt{function-type} with the same \texttt{client}
-argument, a second argument resulting from calling \texttt{(parent
-  environment)} and the same \texttt{function-name} argument.
+This method calls \texttt{function-type} with the same \textit{client}
+argument, a second argument resulting from calling \texttt{(parent}
+\textit{environment}\texttt{)} and the same \textit{function-name}
+argument.
 
 MORE METHODS HERE...
