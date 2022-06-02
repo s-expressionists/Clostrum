@@ -509,12 +509,6 @@
                :name symbol)
         (setf (variable-type entry) new-value))))
 
-(defmethod env:variable-unbound
-    (client
-     (env run-time-environment)
-     symbol)
-  +unbound+)
-
 (defmethod env:variable-description
     (client
      (env run-time-environment)
