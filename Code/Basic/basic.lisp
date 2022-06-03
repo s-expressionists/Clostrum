@@ -192,7 +192,7 @@
     (client
      (env run-time-environment)
      function-name)
-  (cell (get-function-entry function-name env t)))
+  (cell (ensure-function-entry function-name env)))
 
 (defmethod env:special-operator
     (client
@@ -211,7 +211,7 @@
     (alx:when-let ((entry (get-function-entry function-name env)))
       (setf (special-operator entry) nil))
     (return-from env:special-operator))
-  (let ((entry (get-function-entry function-name env t)))
+  (let ((entry (ensure-function-entry function-name env)))
     (cond
       ((function-bound-p entry)
        (error 'env:attempt-to-define-special-operator-for-existing-function
@@ -246,7 +246,7 @@
             (setf (car cell) (cdr cell))))
         (progn
           ;; Ensure that the entry exists.
-          (setf entry (get-function-entry function-name env t))
+          (setf entry (ensure-function-entry function-name env))
           (let ((cell (cell entry)))
             (setf (car cell) new-value))))))
 
@@ -276,7 +276,7 @@
           (setf (macro-function entry) nil))
         (progn
           ;; Ensure that the entry exists.
-          (setf entry (get-function-entry symbol env t))
+          (setf entry (ensure-function-entry symbol env))
           (setf (macro-function entry) new-value)))))
 
 (defmethod env:compiler-macro-function
@@ -295,7 +295,7 @@
     (alx:when-let ((entry (get-function-entry function-name env)))
       (setf (compiler-macro-function entry) nil))
     (return-from env:compiler-macro-function))
-  (let ((entry (get-function-entry function-name env t)))
+  (let ((entry (ensure-function-entry function-name env)))
     (setf (compiler-macro-function entry) new-value)))
 
 (defmethod env:function-type
@@ -324,7 +324,7 @@
         (t
          (setf (function-type entry) nil))))
     (return-from env:function-type))
-  (let ((entry (get-function-entry function-name env t)))
+  (let ((entry (ensure-function-entry function-name env)))
     (cond
       ((special-operator entry)
        (error 'env:attempt-to-set-function-type-of-special-operator
@@ -356,7 +356,7 @@
           (error 'env:attempt-to-declare-inline-a-non-existing-function
                  :function-name function-name)))
     (return-from env:function-inline))
-  (let ((entry (get-function-entry function-name env t)))
+  (let ((entry (ensure-function-entry function-name env)))
     (if (function-bound-p entry)
         (setf (function-inline entry) new-value)
         (error 'env:attempt-to-declare-inline-a-non-existing-function
