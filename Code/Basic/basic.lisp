@@ -1,16 +1,5 @@
 (cl:in-package #:clostrum-basic)
 
-(defconstant +unbound+ 'unbound)
-
-(defun function-bound-p (function-entry)
-  (let ((cell (cell function-entry)))
-    (not (eq (car cell) (cdr cell)))))
-
-(defun variable-bound-p (variable-entry)
-  (let ((cell (cell variable-entry)))
-    (not (eq (car cell) +unbound+))))
-
-
 ;;; Function and variable entries.
 (defclass function-entry ()
   ((name
@@ -83,6 +72,12 @@
     (setf (slot-value instance 'cell)
           (cons unbound-function unbound-function))))
 
+(defun function-bound-p (function-entry)
+  (let ((cell (cell function-entry)))
+    (not (eq (car cell) (cdr cell)))))
+
+(defconstant +unbound+ 'unbound)
+
 (defclass variable-entry ()
   ((name
     :initarg :name
@@ -144,6 +139,10 @@
                 entry))
         (apply #'reinitialize-instance entry keyword-arguments))
     entry))
+
+(defun variable-bound-p (variable-entry)
+  (let ((cell (cell variable-entry)))
+    (not (eq (car cell) +unbound+))))
 
 ;;; We need a class entry because this entry would be the unit of
 ;;; sharing of classes between environments.  For now, the entry acts
