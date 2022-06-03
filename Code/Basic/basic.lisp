@@ -413,7 +413,7 @@
     (client
      (env run-time-environment)
      symbol)
-  (cell (get-variable-entry symbol env t)))
+  (cell (ensure-variable-entry symbol env)))
 
 (defmethod env:constant-variable
     (client
@@ -429,7 +429,7 @@
      client
      (env run-time-environment)
      symbol)
-  (let* ((entry (get-variable-entry symbol env t))
+  (let* ((entry (ensure-variable-entry symbol env))
          (cell (cell entry)))
     (if (constant-variable-p entry)
         (let ((value (car cell)))
@@ -462,7 +462,7 @@
      (env run-time-environment)
      symbol
      init-p)
-  (let ((entry (get-variable-entry symbol env t)))
+  (let ((entry (ensure-variable-entry symbol env)))
     (cond ((constant-variable-p entry)
            (error 'env:attempt-to-define-special-variable-for-existing-constant
                   :name symbol))
@@ -489,7 +489,7 @@
      client
      (env run-time-environment)
      symbol)
-  (let ((entry (get-variable-entry symbol env t)))
+  (let ((entry (ensure-variable-entry symbol env)))
     (cond
       ((constant-variable-p entry)
        (error 'env:attempt-to-define-symbol-macro-for-existing-constant
@@ -517,7 +517,7 @@
      client
      (env run-time-environment)
      symbol)
-  (let ((entry (get-variable-entry symbol env t)))
+  (let ((entry (ensure-variable-entry symbol env)))
     (if (constant-variable-p entry)
         (error 'env:attempt-to-proclaim-the-type-of-a-constant-variable
                :name symbol)
@@ -541,7 +541,7 @@
      client
      (env run-time-environment)
      symbol)
-  (let ((entry (get-variable-entry symbol env t)))
+  (let ((entry (ensure-variable-entry symbol env)))
     (setf (type-expander entry) new-value)))
 
 
