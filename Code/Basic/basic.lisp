@@ -189,7 +189,7 @@
   (let ((cell (cell function-entry)))
     (not (eq (car cell) (cdr cell)))))
 
-(defun get-variable-entry (name env)
+(defun variable-entry (name env)
   (gethash name (variables env) nil))
 
 (defun variable-bound-p (variable-entry)
@@ -415,7 +415,7 @@
     (client
      (env run-time-environment)
      symbol)
-  (let ((entry (get-variable-entry symbol env)))
+  (let ((entry (variable-entry symbol env)))
     (if (or (null entry) (not (constant-variable-p entry)))
         (values nil nil)
         (values (constant-variable-p entry) (car (cell entry))))))
@@ -448,7 +448,7 @@
     (client
      (env run-time-environment)
      symbol)
-  (alx:if-let ((entry (get-variable-entry symbol env)))
+  (alx:if-let ((entry (variable-entry symbol env)))
     (values (special-variable-p entry) (car (cell entry)))
     (values nil nil)))
 
@@ -474,7 +474,7 @@
     (client
      (env run-time-environment)
      symbol)
-  (let ((entry (get-variable-entry symbol env)))
+  (let ((entry (variable-entry symbol env)))
     (if (or (null entry) (not (symbol-macro-p entry)))
         (values nil nil)
         (let ((expander (car (cell entry))))
@@ -501,7 +501,7 @@
     (client
      (env run-time-environment)
      symbol)
-  (alx:if-let ((entry (get-variable-entry symbol env)))
+  (alx:if-let ((entry (variable-entry symbol env)))
     (if (constant-variable-p entry)
         (type-of (car (cell entry)))
         (or (variable-type entry)
@@ -529,7 +529,7 @@
     (client
      (env run-time-environment)
      symbol)
-  (alx:when-let ((entry (get-variable-entry symbol env)))
+  (alx:when-let ((entry (variable-entry symbol env)))
     (type-expander entry)))
 
 (defmethod (setf env:type-expander)
