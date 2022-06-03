@@ -38,6 +38,12 @@
 (defun (setf variable-entry) (new-entry name environment)
   (setf (gethash name (variables environment)) new-entry))
 
+(defun class-entry (name environment)
+  (gethash name (classes environment))n)
+
+(defun (setf class-entry) (new-entry name environment)
+  (setf (gethash name (classes environment)) new-entry))
+
 (defun variable-bound-p (variable-entry)
   (let ((cell (cell variable-entry)))
     (not (eq (car cell) +unbound+))))
