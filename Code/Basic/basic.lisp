@@ -164,7 +164,7 @@
     :reader declarations
     :initform (make-hash-table :test #'eq))))
 
-(defun get-function-entry (name env)
+(defun function-entry (name env)
   (gethash name (functions env) nil))
 
 (defun function-bound-p (function-entry)
@@ -194,7 +194,7 @@
     (client
      (env run-time-environment)
      function-name)
-  (alx:if-let ((entry (get-function-entry function-name env)))
+  (alx:if-let ((entry (function-entry function-name env)))
     (special-operator entry)
     nil))
 
@@ -204,7 +204,7 @@
      (env run-time-environment)
      function-name)
   (when (null new-value)
-    (alx:when-let ((entry (get-function-entry function-name env)))
+    (alx:when-let ((entry (function-entry function-name env)))
       (setf (special-operator entry) nil))
     (return-from env:special-operator))
   (let ((entry (ensure-function-entry function-name env)))
@@ -222,7 +222,7 @@
     (client
      (env run-time-environment)
      function-name)
-  (let ((entry (get-function-entry function-name env)))
+  (let ((entry (function-entry function-name env)))
     (cond ((null entry) nil)
           ((function-bound-p entry)
            (car (cell entry)))
@@ -234,7 +234,7 @@
      client
      (env run-time-environment)
      function-name)
-  (let ((entry (get-function-entry function-name env)))
+  (let ((entry (function-entry function-name env)))
     (if (null new-value)
         ;; Avoid creating a new entry if NEW-VALUE is NIL.
         (unless (null entry)
@@ -250,7 +250,7 @@
     (client
      (env run-time-environment)
      symbol)
-  (alx:when-let ((entry (get-function-entry symbol env)))
+  (alx:when-let ((entry (function-entry symbol env)))
     (macro-function entry)))
 
 (defmethod (setf env:macro-function)
@@ -258,7 +258,7 @@
      client
      (env run-time-environment)
      symbol)
-  (let ((entry (get-function-entry symbol env)))
+  (let ((entry (function-entry symbol env)))
     ;; Check for error situations.  We consider it an error to call
     ;; this function, whether with NEW-VALUE being NIL or not, if
     ;; there is an existing definition of the name as a function.
@@ -279,7 +279,7 @@
     (client
      (env run-time-environment)
      function-name)
-  (alx:when-let ((entry (get-function-entry function-name env)))
+  (alx:when-let ((entry (function-entry function-name env)))
     (compiler-macro-function entry)))
 
 (defmethod (setf env:compiler-macro-function)
@@ -288,7 +288,7 @@
      (env run-time-environment)
      function-name)
   (when (null new-value)
-    (alx:when-let ((entry (get-function-entry function-name env)))
+    (alx:when-let ((entry (function-entry function-name env)))
       (setf (compiler-macro-function entry) nil))
     (return-from env:compiler-macro-function))
   (let ((entry (ensure-function-entry function-name env)))
@@ -298,7 +298,7 @@
     (client
      (env run-time-environment)
      function-name)
-  (alx:if-let ((entry (get-function-entry function-name env)))
+  (alx:if-let ((entry (function-entry function-name env)))
     (or (function-type entry)
         (function-bound-p entry))
     nil))
@@ -309,7 +309,7 @@
      (env run-time-environment)
      function-name)
   (when (null new-value)
-    (alx:when-let ((entry (get-function-entry function-name env)))
+    (alx:when-let ((entry (function-entry function-name env)))
       (cond
         ((special-operator entry)
          (error 'env:attempt-to-set-function-type-of-special-operator
@@ -335,7 +335,7 @@
     (client
      (env run-time-environment)
      function-name)
-  (alx:if-let ((entry (get-function-entry function-name env)))
+  (alx:if-let ((entry (function-entry function-name env)))
     (and (function-bound-p entry)
          (function-inline entry))
     nil))
@@ -346,7 +346,7 @@
      (env run-time-environment)
      function-name)
   (when (null new-value)
-    (alx:when-let ((entry (get-function-entry function-name env)))
+    (alx:when-let ((entry (function-entry function-name env)))
       (if (function-bound-p entry)
           (setf (function-inline entry) nil)
           (error 'env:attempt-to-declare-inline-a-non-existing-function
@@ -368,7 +368,7 @@
     (client
      (env run-time-environment)
      symbol)
-  (alx:when-let ((entry (get-function-entry symbol env)))
+  (alx:when-let ((entry (function-entry symbol env)))
     (setf-expander entry)))
 
 (defmethod (setf env:setf-expander)
@@ -377,10 +377,10 @@
      (env run-time-environment)
      symbol)
   (when (null new-value)
-    (alx:when-let ((entry (get-function-entry symbol env)))
+    (alx:when-let ((entry (function-entry symbol env)))
       (setf (setf-expander entry) nil))
     (return-from env:setf-expander))
-  (alx:if-let ((entry (get-function-entry symbol env)))
+  (alx:if-let ((entry (function-entry symbol env)))
     (if (or (function-bound-p entry)
             (macro-function entry))
         (setf (setf-expander entry) new-value)
