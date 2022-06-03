@@ -189,12 +189,8 @@
   (let ((cell (cell function-entry)))
     (not (eq (car cell) (cdr cell)))))
 
-(defun get-variable-entry (name env &optional createp)
-  (if createp
-      (alx:ensure-gethash name
-                          (variables env)
-                          (make-instance 'variable-entry :name name))
-      (gethash name (variables env) nil)))
+(defun get-variable-entry (name env)
+  (gethash name (variables env) nil))
 
 (defun variable-bound-p (variable-entry)
   (let ((cell (cell variable-entry)))
