@@ -39,7 +39,7 @@
   (setf (gethash name (variables environment)) new-entry))
 
 (defun class-entry (name environment)
-  (gethash name (classes environment))n)
+  (gethash name (classes environment)))
 
 (defun (setf class-entry) (new-entry name environment)
   (setf (gethash name (classes environment)) new-entry))
@@ -93,13 +93,13 @@
 ;;; existing entry if one does exist.  The existing entry or the entry
 ;;; being created is returned.
 (defun ensure-function-entry (name environment &rest keyword-arguments)
-  (let ((entry (gethash name (functions environment))))
+  (let ((entry (function-entry name environment)))
     (if (null entry)
         (progn
           (setf entry
                 (apply #'make-instance 'function-entry
                        :name name keyword-arguments))
-          (setf (gethash name (functions environment))
+          (setf (function-entry name environment)
                 entry))
         (apply #'reinitialize-instance entry keyword-arguments))
     entry))
@@ -172,13 +172,13 @@
 ;;; existing entry if one does exist.  The existing entry or the entry
 ;;; being created is returned.
 (defun ensure-variable-entry (name environment &rest keyword-arguments)
-  (let ((entry (gethash name (variables environment))))
+  (let ((entry (variable-entry name environment)))
     (if (null entry)
         (progn
           (setf entry
                 (apply #'make-instance 'variable-entry
                        :name name keyword-arguments))
-          (setf (gethash name (variables environment))
+          (setf (variable-entry name environment)
                 entry))
         (apply #'reinitialize-instance entry keyword-arguments))
     entry))
