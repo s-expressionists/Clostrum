@@ -164,12 +164,8 @@
     :reader declarations
     :initform (make-hash-table :test #'eq))))
 
-(defun get-function-entry (name env &optional createp)
-  (if createp
-      (alx:ensure-gethash name
-                          (functions env)
-                          (make-instance 'function-entry :name name))
-      (gethash name (functions env) nil)))
+(defun get-function-entry (name env)
+  (gethash name (functions env) nil))
 
 (defun function-bound-p (function-entry)
   (let ((cell (cell function-entry)))
