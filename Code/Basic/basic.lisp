@@ -119,6 +119,24 @@
     :accessor type-expander))
   (:default-initargs :name (error "The initarg :NAME is required.")))
 
+;;; Make sure NAME names a variable entry in ENVIRONMENT.
+;;; KEYWORD-ARGUMENTS are keyword/value pairs that will be passed
+;;; either to MAKE-INSTANCE in order create a new entry if no entry
+;;; exists, or will be passed to REINITIALIZE-INSTANCE to modify the
+;;; existing entry if one does exist.  The existing entry or the entry
+;;; being created is returned.
+(defun ensure-variable-entry (name environment &rest keyword-arguments)
+  (let ((entry (gethash name (variables environment))))
+    (if (null entry)
+        (progn
+          (setf entry
+                (apply #'make-instance 'variable-entry
+                       :name name keyword-arguments))
+          (setf (gethash name (variables environment))
+                entry))
+        (apply #'reinitialize-instance entry keyword-arguments))
+    entry))
+
 ;;; We need a class entry because this entry would be the unit of
 ;;; sharing of classes between environments.  For now, the entry acts
 ;;; as a simple indirection, but we may attach more information to it
