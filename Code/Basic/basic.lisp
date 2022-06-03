@@ -26,7 +26,7 @@
   (gethash name (functions env) nil))
 
 (defun (setf function-entry) (new-entry name environment)
-  (setf (gethash name environment new-entry)))
+  (setf (gethash name (functions environment)) new-entry))
 
 (defun function-bound-p (function-entry)
   (let ((cell (cell function-entry)))
@@ -34,6 +34,9 @@
 
 (defun variable-entry (name env)
   (gethash name (variables env) nil))
+
+(defun (setf variable-entry) (new-entry name environment)
+  (setf (gethash name (variables environment)) new-entry))
 
 (defun variable-bound-p (variable-entry)
   (let ((cell (cell variable-entry)))
