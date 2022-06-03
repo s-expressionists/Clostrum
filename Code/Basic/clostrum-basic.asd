@@ -14,6 +14,7 @@
   :depends-on ("clostrum" "alexandria")
   :components
   ((:file "packages")
+   (:file "run-time-environment")
    (:file "basic")
    (:file "compilation-environment"))
   :in-order-to ((test-op (load-op "clostrum-test")))
