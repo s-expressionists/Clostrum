@@ -25,6 +25,9 @@
 (defun function-entry (name env)
   (gethash name (functions env) nil))
 
+(defun (setf function-entry) (new-entry name environment)
+  (setf (gethash name environment new-entry)))
+
 (defun function-bound-p (function-entry)
   (let ((cell (cell function-entry)))
     (not (eq (car cell) (cdr cell)))))
