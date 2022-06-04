@@ -10,10 +10,6 @@
   ((parent :initarg :parent :reader env:parent))
   (:default-initargs :parent (error "~s is required." :parent)))
 
-(defclass env:compilation-environment ()
-  ((parent :initarg :parent :reader env:parent))
-  (:default-initargs :parent (error "~s is required." :parent)))
-
 ;;; Macros DEFINE-FUNCTION and DEFINE-ACCESSOR are used to define
 ;;; run-time-environment protocol functions, so it is possible to
 ;;; generate trampolines for the evaluation-environment-mixin
@@ -85,45 +81,6 @@
 
 (define-operator* (setf env:class-description)
     (new-value client environment symbol))
-
-(defmethod env:function-description
-    (client (environment env:compilation-environment) function-name)
-  (env:function-description client (env:parent environment) function-name))
-
-(defmethod env:variable-description
-    (client (environment env:compilation-environment) symbol)
-  (env:variable-description client (env:parent environment) symbol))
-
-(defmethod env:class-description
-    (client (environment env:compilation-environment) symbol)
-  (env:class-description client (env:parent environment) symbol))
-
-(defmethod env:macro-function
-    (client (environment env:compilation-environment) symbol)
-  (env:macro-function client (env:parent environment) symbol))
-
-(defmethod (setf env:macro-function)
-    (function client (environment env:compilation-environment) symbol)
-  (funcall #'(setf env:macro-function) function
-           client (env:parent environment) symbol))
-
-(defmethod env:fdefinition
-    (client (environment env:compilation-environment) symbol)
-  (env:fdefinition client (env:parent environment) symbol))
-
-(defmethod (setf env:fdefinition)
-    (function client (environment env:compilation-environment) symbol)
-  (funcall #'(setf env:fdefinition) function
-           client (env:parent environment) symbol))
-
-(defmethod env:proclamation
-    (client (environment env:compilation-environment) symbol)
-  (env:proclamation client (env:parent environment) symbol))
-
-(defmethod (setf env:proclamation)
-    (function client (environment env:compilation-environment) symbol)
-  (funcall #'(setf env:proclamation) function
-           client (env:parent environment) symbol))
 
 (defgeneric env:import-function (client from-environment name to-environment))
 
