@@ -5,6 +5,7 @@
   :components
   ((:file "packages")
    (:file "clostrum")
+   (:file "evaluation-environment-mixin")
    (:file "compilation-environment")
    (:file "conditions"))
   :in-order-to ((test-op (test-op "clostrum-test"))))
