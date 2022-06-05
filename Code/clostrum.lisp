@@ -16,29 +16,12 @@
 ;;; automatically.
 
 (defmacro define-operator (name lambda-list &rest options)
-  (let* ((mixin-class-name 'env:evaluation-environment-mixin)
-         (specialized-parameter `(environment ,mixin-class-name))
-         (method-lambda-list
-           (subst specialized-parameter 'environment lambda-list)))
-    `(progn (defgeneric ,name ,lambda-list ,@options)
-            (defmethod ,name ,method-lambda-list
-              (let ((environment (env:parent environment)))
-                (funcall (function ,name) ,@lambda-list))))))
+  `(defgeneric ,name ,lambda-list ,@options))
 
 (defmacro define-accessor (name lambda-list &rest options)
-  (let* ((mixin-class-name 'env:evaluation-environment-mixin)
-         (specialized-parameter `(environment ,mixin-class-name))
-         (method-lambda-list
-           (subst specialized-parameter 'environment lambda-list))
-         (new-value (gensym "NEW-VALUE")))
+  (let ((new-value (gensym "NEW-VALUE")))
     `(progn (defgeneric ,name ,lambda-list ,@options)
-            (defgeneric (setf ,name) (,new-value ,@lambda-list) ,@options)
-            (defmethod ,name ,method-lambda-list
-              (let ((environment (env:parent environment)))
-                (,name ,@lambda-list)))
-            (defmethod (setf ,name) (,new-value ,@method-lambda-list)
-              (let ((environment (env:parent environment)))
-                (setf (,name ,@lambda-list) ,new-value))))))
+            (defgeneric (setf ,name) (,new-value ,@lambda-list) ,@options))))
 
 (defmacro define-operator* (name args &rest options)
   `(defgeneric ,name (,@args) ,@options))
