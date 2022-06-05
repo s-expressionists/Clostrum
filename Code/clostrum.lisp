@@ -6,15 +6,6 @@
 (defclass env:run-time-environment () ()
   (:documentation "Base class for run-time environments."))
 
-(defclass env:evaluation-environment-mixin ()
-  ((parent :initarg :parent :reader env:parent))
-  (:default-initargs :parent (error "~s is required." :parent)))
-
-;;; Macros DEFINE-FUNCTION and DEFINE-ACCESSOR are used to define
-;;; run-time-environment protocol functions, so it is possible to
-;;; generate trampolines for the evaluation-environment-mixin
-;;; automatically.
-
 (defmacro define-operator (name lambda-list &rest options)
   `(defgeneric ,name ,lambda-list ,@options))
 
