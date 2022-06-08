@@ -187,25 +187,23 @@
     (client (environment run-time-environment) name)
   (%special-operator environment name))
 
+(defun (setf %special-operator) (new-value environment name)
+  (if (null new-value)
+      ;; Then we want to avoid creating an entry.
+      (let ((entry (function-entry name environment)))
+        (unless (null entry)
+          ;; The entry exists, so we need to invoke the slot writer.
+          (setf (special-operator entry) nil)))
+      ;; Else, we need the entry so that we can write the slot.
+      (let ((entry (ensure-function-entry name environment)))
+        (if (function-bound-p entry)
+            (error 'env:attempt-to-define-special-operator-for-existing-function
+                   :function-name name)
+            (setf (special-operator entry) new-value)))))
+
 (defmethod (setf env:special-operator)
-    (new-value
-     client
-     (env run-time-environment)
-     function-name)
-  (when (null new-value)
-    (alx:when-let ((entry (function-entry function-name env)))
-      (setf (special-operator entry) nil))
-    (return-from env:special-operator))
-  (let ((entry (ensure-function-entry function-name env)))
-    (cond
-      ((function-bound-p entry)
-       (error 'env:attempt-to-define-special-operator-for-existing-function
-              :function-name function-name))
-      ((macro-function entry)
-       (error 'env:attempt-to-define-special-operator-for-existing-macro
-              :function-name function-name))
-      (t
-       (setf (special-operator entry) new-value)))))
+    (new-value client (environment run-time-environment) name)
+  (setf (%special-operator environment name) new-value))
 
 (defun %fdefinition (environment name)
   (let ((entry (function-entry name environment)))
