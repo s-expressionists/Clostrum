@@ -205,16 +205,17 @@
       (t
        (setf (special-operator entry) new-value)))))
 
-(defmethod env:fdefinition
-    (client
-     (env run-time-environment)
-     function-name)
-  (let ((entry (function-entry function-name env)))
+(defun fdefinition (environment name)
+  (let ((entry (function-entry name environment)))
     (cond ((null entry) nil)
           ((function-bound-p entry)
            (car (cell entry)))
           (t
            nil))))
+
+(defmethod env:fdefinition
+    (client (environment run-time-environment) name)
+  (fdefinition environment name))
 
 (defmethod (setf env:fdefinition)
     (new-value
