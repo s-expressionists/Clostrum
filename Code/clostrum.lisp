@@ -6,9 +6,6 @@
 (defclass env:run-time-environment () ()
   (:documentation "Base class for run-time environments."))
 
-(defmacro define-operator (name lambda-list &rest options)
-  `(defgeneric ,name ,lambda-list ,@options))
-
 (defmacro define-accessor (name lambda-list &rest options)
   (let ((new-value (gensym "NEW-VALUE")))
     `(progn (defgeneric ,name ,lambda-list ,@options)
@@ -21,14 +18,14 @@
 (define-accessor env:compiler-macro-function (client environment function-name))
 (define-accessor env:function-type (client environment function-name))
 (define-accessor env:function-inline (client environment function-name))
-(define-operator env:map-defined-functions (client environment function))
-(define-operator env:map-defined-classes (client environment function))
+(defgeneric env:map-defined-functions (client environment function))
+(defgeneric env:map-defined-classes (client environment function))
 
 (define-accessor env:constant-variable (client environment symbol))
 ;;; The accessor ENV:SPECIAL-VARIABLE is defined as two operators,
 ;;; because it has an irregular lambda list.
-(define-operator env:special-variable (client environment symbol))
-(define-operator (setf env:special-variable)
+(defgeneric env:special-variable (client environment symbol))
+(defgeneric (setf env:special-variable)
     (new-value client environment symbol init-p))
 (define-accessor env:symbol-macro (client environment symbol))
 (define-accessor env:variable-type (client environment symbol))
@@ -39,9 +36,9 @@
 (define-accessor env:find-package (client environment name))
 (define-accessor env:proclamation (client environment name))
 
-(define-operator env:function-description (client environment function-name))
-(define-operator env:variable-description (client environment symbol))
-(define-operator env:class-description (client environment symbol))
+(defgeneric env:function-description (client environment function-name))
+(defgeneric env:variable-description (client environment symbol))
+(defgeneric env:class-description (client environment symbol))
 
 ;;; Compilation time.
 (defgeneric (setf env:function-description)
