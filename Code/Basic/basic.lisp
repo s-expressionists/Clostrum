@@ -205,7 +205,7 @@
       (t
        (setf (special-operator entry) new-value)))))
 
-(defun fdefinition (environment name)
+(defun %fdefinition (environment name)
   (let ((entry (function-entry name environment)))
     (cond ((null entry) nil)
           ((function-bound-p entry)
@@ -215,9 +215,9 @@
 
 (defmethod env:fdefinition
     (client (environment run-time-environment) name)
-  (fdefinition environment name))
+  (%fdefinition environment name))
 
-(defun (setf fdefinition) (new-value environment name)
+(defun (setf %fdefinition) (new-value environment name)
   (let ((entry (function-entry name environment)))
     (if (null new-value)
         ;; Avoid creating a new entry if NEW-VALUE is NIL.
@@ -232,7 +232,7 @@
 
 (defmethod (setf env:fdefinition)
     (new-value client (environment run-time-environment) name)
-  (setf (fdefinition environment name) new-value))
+  (setf (%fdefinition environment name) new-value))
 
 (defmethod env:macro-function
     (client
