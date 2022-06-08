@@ -14,9 +14,6 @@
     `(progn (defgeneric ,name ,lambda-list ,@options)
             (defgeneric (setf ,name) (,new-value ,@lambda-list) ,@options))))
 
-(defmacro define-operator* (name args &rest options)
-  `(defgeneric ,name (,@args) ,@options))
-
 ;;; run time
 (define-accessor env:special-operator (client environment function-name))
 (define-accessor env:fdefinition (client environment function-name))
@@ -47,13 +44,13 @@
 (define-operator env:class-description (client environment symbol))
 
 ;;; Compilation time.
-(define-operator* (setf env:function-description)
+(defgeneric (setf env:function-description)
     (new-value client environment funciton-name))
 
-(define-operator* (setf env:variable-description)
+(defgeneric (setf env:variable-description)
     (new-value client environment symbol))
 
-(define-operator* (setf env:class-description)
+(defgeneric (setf env:class-description)
     (new-value client environment symbol))
 
 (defgeneric env:import-function (client from-environment name to-environment))
