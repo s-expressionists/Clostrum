@@ -177,13 +177,15 @@
      function-name)
   (cell (ensure-function-entry function-name env)))
 
+(defun %special-operator (environment name)
+  (let ((entry (function-entry name environment)))
+    (if (null entry)
+        nil
+        (special-operator entry))))
+
 (defmethod env:special-operator
-    (client
-     (env run-time-environment)
-     function-name)
-  (alx:if-let ((entry (function-entry function-name env)))
-    (special-operator entry)
-    nil))
+    (client (environment run-time-environment) name)
+  (%special-operator environment name))
 
 (defmethod (setf env:special-operator)
     (new-value
