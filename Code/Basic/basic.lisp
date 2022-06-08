@@ -217,12 +217,8 @@
     (client (environment run-time-environment) name)
   (fdefinition environment name))
 
-(defmethod (setf env:fdefinition)
-    (new-value
-     client
-     (env run-time-environment)
-     function-name)
-  (let ((entry (function-entry function-name env)))
+(defun (setf fdefinition) (new-value environment name)
+  (let ((entry (function-entry name environment)))
     (if (null new-value)
         ;; Avoid creating a new entry if NEW-VALUE is NIL.
         (unless (null entry)
@@ -230,9 +226,13 @@
             (setf (car cell) (cdr cell))))
         (progn
           ;; Ensure that the entry exists.
-          (setf entry (ensure-function-entry function-name env))
+          (setf entry (ensure-function-entry name environment))
           (let ((cell (cell entry)))
             (setf (car cell) new-value))))))
+
+(defmethod (setf env:fdefinition)
+    (new-value client (environment run-time-environment) name)
+  (setf (fdefinition environment name) new-value))
 
 (defmethod env:macro-function
     (client
