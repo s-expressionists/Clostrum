@@ -306,16 +306,16 @@
   (let ((entry (if (null new-value)
                    (function-entry name environment)
                    (ensure-function-entry name environment))))
-    (cond ((null entry)
-           nil)
-          ((not (null (special-operator entry)))
-           (error 'env:attempt-to-set-function-type-of-special-operator
-                  :function-name name))
-          ((not (null (macro-function entry)))
-           (error 'env:attempt-to-set-function-type-of-macro
-                  :function-name name))
-          (t
-           (setf (function-type entry) new-value)))))
+    (unless (null entry)
+      (cond ((not (null (special-operator entry)))
+             (error 'env:attempt-to-set-function-type-of-special-operator
+                    :function-name name))
+            ((not (null (macro-function entry)))
+             (error 'env:attempt-to-set-function-type-of-macro
+                    :function-name name))
+            (t
+             (setf (function-type entry) new-value)))))
+  new-value)
 
 (defmethod (setf env:function-type)
     (new-value client (environment run-time-environment) name)
