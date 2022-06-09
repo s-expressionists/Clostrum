@@ -215,17 +215,16 @@
   (%fdefinition environment name))
 
 (defun (setf %fdefinition) (new-value environment name)
-  (let ((entry (function-entry name environment)))
-    (if (null new-value)
-        ;; Avoid creating a new entry if NEW-VALUE is NIL.
-        (unless (null entry)
-          (let ((cell (cell entry)))
-            (setf (car cell) (cdr cell))))
-        (progn
-          ;; Ensure that the entry exists.
-          (setf entry (ensure-function-entry name environment))
-          (let ((cell (cell entry)))
-            (setf (car cell) new-value))))))
+  (let ((entry (if (null new-value)
+                   (function-entry name environment)
+                   (ensure-function-entry name environment))))
+    (unless (null entry)
+      (let ((cell (cell entry)))
+        (setf (car cell)
+              (if (null new-value)
+                  (cdr cell)
+                  new-value)))))
+  new-value)
 
 (defmethod (setf env:fdefinition)
     (new-value client (environment run-time-environment) name)
