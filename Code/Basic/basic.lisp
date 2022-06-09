@@ -245,22 +245,18 @@
   (%macro-function environment name))
 
 (defun (setf %macro-function) (new-value environment name)
-  (let ((entry (function-entry name environment)))
-    ;; Check for error situations.  We consider it an error to call
-    ;; this function, whether with NEW-VALUE being NIL or not, if
-    ;; there is an existing definition of the name as a function.
+  (let ((entry (if (null new-value)
+                   (function-entry name environment)
+                   (ensure-function-entry name environment))))
     (unless (null entry)
+      ;; Check for error situations.  We consider it an error to call
+      ;; this function, whether with NEW-VALUE being NIL or not, if
+      ;; there is an existing definition of the name as a function.
       (when (function-bound-p entry)
         (error 'env:attempt-to-define-macro-for-existing-function
-               :function-name name)))
-    (if (null new-value)
-        ;; Avoid creating a new entry if NEW-VALUE is NIL.
-        (unless (null entry)
-          (setf (macro-function entry) nil))
-        (progn
-          ;; Ensure that the entry exists.
-          (setf entry (ensure-function-entry name environment))
-          (setf (macro-function entry) new-value)))))
+               :function-name name))
+      (setf (macro-function entry) new-value)))
+  new-value)
 
 (defmethod (setf env:macro-function)
     (new-value client (environment run-time-environment) name)
@@ -277,15 +273,12 @@
   (%compiler-macro-function environment name))
 
 (defun (setf %compiler-macro-function) (new-value environment name)
-  (let ((entry (function-entry name environment)))
-    (if (null new-value)
-        ;; Avoid creating a new entry if NEW-VALUE is NIL.
-        (unless (null entry)
-          (setf (compiler-macro-function entry) nil))
-        (progn
-          ;; Ensure that the entry exists.
-          (setf entry (ensure-function-entry name environment))
-          (setf (compiler-macro-function entry) new-value)))))
+  (let ((entry (if (null new-value)
+                   (function-entry name environment)
+                   (ensure-function-entry name environment))))
+    (unless (null entry)
+      (setf (compiler-macro-function entry) new-value)))
+  new-value)
 
 (defmethod (setf env:compiler-macro-function)
     (new-value client (environment run-time-environment) name)
