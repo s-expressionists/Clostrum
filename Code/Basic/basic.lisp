@@ -266,12 +266,15 @@
     (new-value client (environment run-time-environment) name)
   (setf (%macro-function environment name) new-value))
 
+(defun %compiler-macro-function (environment name)
+  (let ((entry (function-entry name environment)))
+    (if (null entry)
+        nil
+        (compiler-macro-function entry))))
+
 (defmethod env:compiler-macro-function
-    (client
-     (env run-time-environment)
-     function-name)
-  (alx:when-let ((entry (function-entry function-name env)))
-    (compiler-macro-function entry)))
+    (client (environment run-time-environment) name)
+  (%compiler-macro-function environment name))
 
 (defmethod (setf env:compiler-macro-function)
     (new-value
