@@ -302,33 +302,24 @@
     (client (environment run-time-environment) name)
   (%function-type environment name))
 
+(defun (setf %function-type) (new-value environment name)
+  (let ((entry (if (null new-value)
+                   (function-entry name environment)
+                   (ensure-function-entry name environment))))
+    (cond ((null entry)
+           nil)
+          ((not (null (special-operator entry)))
+           (error 'env:attempt-to-set-function-type-of-special-operator
+                  :function-name name))
+          ((not (null (macro-function entry)))
+           (error 'env:attempt-to-set-function-type-of-macro
+                  :function-name name))
+          (t
+           (setf (function-type entry) new-value)))))
+
 (defmethod (setf env:function-type)
-    (new-value
-     client
-     (env run-time-environment)
-     function-name)
-  (when (null new-value)
-    (alx:when-let ((entry (function-entry function-name env)))
-      (cond
-        ((special-operator entry)
-         (error 'env:attempt-to-set-function-type-of-special-operator
-                :function-name function-name))
-        ((macro-function entry)
-         (error 'env:attempt-to-set-function-type-of-macro
-                :function-name function-name))
-        (t
-         (setf (function-type entry) nil))))
-    (return-from env:function-type))
-  (let ((entry (ensure-function-entry function-name env)))
-    (cond
-      ((special-operator entry)
-       (error 'env:attempt-to-set-function-type-of-special-operator
-              :function-name function-name))
-      ((macro-function entry)
-       (error 'env:attempt-to-set-function-type-of-macro
-              :function-name function-name))
-      (t
-       (setf (function-type entry) new-value)))))
+    (new-value client (environment run-time-environment) name)
+  (setf (%function-type environment name) new-value))
 
 (defmethod env:function-inline
     (client
