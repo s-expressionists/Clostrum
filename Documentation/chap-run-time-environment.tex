@@ -151,6 +151,12 @@ function associated with \textit{function-name} in
 If \textit{function-name} is associated with a macro or a special
 operator in \textit{environment}, then an error is signaled.
 
+The value of \textit{new-type} may be \texttt{nil}.  Then any existing
+type information about \textit{function-name} is erased, and the
+result is as if no type information has been given.  Then, if the
+function is defined, subsequent calls to \texttt{function-type} will
+return \texttt{t}, and if not, such calls will return \texttt{nil}.
+
 \Defgeneric {function-inline} {client environment function-name}
 
 This generic function returns the proclaimed inline information of the
