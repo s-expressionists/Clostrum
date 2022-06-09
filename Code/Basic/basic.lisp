@@ -276,17 +276,20 @@
     (client (environment run-time-environment) name)
   (%compiler-macro-function environment name))
 
+(defun (setf %compiler-macro-function) (new-value environment name)
+  (let ((entry (function-entry name environment)))
+    (if (null new-value)
+        ;; Avoid creating a new entry if NEW-VALUE is NIL.
+        (unless (null entry)
+          (setf (compiler-macro-function entry) nil))
+        (progn
+          ;; Ensure that the entry exists.
+          (setf entry (ensure-function-entry name environment))
+          (setf (compiler-macro-function entry) new-value)))))
+
 (defmethod (setf env:compiler-macro-function)
-    (new-value
-     client
-     (env run-time-environment)
-     function-name)
-  (when (null new-value)
-    (alx:when-let ((entry (function-entry function-name env)))
-      (setf (compiler-macro-function entry) nil))
-    (return-from env:compiler-macro-function))
-  (let ((entry (ensure-function-entry function-name env)))
-    (setf (compiler-macro-function entry) new-value)))
+    (new-value client (environment run-time-environment) name)
+  (setf (%compiler-macro-function environment name) new-value))
 
 (defmethod env:function-type
     (client
