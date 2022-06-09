@@ -188,18 +188,15 @@
   (%special-operator environment name))
 
 (defun (setf %special-operator) (new-value environment name)
-  (if (null new-value)
-      ;; Then we want to avoid creating an entry.
-      (let ((entry (function-entry name environment)))
-        (unless (null entry)
-          ;; The entry exists, so we need to invoke the slot writer.
-          (setf (special-operator entry) nil)))
-      ;; Else, we need the entry so that we can write the slot.
-      (let ((entry (ensure-function-entry name environment)))
-        (if (function-bound-p entry)
-            (error 'env:attempt-to-define-special-operator-for-existing-function
-                   :function-name name)
-            (setf (special-operator entry) new-value)))))
+  (let ((entry (if (null new-value)
+                   (function-entry name environment)
+                   (ensure-function-entry name environment))))
+    (unless (null entry)
+      (if (function-bound-p entry)
+          (error 'env:attempt-to-define-special-operator-for-existing-function
+                 :function-name name)
+          (setf (special-operator entry) new-value))))
+  new-value)
 
 (defmethod (setf env:special-operator)
     (new-value client (environment run-time-environment) name)
