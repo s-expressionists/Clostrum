@@ -71,17 +71,17 @@ that compile-time definition, effectively overriding a possible
 definition by the same name in the run-time environment.
 
 {\small\Defmethod {macro-function} {client (environment {\tt
-      evaluation-environment-mixin}) \\ symbol}
+      evaluation-environment-mixin}) \\ name}
 }
 
-This method first executes \texttt{(call-next-method)}.  If the return
-value of that call is non-\texttt{nil}, it is returned.  If the return
-value of the call \texttt{(call-next-method)} is \texttt{nil}, then
-this method recursively calls \texttt{macro-function} with the same
-\textit{client} argument, a second argument resulting from calling
-\texttt{(parent} \textit{environment}\texttt{)}, and the same
-\textit{symbol} argument.  The return value of the recursive
-call is then returned.
+This method first queries \textit{environment} to see whether
+\textit{name} is defined as a macro function there.  If so, i.e., if
+the definition there is non-\texttt{nil}, that definition is returned.
+If the definition there is \texttt{nil}, then this method recursively
+calls \texttt{macro-function} with the same \textit{client} argument,
+a second argument resulting from calling \texttt{(parent}
+\textit{environment}\texttt{)}, and the same \textit{name} argument.
+The return value of the recursive call is then returned.
 
 As a result of this behavior, if a macro definition is made at compile
 time (presumably by a call to \texttt{(setf macro-function)} on an
