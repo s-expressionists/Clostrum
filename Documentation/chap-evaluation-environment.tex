@@ -116,14 +116,17 @@ name in the run-time environment.
       evaluation-environment-mixin}) \\ name}
 }
 
-This method first executes \texttt{(call-next-method)}.  If the return
-value of that call is non-\texttt{nil}, it is returned.  If the return
-value of the call \texttt{(call-next-method)} is \texttt{nil}, then
-this method recursively calls \texttt{function-type} with the same
-\textit{client} argument, a second argument resulting from calling
-\texttt{(parent} \textit{environment}\texttt{)}, and the same
-\textit{symbol} argument.  The return value of the recursive
-call is then returned.
+This method first queries \textit{environment} to see whether
+\textit{name} is defined as a function there.  If so, i.e., if the
+definition there is non-\texttt{nil}, then it queries
+\textit{environment} to see whether a function type has been
+proclaimed there, and it returns the value of that query.  If
+\textit{name} is not defined as a function in \textit{environment},
+then this method recursively calls \texttt{function-type} with the
+same \textit{client} argument, a second argument resulting from
+calling \texttt{(parent} \textit{environment}\texttt{)}, and the same
+\textit{symbol} argument.  The return value of the recursive call is
+then returned.
 
 As a result of this behavior, if a type proclamation is made at
 compile time (presumably by a call to \texttt{(setf function-type)} on
