@@ -94,14 +94,15 @@ definition by the same name in the run-time environment.
       evaluation-environment-mixin}) \\ name}
 }
 
-This method first executes \texttt{(call-next-method)}.  If the return
-value of that call is non-\texttt{nil}, it is returned.  If the return
-value of the call \texttt{(call-next-method)} is \texttt{nil}, then
-this method recursively calls \texttt{compiler-macro-function} with
-the same \textit{client} argument, a second argument resulting from
-calling \texttt{(parent} \textit{environment}\texttt{)}, and the same
-\textit{name} argument.  The return value of the recursive
-call is then returned.
+This method first queries \textit{environment} to see whether
+\textit{name} is defined as a compiler macro function there.  If so,
+i.e., if the definition there is non-\texttt{nil}, that definition is
+returned.  If the definition there is \texttt{nil}, then this method
+recursively calls \texttt{compiler-macro-function} with the same
+\textit{client} argument, a second argument resulting from calling
+\texttt{(parent} \textit{environment}\texttt{)}, and the same
+\textit{name} argument.  The return value of the recursive call is
+then returned.
 
 As a result of this behavior, if a compiler-macro definition is made
 at compile time (presumably by a call to \texttt{(setf
