@@ -45,23 +45,23 @@ argument, a second argument resulting from calling \texttt{(parent}
 The return value of the recursive call is then returned.
 
 In a typical system, there are no provisions for adding new special
-operators at compile time to be used only at compile time, so the call
-to \texttt{(call-next-method)} would then return \texttt{nil}.  But we
-see no reason to disallow the possibility of adding new special
-operators at compile time in case some clients need such a feature.
+operators at compile time to be used only at compile time, so the
+initial query would then return \texttt{nil}.  But we see no reason to
+disallow the possibility of adding new special operators at compile
+time in case some clients need such a feature.
 
 {\small\Defmethod {fdefinition} {client (environment {\tt
       evaluation-environment-mixin}) \\ name}
 }
 
-This method first executes \texttt{(call-next-method)}.  If the return
-value of that call is non-\texttt{nil}, it is returned.  If the return
-value of the call \texttt{(call-next-method)} is \texttt{nil}, then
-this method recursively calls \texttt{fdefinition} with the same
-\textit{client} argument, a second argument resulting from calling
-\texttt{(parent} \textit{environment}\texttt{)}, and the same
-\textit{name} argument.  The return value of the recursive
-call is then returned.
+This method first queries \textit{environment} to see whether
+\textit{name} is defined as a function there.  If so, i.e., if the
+definition there is non-\texttt{nil}, that definition is returned.  If
+the definition there is \texttt{nil}, then this method recursively
+calls \texttt{fdefinition} with the same \textit{client} argument, a
+second argument resulting from calling \texttt{(parent}
+\textit{environment}\texttt{)}, and the same \textit{name} argument.
+The return value of the recursive call is then returned.
 
 As a result of this behavior, if a function definition is made at
 compile time (presumably by a call to \texttt{(setf fdefinition)} on
