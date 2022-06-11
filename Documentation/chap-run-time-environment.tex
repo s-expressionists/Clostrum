@@ -149,47 +149,35 @@ Otherwise, no interpretation of the value of \textit{new-value} is
 made by \sysname{}, leaving that interpretation entirely up to client
 code.
 
-\Defgeneric {function-inline} {client environment function-name}
+\Defgeneric {function-inline} {client environment name}
 
 This generic function returns the proclaimed inline information of the
-function associated with \textit{function-name} in
-\textit{environment}.
-
-If \textit{function-name} is not associated with an ordinary function
-or a generic function in \textit{environment}, then \texttt{nil} is
-returned.
-
-If \textit{function-name} is associated with an ordinary function or a
-generic function in \textit{environment}, then the return value of
-this function is either \texttt{nil}, \texttt{inline}, or
-\texttt{notinline}.  If no inline proclamation has been made, then
-this generic function returns \texttt{nil}.
+function associated with \textit{name} in \textit{environment}.  If no
+prior call to \texttt{(setf function-inline)} has been made, then
+\texttt{nil} is returned.  Otherwise, the value of the
+\textit{new-inline} argument to that call is returned.
 
 \Defgeneric {(setf function-inline)}\\
-{new-inline client environment function-name}
+{new-inline client environment name}
 
 This generic function is used to set the proclaimed inline information
-of the function associated with \textit{function-name} in
+of the function associated with \textit{name} in
 \textit{environment} to \textit{new-inline}.
 
 \textit{new-inline} must have one of the values \texttt{nil},
 \texttt{inline}, or \texttt{notinline}.
 
-If \textit{function-name} is not associated with an ordinary function
-or a generic function in \textit{environment}, then an error is
-signaled.
-
-\Defgeneric {function-cell} {client environment function-name}
+\Defgeneric {function-cell} {client environment name}
 
 This generic function returns a \texttt{cons} cell.  The \texttt{cdr}
 slot of the cell contains a function that, when called, signals an
-\texttt{undefined-function} error.  If \texttt{function-name} has a
+\texttt{undefined-function} error.  If \texttt{name} has a
 definition as a function, then the \texttt{car} slot of the \texttt{cons}
-cell contains the function object.  If \texttt{function-name} does not
+cell contains the function object.  If \texttt{name} does not
 have a definition as a function, then the \texttt{car} slot contains
 the same function object as the \texttt{cdr} slot.
 
-\Defgeneric {function-description} {client environment function-name}
+\Defgeneric {function-description} {client environment name}
 
 This generic function returns the function description, which is an
 object that is entirely defined by client code.  Clostrum does not
@@ -197,7 +185,7 @@ provide any methods specialized to \texttt{run-time-environment}, so
 client code must provide a method specialized to its specific
 \texttt{client} class, and to (a subclass of)
 \texttt{run-time-environment}.  It is recommended that this method
-return \texttt{nil} if no function named \textit{function-name} exists
+return \texttt{nil} if no function named \textit{name} exists
 in \textit{environment}.  Similarly, Clostrum does not provide any
 methods specialized to \texttt{evaluation-environment-mixin}, so
 client code must provide a method specialized to its specific
