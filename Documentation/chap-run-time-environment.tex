@@ -186,11 +186,7 @@ client code must provide a method specialized to its specific
 \texttt{client} class, and to (a subclass of)
 \texttt{run-time-environment}.  It is recommended that this method
 return \texttt{nil} if no function named \textit{name} exists
-in \textit{environment}.  Similarly, Clostrum does not provide any
-methods specialized to \texttt{evaluation-environment-mixin}, so
-client code must provide a method specialized to its specific
-\texttt{client} class, and to (a subclass of)
-\texttt{evaluation-environment-mixin}.
+in \textit{environment}.
 
 This function is typically used at compile-time in a file compiler,
 and then it will be called with an instance of
@@ -211,10 +207,7 @@ specialized to \texttt{compilation-environment}.  The method on
 \texttt{(setf function-description)} simply stores the object supplied
 as an argument.  The method on \texttt{function-description} checks
 whether an object has been stored, and if so, it returns that object.
-If not, it trampolines to a call to itself, passing the \emph{parent}
-of the compilation environment as an argument.  This parent is
-typically an instance of (a subclass of)
-\texttt{evaluation-environment-mixin}.
+If not, it returns \texttt{nil}.
 
 \Defgeneric {constant-variable} {client environment symbol}
 
