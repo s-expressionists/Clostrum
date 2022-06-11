@@ -233,18 +233,13 @@ error is signaled.
 
 This function returns two values. The first value is true if
 \textit{symbol} has a definition as a special variable and
-\texttt{nil} otherwise. The second value is the value of
-\textit{symbol} as a special variable in \textit{environment}. When
-the special variable is unbound, then the second value is \texttt{eq}
-to the result of calling \textit{variable-unbound}.
-
-Notice that the symbol can have a value even though this function
-returns \texttt{nil} as its first value.  The first such case is when
-the symbol has a value as a constant variable in \textit{environment}.
-The second case is when the symbol was assigned a value as a result of
-modifying the \texttt{car} slot of the \texttt{cons} cell returned by
-\texttt{variable-cell} without declaring the variable as
-\texttt{special}.
+\texttt{nil} otherwise.  The second value is the same as the contents
+of the \texttt{car} slot of the \texttt{cons} cell returned by a call
+to \texttt{variable-cell}.  It is recommended to use the second value
+returned by this generic function in favor of calling
+\texttt{variable-cell} when possible, because a variable cell is
+allocated only when needed, and if no value has been given to the
+variable, then no variable cell has been allocated.
 
 \Defgeneric {(setf special-variable)} {value client environment symbol init-p}
 
