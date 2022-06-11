@@ -17,37 +17,37 @@ of the variable, provided that it has one.  Client code can implement
 \texttt{symbol-value} and \texttt{(setf symbol-value)} by accessing
 the \texttt{car} slot of this \texttt{cons} cell.
 
-\Defgeneric {special-operator} {client environment function-name}
+\Defgeneric {special-operator} {client environment name}
 
-If \textit{function-name} has a definition as a special operator in
+If \textit{name} has a definition as a special operator in
 \textit{environment}, then that definition is returned.  The
 definition is the object that was used as an argument to \texttt{(setf
   special-operator)}.  The exact nature of this object is not
 specified, other than that it can not be \texttt{nil}.  If
-\textit{function-name} does not have a definition as a special
+\textit{name} does not have a definition as a special
 operator in \textit{environment}, then \texttt{nil} is returned.
 
-\Defgeneric {(setf special-operator)} {new client environment function-name}
+\Defgeneric {(setf special-operator)} {new client environment name}
 
-Set the definition of \textit{function-name} to be a special operator.
+Set the definition of \textit{name} to be a special operator.
 The exact nature of \textit{new} is not specified, except that a
-value of \texttt{nil} means that \textit{function-name} no longer has
+value of \texttt{nil} means that \textit{name} no longer has
 a definition as a special operator in \textit{environment}.
 
 If a value other than \texttt{nil} is given for \textit{new}, and
-\textit{function-name} already has a definition as an ordinary
+\textit{name} already has a definition as an ordinary
 function, as a generic function, or as a macro, then an error is
 signaled.  As a consequence, if it is desirable for
-\textit{function-name} to have a definition both as a special operator
+\textit{name} to have a definition both as a special operator
 and as a macro, then the definition as a special operator should be
 set first.
 
-\Defgeneric {fdefinition} {client environment function-name}
+\Defgeneric {fdefinition} {client environment name}
 
 This generic function is a generic version of the \commonlisp{}
 function named \texttt{(setf cl:fdefinition)}.
 
-If \textit{function-name} has a definition as a function in
+If \textit{name} has a definition as a function in
 \textit{environment}, then that definition is returned.  If no
 definition exists, or a definition exists, but it is a special
 operator or a macro, then \texttt{nil} is returned.
@@ -58,20 +58,20 @@ to \texttt{clostrum:fdefinition}, since the \commonlisp{} function
 returns \textit{true} when the name is defined as a macro or a special
 operator.
 
-\Defgeneric {(setf fdefinition)} {new-def client environment function-name}
+\Defgeneric {(setf fdefinition)} {new-def client environment name}
 
 This generic function is a generic version of the \commonlisp{}
 function named \texttt{(setf cl:fdefinition)}.
 
 No checks are made for the validity of \textit{new-def}.  Only the
-definition of \texttt{function-name} as a real function (and not as a
+definition of \texttt{name} as a real function (and not as a
 macro or a special operator) is influenced.
 
-If \textit{function-name} already names a function, then the previous
+If \textit{name} already names a function, then the previous
 definition is lost.  If \texttt{new-def} is \texttt{nil} then
-\texttt{function-name} will be made undefined.
+\texttt{name} will be made undefined.
 
-If \textit{function-name} is a symbol and it has an associated
+If \textit{name} is a symbol and it has an associated
 \texttt{setf} expander, then that \texttt{setf} expander is preserved.
 
 \Defgeneric {macro-function} {client environment symbol}
@@ -103,29 +103,29 @@ kept.
 If \textit{symbol} has an associated \texttt{setf} expander, then that
 \texttt{setf} expander is preserved.
 
-\Defgeneric {compiler-macro-function} {client environment function-name}
+\Defgeneric {compiler-macro-function} {client environment name}
 
 This generic function is a generic version of the \commonlisp{}
 function named \texttt{cl:compiler-macro-function}.
 
-If \textit{function-name} has a definition as a compiler macro in
+If \textit{name} has a definition as a compiler macro in
 \textit{environment}, then the corresponding compiler macro function
 is returned.
 
-If \textit{function-name} has no definition as a compiler macro in
+If \textit{name} has no definition as a compiler macro in
 \textit{environment}, then this function returns \texttt{nil}.
 
 \Defgeneric {(setf compiler-macro-function)}\\
-{new-def client environment function-name}
+{new-def client environment name}
 
 This generic function is a generic version of the \commonlisp{}
 function \texttt{(setf cl:compiler-macro-function)}.
 
 \textit{new-def} can be a compiler macro function or \texttt{nil}.
 When it is a compiler macro function, then it establishes
-\textit{new-def} as a compiler macro for \textit{function-name} and
+\textit{new-def} as a compiler macro for \textit{name} and
 any existing definition is lost.  A value of \texttt{nil} means that
-\textit{function-name} no longer has a compiler macro associated with
+\textit{name} no longer has a compiler macro associated with
 it in \textit{environment}.
 
 \Defgeneric {function-type} {client environment name}
@@ -211,10 +211,11 @@ If not, it returns \texttt{nil}.
 
 \Defgeneric {constant-variable} {client environment symbol}
 
-This function returns two values. The first value is true if \textit{symbol}
-has a definition as a constant variable and \texttt{nil} otherwise. The second
-value is the value of the constant variable \textit{symbol} or \texttt{nil} if
-\textit{symbol} does not have a definition as a constant variable.
+This function returns two values. The first value is true if
+\textit{symbol} has a definition as a constant variable and
+\texttt{nil} otherwise. The second value is the value of the constant
+variable \textit{symbol} or \texttt{nil} if \textit{symbol} does not
+have a definition as a constant variable.
 
 \Defgeneric {(setf constant-variable)} {value client environment symbol}
 
