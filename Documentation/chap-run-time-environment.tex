@@ -321,10 +321,13 @@ proclaiming the type of a symbol macro.  Therefore, it is meaningful
 to call this function when \textit{symbol} has a definition as a
 symbol macro in \textit{environment}.
 
-\Defgeneric {variable-unbound} {client environment symbol}
+\Defgeneric {variable-cell} {client environment name}
 
-A call to this function always succeeds.  It returns an object that indicates
-that the variable is unbound.
+This generic function returns a \texttt{cons} cell.  The \texttt{cdr}
+slot of the cell contains an object that represents an unbound
+variable.  If \textit{name} has been given an explicit value, then the
+\texttt{car} slot contains that value.  If not, then the \texttt{car}
+slot contains the same object as the \texttt{cdr} slot.
 
 \Defgeneric {variable-description} {client environment symbol}
 
