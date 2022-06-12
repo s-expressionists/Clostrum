@@ -259,6 +259,31 @@ unbound, then it remains unbound.
 If \textit{init-p} is true, then \textit{value} becomes the new value
 of the special variable \textit{symbol}.
 
+\Defgeneric {variable-value} {client environment symbol}
+
+This function returns two values.  The values are \texttt{nil} and
+\texttt{nil} if and only if \textit{symbol} does not have a value as a
+variable in \textit{environment}.  Otherwise, the first value is true
+and the second value is the value of the variable \textit{symbol} in
+\textit{environment}.  There are three cases in which the first
+return value can be true:
+
+\begin{enumerate}
+\item It has been assigned a value by a call to \texttt{(setf
+  special-variable)} with a true value for the argument
+  \textit{init-p}.  The second return value is then the value that was
+  assigned by this call.
+\item It has been assigned a value by a call to \texttt{(setf
+  constant-variable)}.  The second return value is then the value that
+  was assigned by this call.
+\item The \texttt{car} slot of the \texttt{cons} cell returned by a
+  call to \texttt{variable-cell} has been modified so that it contains
+  a value that is different from the value contained in in the
+  \texttt{cdr} slot of that \texttt{cons} cell.  The second return
+  value is then the value of the \texttt{car} slot of that
+  \texttt{cons} cell.
+\end{enumerate}
+
 \Defgeneric {symbol-macro} {client environment symbol}
 
 This function returns two values.  The first value is a macro
