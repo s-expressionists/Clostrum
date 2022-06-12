@@ -409,13 +409,14 @@
            (setf (constant-variable-p entry) t)
            (setf (car cell) new-value))))))
 
+;;; FIXME: This method does not yet correspond to the documentation.
+;;; Client code needs to be adapted first.
 (defmethod env:special-variable
-    (client
-     (env run-time-environment)
-     symbol)
-  (alx:if-let ((entry (variable-entry symbol env)))
-    (values (special-variable-p entry) (car (cell entry)))
-    (values nil nil)))
+    (client (environment run-time-environment) symbol)
+  (let ((entry (variable-entry symbol environment)))
+    (if (null entry)
+        (values nil nil)
+        (values t (car (cell entry))))))
 
 (defmethod (setf env:special-variable)
     (new-value
