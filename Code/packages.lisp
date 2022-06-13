@@ -17,6 +17,7 @@
    ;;
    #:constant-variable #:special-variable #:symbol-macro
    #:variable-type #:variable-description
+   #:variable-value
    #:variable-cell
    ;;
    #:find-class #:class-description #:setf-expander #:type-expander
