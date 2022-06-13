@@ -436,6 +436,14 @@
            (when init-p
              (setf (car (cell entry)) new-value))))))
 
+(defmethod env:variable-value
+    (client (environment run-time-environment) name)
+  (let ((entry (variable-entry name environment)))
+    (if (or (null entry)
+            (eq (car (cell entry)) (cdr (cell entry))))
+        (values nil nil)
+        (values t (car (cell entry))))))
+
 (defmethod env:symbol-macro
     (client
      (env run-time-environment)
