@@ -27,6 +27,9 @@
 (defgeneric env:special-variable (client environment symbol))
 (defgeneric (setf env:special-variable)
     (new-value client environment symbol init-p))
+
+(defgeneric env:variable-value (client environment symbol))
+
 (define-accessor env:symbol-macro (client environment symbol))
 (define-accessor env:variable-type (client environment symbol))
 
