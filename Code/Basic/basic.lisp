@@ -172,10 +172,8 @@
 
 ;;; Functions.
 (defmethod env:function-cell
-    (client
-     (env run-time-environment)
-     name)
-  (cell (ensure-function-entry name env)))
+    (client (environment run-time-environment) name)
+  (cell (ensure-function-entry name environment)))
 
 (defun %special-operator (environment name)
   (let ((entry (function-entry name environment)))
@@ -311,43 +309,34 @@
   (setf (%function-type environment name) new-value))
 
 (defmethod env:function-inline
-    (client
-     (env run-time-environment)
-     name)
-  (alx:if-let ((entry (function-entry name env)))
+    (client (environment run-time-environment) name)
+  (alx:if-let ((entry (function-entry name environment)))
     (and (function-bound-p entry)
          (function-inline entry))
     nil))
 
 (defmethod (setf env:function-inline)
-    (new-value
-     client
-     (env run-time-environment)
-     name)
+    (new-value client (environment run-time-environment) name)
   (when (null new-value)
-    (alx:when-let ((entry (function-entry name env)))
+    (alx:when-let ((entry (function-entry name environment)))
       (if (function-bound-p entry)
           (setf (function-inline entry) nil)
           (error 'env:attempt-to-declare-inline-a-non-existing-function
                  :function-name name)))
     (return-from env:function-inline))
-  (let ((entry (ensure-function-entry name env)))
+  (let ((entry (ensure-function-entry name environment)))
     (if (function-bound-p entry)
         (setf (function-inline entry) new-value)
         (error 'env:attempt-to-declare-inline-a-non-existing-function
                :function-name name))))
 
 (defmethod env:function-description
-    (client
-     (env run-time-environment)
-     name)
+    (client (environment run-time-environment) name)
   nil)
 
 (defmethod env:setf-expander
-    (client
-     (env run-time-environment)
-     symbol)
-  (alx:when-let ((entry (function-entry symbol env)))
+    (client (environment run-time-environment) symbol)
+  (alx:when-let ((entry (function-entry symbol environment)))
     (setf-expander entry)))
 
 (defmethod (setf env:setf-expander)
