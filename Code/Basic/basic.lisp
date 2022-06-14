@@ -174,8 +174,8 @@
 (defmethod env:function-cell
     (client
      (env run-time-environment)
-     function-name)
-  (cell (ensure-function-entry function-name env)))
+     name)
+  (cell (ensure-function-entry name env)))
 
 (defun %special-operator (environment name)
   (let ((entry (function-entry name environment)))
@@ -313,8 +313,8 @@
 (defmethod env:function-inline
     (client
      (env run-time-environment)
-     function-name)
-  (alx:if-let ((entry (function-entry function-name env)))
+     name)
+  (alx:if-let ((entry (function-entry name env)))
     (and (function-bound-p entry)
          (function-inline entry))
     nil))
@@ -323,24 +323,24 @@
     (new-value
      client
      (env run-time-environment)
-     function-name)
+     name)
   (when (null new-value)
-    (alx:when-let ((entry (function-entry function-name env)))
+    (alx:when-let ((entry (function-entry name env)))
       (if (function-bound-p entry)
           (setf (function-inline entry) nil)
           (error 'env:attempt-to-declare-inline-a-non-existing-function
-                 :function-name function-name)))
+                 :function-name name)))
     (return-from env:function-inline))
-  (let ((entry (ensure-function-entry function-name env)))
+  (let ((entry (ensure-function-entry name env)))
     (if (function-bound-p entry)
         (setf (function-inline entry) new-value)
         (error 'env:attempt-to-declare-inline-a-non-existing-function
-               :function-name function-name))))
+               :function-name name))))
 
 (defmethod env:function-description
     (client
      (env run-time-environment)
-     function-name)
+     name)
   nil)
 
 (defmethod env:setf-expander
