@@ -2,6 +2,5 @@
 
 (defpackage #:clostrum/test
   (:use #:cl #:5am)
-  (:local-nicknames (#:env #:clostrum)
-                    (#:alx #:alexandria))
+  (:local-nicknames (#:env #:clostrum))
   (:export #:run-tests))
