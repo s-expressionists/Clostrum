@@ -330,8 +330,10 @@
 
 (defmethod env:setf-expander
     (client (environment run-time-environment) symbol)
-  (alx:when-let ((entry (function-entry symbol environment)))
-    (setf-expander entry)))
+  (let ((entry (function-entry symbol environment)))
+    (if (null entry)
+        nil
+        (setf-expander entry))))
 
 (defmethod (setf env:setf-expander)
     (new-value client (environment run-time-environment) symbol)
