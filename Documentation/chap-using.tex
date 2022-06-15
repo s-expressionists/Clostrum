@@ -3,6 +3,22 @@
 There are several use cases for \sysname{} depending on the type and
 level of ambition of the client.
 
+\section{Implementing standard environment functions}
+
+Unfortunately, the \commonlisp{} standard does not contain a separate
+chapter dedicated environment functions.%
+\footnote{The chapter of the standard
+  entitled ``Environment'' has to do with the computational environment
+  of the \commonlisp{} system.}
+So for example the function \texttt{symbol-function} is specified in
+the chapter entitled ``Symbols'', whereas the function
+\texttt{fdefinition} is specified in the chapter entitled ``Data and
+Control Flow'', even though the two are very much related.
+
+In this section, we describe how a \commonlisp{} implementation could
+implement the standard environment functions using a \sysname{}
+run-time environment as a first-class global environment.
+
 \section{Compilation environment only}
 
 An existing (perhaps relatively new) \commonlisp{} implementation that
