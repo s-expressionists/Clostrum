@@ -2,8 +2,7 @@
 
 (defpackage #:clostrum-basic
   (:use #:cl)
-  (:local-nicknames (#:env #:clostrum)
-                    (#:alx #:alexandria))
+  (:local-nicknames (#:env #:clostrum))
   (:shadow #:macro-function
            #:compiler-macro-function
            #:class)
