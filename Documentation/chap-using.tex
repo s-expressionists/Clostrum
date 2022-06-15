@@ -17,7 +17,26 @@ Control Flow'', even though the two are very much related.
 
 In this section, we describe how a \commonlisp{} implementation could
 implement the standard environment functions using a \sysname{}
-run-time environment as a first-class global environment.
+run-time environment as a first-class global environment.  To access
+the \sysname{} run-time environment, we are going to assume it is
+available in the host special variable \texttt{*environment*}, but in
+a real system, accessing the value of a special variable may require
+access to the global environment, so some other mechanism might be
+needed.
+
+We do not include code for error checking in our examples.  In many
+cases, the host \commonlisp{} system may choose to include or exclude
+error checking depending on the value of the \texttt{safety} optimize
+quality.
+
+\subsection{\texttt{fdefinition} and \texttt{symbol-function}}
+
+The standard leaves several decisions about the behavior of
+\texttt{fdefinition} up to the implementation.  It is specified that a
+function object is returned if the name is defined as a function.  If
+the name is defined as a macro or a special operator, the standard
+specified that a true value must be returned, but it leaves the nature
+of the value up to the implementation.
 
 \section{Compilation environment only}
 
