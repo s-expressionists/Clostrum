@@ -317,18 +317,12 @@
 
 (defmethod (setf env:function-inline)
     (new-value client (environment run-time-environment) name)
-  (when (null new-value)
-    (alx:when-let ((entry (function-entry name environment)))
-      (if (function-bound-p entry)
-          (setf (function-inline entry) nil)
-          (error 'env:attempt-to-declare-inline-a-non-existing-function
-                 :function-name name)))
-    (return-from env:function-inline))
-  (let ((entry (ensure-function-entry name environment)))
-    (if (function-bound-p entry)
-        (setf (function-inline entry) new-value)
-        (error 'env:attempt-to-declare-inline-a-non-existing-function
-               :function-name name))))
+  (let ((entry (if (null new-value)
+                   (function-entry name environment)
+                   (ensure-function-entry name environment))))
+    (unless (null entry)
+      (setf (function-inline entry) new-value))
+    new-value))
 
 (defmethod env:function-description
     (client (environment run-time-environment) name)
