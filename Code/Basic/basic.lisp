@@ -337,19 +337,20 @@
 
 (defmethod (setf env:setf-expander)
     (new-value client (environment run-time-environment) symbol)
-  (when (null new-value)
-    (alx:when-let ((entry (function-entry symbol environment)))
-      (setf (setf-expander entry) nil))
-    (return-from env:setf-expander))
-  (alx:if-let ((entry (function-entry symbol environment)))
-    (if (or (function-bound-p entry)
-            (macro-function entry))
-        (setf (setf-expander entry) new-value)
-        (error 'env:attempt-to-define-a-setf-expander-of-non-existing-function-or-macro
-               :name symbol))
-    (error 'env:attempt-to-define-a-setf-expander-of-non-existing-function-or-macro
-           :name symbol)))
-
+  (let ((entry (function-entry symbol environment)))
+    (cond ((null new-value)
+           ;; We don't signal an error in any situation when NEW-VALUE
+           ;; is NIL.
+           (unless (null entry)
+             (setf (setf-expander entry) nil)))
+          ((or (null entry)
+               (and (null (macro-function entry))
+                    (not (function-bound-p entry))))
+           (error 'env:attempt-to-define-a-setf-expander-of-non-existing-function-or-macro
+                  :name symbol))
+          (t
+           (setf (setf-expander entry) new-value))))
+  new-value)
 
 ;;; Variables.
 (defmethod env:variable-cell
