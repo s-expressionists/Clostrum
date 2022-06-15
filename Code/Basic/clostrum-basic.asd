@@ -11,7 +11,7 @@
 
 (defsystem "clostrum-basic"
   :description "Example implementation of the Clostrum protocol."
-  :depends-on ("clostrum" "alexandria")
+  :depends-on ("clostrum")
   :components
   ((:file "packages")
    (:file "run-time-environment")
