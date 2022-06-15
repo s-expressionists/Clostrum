@@ -310,10 +310,10 @@
 
 (defmethod env:function-inline
     (client (environment run-time-environment) name)
-  (alx:if-let ((entry (function-entry name environment)))
-    (and (function-bound-p entry)
-         (function-inline entry))
-    nil))
+  (let ((entry (function-entry name environment)))
+    (if (null entry)
+        nil
+        (function-inline entry))))
 
 (defmethod (setf env:function-inline)
     (new-value client (environment run-time-environment) name)
