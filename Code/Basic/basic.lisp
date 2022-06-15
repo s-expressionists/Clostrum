@@ -340,15 +340,12 @@
     (setf-expander entry)))
 
 (defmethod (setf env:setf-expander)
-    (new-value
-     client
-     (env run-time-environment)
-     symbol)
+    (new-value client (environment run-time-environment) symbol)
   (when (null new-value)
-    (alx:when-let ((entry (function-entry symbol env)))
+    (alx:when-let ((entry (function-entry symbol environment)))
       (setf (setf-expander entry) nil))
     (return-from env:setf-expander))
-  (alx:if-let ((entry (function-entry symbol env)))
+  (alx:if-let ((entry (function-entry symbol environment)))
     (if (or (function-bound-p entry)
             (macro-function entry))
         (setf (setf-expander entry) new-value)
@@ -398,11 +395,7 @@
          (special-variable-p entry))))
 
 (defmethod (setf env:special-variable)
-    (new-value
-     client
-     (environment run-time-environment)
-     symbol
-     init-p)
+    (new-value client (environment run-time-environment) symbol init-p)
   (let ((entry (ensure-variable-entry symbol environment)))
     (cond ((constant-variable-p entry)
            (error 'env:attempt-to-define-special-variable-for-existing-constant
@@ -424,9 +417,7 @@
         (values t (car (cell entry))))))
 
 (defmethod env:symbol-macro
-    (client
-     (environment run-time-environment)
-     symbol)
+    (client (environment run-time-environment) symbol)
   (let ((entry (variable-entry symbol environment)))
     (if (or (null entry) (not (symbol-macro-p entry)))
         (values nil nil)
@@ -434,10 +425,7 @@
           (values expander (funcall expander symbol environment))))))
 
 (defmethod (setf env:symbol-macro)
-    (new-value
-     client
-     (environment run-time-environment)
-     symbol)
+    (new-value client (environment run-time-environment) symbol)
   (let ((entry (ensure-variable-entry symbol environment)))
     (cond
       ((constant-variable-p entry)
@@ -451,9 +439,7 @@
        (setf (car (cell entry)) (constantly new-value))))))
 
 (defmethod env:variable-type
-    (client
-     (environment run-time-environment)
-     symbol)
+    (client (environment run-time-environment) symbol)
   (alx:if-let ((entry (variable-entry symbol environment)))
     (if (constant-variable-p entry)
         (type-of (car (cell entry)))
@@ -462,10 +448,7 @@
     t))
 
 (defmethod (setf env:variable-type)
-    (new-value
-     client
-     (environment run-time-environment)
-     symbol)
+    (new-value client (environment run-time-environment) symbol)
   (let ((entry (ensure-variable-entry symbol environment)))
     (if (constant-variable-p entry)
         (error 'env:attempt-to-proclaim-the-type-of-a-constant-variable
@@ -473,23 +456,16 @@
         (setf (variable-type entry) new-value))))
 
 (defmethod env:variable-description
-    (client
-     (environment run-time-environment)
-     symbol)
+    (client (environment run-time-environment) symbol)
   nil)
 
 (defmethod env:type-expander
-    (client
-     (environment run-time-environment)
-     symbol)
+    (client (environment run-time-environment) symbol)
   (alx:when-let ((entry (variable-entry symbol environment)))
     (type-expander entry)))
 
 (defmethod (setf env:type-expander)
-    (new-value
-     client
-     (environment run-time-environment)
-     symbol)
+    (new-value client (environment run-time-environment) symbol)
   (let ((entry (ensure-variable-entry symbol environment)))
     (setf (type-expander entry) new-value)))
 
@@ -497,9 +473,7 @@
 ;;; Other.
 
 (defmethod env:find-class
-    (client
-     (environment run-time-environment)
-     symbol)
+    (client (environment run-time-environment) symbol)
   (let ((entry (gethash symbol (classes environment))))
     (values (if (null entry)
                 nil
@@ -516,30 +490,20 @@
        ,new-value-var)))
 
 (defmethod (setf env:find-class)
-    (new-value
-     client
-     (environment run-time-environment)
-     symbol)
+    (new-value client (environment run-time-environment) symbol)
   (update-class-information (symbol environment new-value)
     :class new-value))
 
 (defmethod env:class-description
-    (client
-     (environment run-time-environment)
-     symbol)
+    (client (environment run-time-environment) symbol)
   nil)
 
 (defmethod env:find-package
-    (client
-     (environment run-time-environment)
-     name)
+    (client (environment run-time-environment) name)
   (values (gethash name (packages environment))))
 
 (defmethod (setf env:find-package)
-    (new-package
-     client
-     (environment run-time-environment)
-     name)
+    (new-package client (environment run-time-environment) name)
   (if (null new-package)
       (remhash name (packages environment))
       (setf (gethash name (packages environment)) new-package)))
@@ -548,34 +512,25 @@
 ;;; Declarations.
 
 (defmethod env:proclamation
-    (client
-     (environment run-time-environment)
-     name)
+    (client (environment run-time-environment) name)
   (values (gethash name (declarations environment))))
 
 (defmethod (setf env:proclamation)
-    (new-value
-     client
-     (environment run-time-environment)
-     name)
+    (new-value client (environment run-time-environment) name)
   (cond ((null new-value)
          (remhash name (declarations environment)))
         (t
          (setf (gethash name (declarations environment)) new-value))))
 
 (defmethod env:map-defined-functions
-    (client
-     (environment run-time-environment)
-     function)
+    (client (environment run-time-environment) function)
   (maphash (lambda (name function-entry)
              (when (function-bound-p function-entry)
                (funcall function name (car (cell function-entry)))))
            (functions environment)))
 
 (defmethod env:map-defined-classes
-    (client
-     (environment run-time-environment)
-     function)
+    (client (environment run-time-environment) function)
   (maphash (lambda (name entry)
              (let ((class (class entry)))
                (unless (null class)
