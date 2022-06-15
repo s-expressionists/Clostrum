@@ -437,12 +437,14 @@
 
 (defmethod env:variable-type
     (client (environment run-time-environment) symbol)
-  (alx:if-let ((entry (variable-entry symbol environment)))
-    (if (constant-variable-p entry)
-        (type-of (car (cell entry)))
-        (or (variable-type entry)
-            t))
-    t))
+  (let ((entry (variable-entry symbol environment)))
+    (cond ((null entry)
+           t)
+          ((constant-variable-p entry)
+           (type-of (car (cell entry))))
+          (t
+           (let ((type (variable-type entry)))
+             (if (null type) t type))))))
 
 (defmethod (setf env:variable-type)
     (new-value client (environment run-time-environment) symbol)
@@ -458,8 +460,10 @@
 
 (defmethod env:type-expander
     (client (environment run-time-environment) symbol)
-  (alx:when-let ((entry (variable-entry symbol environment)))
-    (type-expander entry)))
+  (let ((entry (variable-entry symbol environment)))
+    (if (null entry)
+        nil
+        (type-expander entry))))
 
 (defmethod (setf env:type-expander)
     (new-value client (environment run-time-environment) symbol)
