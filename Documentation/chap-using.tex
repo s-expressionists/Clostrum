@@ -39,11 +39,15 @@ special operator in the global environment.  We use the \sysname{}
 functions \texttt{fdefinition}, \texttt{macro-function}, and
 \texttt{special-operator} to query the environment.  Each of these
 functions returns \texttt{nil} if no definition is present, so if all
-of them return \texttt{nil}, then the name is not fbound.
+of them return \texttt{nil}, then the name is not fbound.  The
+standard says that, in safe code, the implementation must check that
+the name is a valid function name, and we indicate the place for that
+verification in a comment.
 
 \begin{verbatim}
 (defun fboundp (name)
-  ;; Optionally check that NAME is a valid function name.
+  ;; At least in safe code, check that NAME is a valid
+  ;; function name.
   (not (and (null (env:fdefinition *c* *e* name)))
             (null (env:macro-function *c* *e* name))
             (null (env:special-operator *c* *e* name))))
@@ -56,7 +60,37 @@ The standard leaves several decisions about the behavior of
 function object is returned if the name is defined as a function.  If
 the name is defined as a macro or a special operator, the standard
 specified that a true value must be returned, but it leaves the nature
-of the value up to the implementation.
+of the value up to the implementation.  In our example implementation,
+we assume that the \commonlisp{} implementation calls the \sysname{}
+function \texttt{(setf special-operator)} with a value that is
+acceptable as a return value for the standard function
+\texttt{fdefinition} when the name is that of a special operator.
+
+\begin{verbatim}
+(defun fdefinition (name)
+  ;; At least in safe code, check that NAME is a valid
+  ;; function name.
+  (let ((function (env:fdefinition *c* *e* name)))
+    (if (not (null function))
+        function
+        (let ((macro (env:macro-function *c* *e* name)))
+          (if (not (null macro))
+              `(:macro ,macro)
+              (let ((special (env:special-operator *c* *e* name)))
+                (if (not (null special))
+                    special
+                    (error 'undefined-function ...))))))))
+\end{verbatim}
+
+The standard function \texttt{symbol-function} is like
+\texttt{fdefinition} except that the name is restricted to be a
+symbol, which the implementation must verify in safe code.
+
+\begin{verbatim}
+(defun symbol-function (name)
+  ;; At least in safe code, check that NAME is a symbol
+  (fdefinition name))
+\end{verbatim}
 
 \section{Compilation environment only}
 
