@@ -92,6 +92,18 @@ symbol, which the implementation must verify in safe code.
   (fdefinition name))
 \end{verbatim}
 
+\subsection{\texttt{macro-function}}
+
+The \sysname{} function behaves the same way as the standard function.
+
+\begin{verbatim}
+(defun macro-function (symbol &optional environment)
+  (env:macro-function 
+    *c* 
+    (if (null environment) *e* environment)
+    symbol))
+\end{verbatim}
+
 \section{Compilation environment only}
 
 An existing (perhaps relatively new) \commonlisp{} implementation that
