@@ -104,6 +104,16 @@ The \sysname{} function behaves the same way as the standard function.
     symbol))
 \end{verbatim}
 
+\subsection{\texttt{special-operator-p}}
+
+The \sysname{} function behaves the same way as the standard function.
+
+\begin{verbatim}
+(defun special-operator-p (symbol)
+  ;; At least in safe mode, check that SYMBOL is a symbol.
+  (env:special-operator-p *c* *e* symbol))   
+\end{verbatim}
+
 \section{Compilation environment only}
 
 An existing (perhaps relatively new) \commonlisp{} implementation that
