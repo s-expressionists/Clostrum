@@ -98,8 +98,8 @@ The \sysname{} function behaves the same way as the standard function.
 
 \begin{verbatim}
 (defun macro-function (symbol &optional environment)
-  (env:macro-function 
-    *c* 
+  (env:macro-function
+    *c*
     (if (null environment) *e* environment)
     symbol))
 \end{verbatim}
@@ -111,7 +111,7 @@ The \sysname{} function behaves the same way as the standard function.
 \begin{verbatim}
 (defun special-operator-p (symbol)
   ;; At least in safe mode, check that SYMBOL is a symbol.
-  (env:special-operator-p *c* *e* symbol))   
+  (env:special-operator-p *c* *e* symbol))
 \end{verbatim}
 
 \section{Compilation environment only}
