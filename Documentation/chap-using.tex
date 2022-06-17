@@ -137,6 +137,31 @@ The \sysname{} function behaves the same way as the standard function.
     symbol))
 \end{verbatim}
 
+\subsection{\texttt{(setf macro-function)}}
+
+The standard says that the consequences are undefined if the
+\texttt{environment} optional argument is non-\texttt{nil}.  In this
+example, we use that freedom to make it possible to pass an explicit
+run-time environment.
+
+The \sysname{} function \texttt{(setf macro-function)} signals an
+error if the name has a definition as a function, but the standard
+function just results in any pre-existing function definition being
+lost.  For that reason, we start by calling the \sysname{} function
+\texttt{(setf fdefinition)} with a value of \texttt{nil}.
+
+\begin{verbatim}
+(defun (setf macro-function)
+    (new-function symbol &optional environment)
+  (check-type symbol symbol)
+  (check-type new-function function)
+  (let ((environment (if (null environment) *e* environment)))
+    ;; We must make sure that SYMBOL does not have
+    ;; a definition as a function.
+    (setf (env:fdefinition *c* environment) nil)
+    (setf (env:macro-function *c* environment) new-function)))
+\end{verbatim}
+
 \subsection{\texttt{special-operator-p}}
 
 The \sysname{} function behaves the same way as the standard function.
