@@ -25,11 +25,15 @@ access to the global environment, so some other mechanism might be
 needed.  Similarly, we assume that some kind of client object is
 available in the special variable \texttt{*c*}.
 
-We do not include code for error checking in our examples.  In many
-cases, the host \commonlisp{} system may choose to include or exclude
-error checking depending on the value of the \texttt{safety} optimize
-quality.  In our examples, we use the package prefix \texttt{env:} to
-refer to \sysname{} symbols.
+In many cases, the \commonlisp{} standard does not specify that an
+error must be signaled in situations that are not well defined, and in
+some cases, it specifies that an error must be signaled, but only in
+safe code.  To simplify our examples, we always include code to signal
+an error i such situations, but our code may not be very specific in
+terms of what error condition is signaled.
+
+In our examples, we use the package prefix \texttt{env:} to refer to
+\sysname{} symbols.
 
 \subsection{\texttt{fboundp}}
 
@@ -90,6 +94,39 @@ symbol, which the implementation must verify in safe code.
 (defun symbol-function (name)
   ;; At least in safe code, check that NAME is a symbol
   (fdefinition name))
+\end{verbatim}
+
+\subsection{\texttt{(setf fdefinition)} and \texttt{(setf symbol-function)}}
+
+In the ``Notes'' section of the \commonlisp{} standard, it is said
+that ``It is an error to set the \texttt{fdefinition} of a function
+name to a symbol, a list, or the value returned by
+\texttt{fdefinition} on the name of a macro or special form.''
+However, the ``Notes'' section is not normative, and there are no
+exceptional situations listed that related to the value of the
+\textit{new-definition} argument.  This is a case where the standard
+does not specify some error situations that might seem reasonable.
+Our example here assumes that \textit{new-definition} must be a
+function, or else an error is signaled.
+
+Also, in the ``Notes'' section, it is indicated that \texttt{(setf
+  fdefinition)} can be used only when \textit{function-name} does not
+represent a special operator, but no exceptional situation for this
+case is indicated.  In our example, we signal an error for this case.
+
+Furthermore, we assume that client code always wants to check that
+\textit{function-name} is a valid function name, and that the client
+has a global type definition \texttt{function-name} for function
+names.
+
+\begin{verbatim}
+(defun (setf fdefinition) (new-definition function-name)
+  (check-type function-name function-name)
+  (check-type new-definition function)
+  (if (env:special-operator *c* *e* function-name)
+      (error ...)
+      (setf (env:fdefinition *c* *e* function-name)
+            new-definition)))
 \end{verbatim}
 
 \subsection{\texttt{macro-function}}
