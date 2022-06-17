@@ -30,7 +30,10 @@ error must be signaled in situations that are not well defined, and in
 some cases, it specifies that an error must be signaled, but only in
 safe code.  To simplify our examples, we always include code to signal
 an error i such situations, but our code may not be very specific in
-terms of what error condition is signaled.
+terms of what error condition is signaled.  When the standard requires
+an argument to an operator to be a function name, we assume that the
+client has a global type definition \texttt{function-name} for
+function names.
 
 In our examples, we use the package prefix \texttt{env:} to refer to
 \sysname{} symbols.
@@ -45,13 +48,12 @@ functions \texttt{fdefinition}, \texttt{macro-function}, and
 functions returns \texttt{nil} if no definition is present, so if all
 of them return \texttt{nil}, then the name is not fbound.  The
 standard says that, in safe code, the implementation must check that
-the name is a valid function name, and we indicate the place for that
-verification in a comment.
+the name is a valid function name, and we include code to check that
+this is the case.
 
 \begin{verbatim}
 (defun fboundp (name)
-  ;; At least in safe code, check that NAME is a valid
-  ;; function name.
+  (check-type name function-name)
   (not (and (null (env:fdefinition *c* *e* name)))
             (null (env:macro-function *c* *e* name))
             (null (env:special-operator *c* *e* name))))
@@ -72,8 +74,7 @@ acceptable as a return value for the standard function
 
 \begin{verbatim}
 (defun fdefinition (name)
-  ;; At least in safe code, check that NAME is a valid
-  ;; function name.
+  (check-type name function-name)
   (let ((function (env:fdefinition *c* *e* name)))
     (if (not (null function))
         function
@@ -92,7 +93,7 @@ symbol, which the implementation must verify in safe code.
 
 \begin{verbatim}
 (defun symbol-function (name)
-  ;; At least in safe code, check that NAME is a symbol
+  (check-type name symbol)
   (fdefinition name))
 \end{verbatim}
 
@@ -113,11 +114,6 @@ Also, in the ``Notes'' section, it is indicated that \texttt{(setf
   fdefinition)} can be used only when \textit{function-name} does not
 represent a special operator, but no exceptional situation for this
 case is indicated.  In our example, we signal an error for this case.
-
-Furthermore, we assume that client code always wants to check that
-\textit{function-name} is a valid function name, and that the client
-has a global type definition \texttt{function-name} for function
-names.
 
 \begin{verbatim}
 (defun (setf fdefinition) (new-definition function-name)
