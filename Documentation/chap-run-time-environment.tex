@@ -65,7 +65,9 @@ function named \texttt{(setf cl:fdefinition)}.
 
 No checks are made for the validity of \textit{new-def}.  Only the
 definition of \texttt{name} as a real function (and not as a
-macro or a special operator) is influenced.
+macro or a special operator) is influenced by this function.  No
+checks are made to determine whether \textit{name} is already defined
+as a macro or as a special operator.
 
 If \textit{name} already names a function, then the previous
 definition is lost.  If \texttt{new-def} is \texttt{nil} then
