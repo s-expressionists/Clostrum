@@ -115,13 +115,22 @@ Also, in the ``Notes'' section, it is indicated that \texttt{(setf
 represent a special operator, but no exceptional situation for this
 case is indicated.  In our example, we signal an error for this case.
 
+The standard says that this function replaces a global function
+definition.  We take that to mean that, if \textit{function-name} is
+the name of a macro, then that definition is lost and replaced by the
+definition of \textit{function-name} as a function.  However,
+\sysname{} does not automatically remove any existing definition of
+the name as a macro, so we need to do that in the standard function.
+
 \begin{verbatim}
 (defun (setf fdefinition) (new-definition function-name)
   (check-type function-name function-name)
   (check-type new-definition function)
   (if (env:special-operator *c* *e* function-name)
       (error ...)
-      (setf (env:fdefinition *c* *e* function-name)
+      (setf (env:macro-function *c* *e* function-name)
+            nil
+            (env:fdefinition *c* *e* function-name)
             new-definition)))
 \end{verbatim}
 
