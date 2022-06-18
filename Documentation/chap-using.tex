@@ -181,6 +181,18 @@ The \sysname{} function behaves the same way as the standard function.
   (env:special-operator-p *c* *e* symbol))
 \end{verbatim}
 
+\subsection{\texttt{compiler-macro-function}}
+
+The \sysname{} function behaves the same way as the standard function.
+
+\begin{verbatim}
+(defun compiler-macro-function (symbol &optional environment)
+  (env:compiler-macro-function
+    *c*
+    (if (null environment) *e* environment)
+    symbol))
+\end{verbatim}
+
 \section{Compilation environment only}
 
 An existing (perhaps relatively new) \commonlisp{} implementation that
