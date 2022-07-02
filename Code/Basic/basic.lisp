@@ -285,7 +285,8 @@
         nil
         (function-type entry))))
 
-(defun (setf %function-type) (new-value environment name)
+(defmethod (setf env:function-type)
+    (new-value client (environment run-time-environment) name)
   (let ((entry (if (null new-value)
                    (function-entry name environment)
                    (ensure-function-entry name environment))))
@@ -299,10 +300,6 @@
             (t
              (setf (function-type entry) new-value)))))
   new-value)
-
-(defmethod (setf env:function-type)
-    (new-value client (environment run-time-environment) name)
-  (setf (%function-type environment name) new-value))
 
 (defmethod env:function-inline
     (client (environment run-time-environment) name)
