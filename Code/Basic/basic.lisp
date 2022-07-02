@@ -278,16 +278,12 @@
     (new-value client (environment run-time-environment) name)
   (setf (%compiler-macro-function environment name) new-value))
 
-(defun %function-type (environment name)
-  (let ((entry (function-entry name environment)))
-    (if (or (null entry) (not (function-bound-p entry)))
-        nil
-        (let ((type (function-type entry)))
-          (if (null type) t type)))))
-
 (defmethod env:function-type
     (client (environment run-time-environment) name)
-  (%function-type environment name))
+  (let ((entry (function-entry name environment)))
+    (if (null entry)
+        nil
+        (function-type entry))))
 
 (defun (setf %function-type) (new-value environment name)
   (let ((entry (if (null new-value)
