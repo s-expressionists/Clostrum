@@ -256,27 +256,21 @@
     (new-value client (environment run-time-environment) name)
   (setf (%macro-function environment name) new-value))
 
-(defun %compiler-macro-function (environment name)
+(defmethod env:compiler-macro-function
+    (client (environment run-time-environment) name)
   (let ((entry (function-entry name environment)))
     (if (null entry)
         nil
         (compiler-macro-function entry))))
 
-(defmethod env:compiler-macro-function
-    (client (environment run-time-environment) name)
-  (%compiler-macro-function environment name))
-
-(defun (setf %compiler-macro-function) (new-value environment name)
+(defmethod (setf env:compiler-macro-function)
+    (new-value client (environment run-time-environment) name)
   (let ((entry (if (null new-value)
                    (function-entry name environment)
                    (ensure-function-entry name environment))))
     (unless (null entry)
       (setf (compiler-macro-function entry) new-value)))
   new-value)
-
-(defmethod (setf env:compiler-macro-function)
-    (new-value client (environment run-time-environment) name)
-  (setf (%compiler-macro-function environment name) new-value))
 
 (defmethod env:function-type
     (client (environment run-time-environment) name)
