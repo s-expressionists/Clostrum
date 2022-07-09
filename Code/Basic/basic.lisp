@@ -324,20 +324,12 @@
 
 (defmethod (setf env:setf-expander)
     (new-value client (environment run-time-environment) symbol)
-  (let ((entry (function-entry symbol environment)))
-    (cond ((null new-value)
-           ;; We don't signal an error in any situation when NEW-VALUE
-           ;; is NIL.
-           (unless (null entry)
-             (setf (setf-expander entry) nil)))
-          ((or (null entry)
-               (and (null (macro-function entry))
-                    (not (function-bound-p entry))))
-           (error 'env:attempt-to-define-a-setf-expander-of-non-existing-function-or-macro
-                  :name symbol))
-          (t
-           (setf (setf-expander entry) new-value))))
-  new-value)
+  (let ((entry (if (null new-value)
+                   (function-entry name environment)
+                   (ensure-function-entry name environment))))
+    (unless (null entry)
+      (setf (setf-expander entry) new-value))
+    new-value))
 
 ;;; Variables.
 (defmethod env:variable-cell
