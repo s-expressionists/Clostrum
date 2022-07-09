@@ -323,7 +323,7 @@
         (setf-expander entry))))
 
 (defmethod (setf env:setf-expander)
-    (new-value client (environment run-time-environment) symbol)
+    (new-value client (environment run-time-environment) name)
   (let ((entry (if (null new-value)
                    (function-entry name environment)
                    (ensure-function-entry name environment))))
