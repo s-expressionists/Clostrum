@@ -10,10 +10,12 @@ separate package named \texttt{clostrum-trucler}.
 
 \section{\trucler{} methods}
 
+\defmethod {describe-variable} {client (environment
+  {\tt run-time-environment}) \\ name}
 \Defmethod {describe-variable} {client (environment
-  compilation-environment) \\ name}
+  {\tt compilation-environment}) \\ name}
 
-This method makes an instance of an appropriate \trucler{} class
+These methods make an instance of an appropriate \trucler{} class
 as follows:
 
 \begin{itemize}
@@ -28,10 +30,12 @@ as follows:
   \texttt{global-symbol-macro-description} is made.
 \end{itemize}
 
+\defmethod {describe-function} {client (environment
+  {\tt run-time-environment}) \\ name}
 \Defmethod {describe-function} {client (environment
-  compilation-environment) \\ name}
+  {\tt compilation-environment}) \\ name}
 
-This method makes an instance of an appropriate \trucler{} class
+These methods make an instance of an appropriate \trucler{} class
 as follows:
 
 \begin{itemize}
@@ -44,28 +48,24 @@ as follows:
 \item If \textit{name} is the name of a macro in
   \textit{environment}, then an instance of the \trucler{} class
   \texttt{global-macro-description} is made.
+\item If \textit{name} is the name of a special operator in
+  \textit{environment}, then an instance of the \trucler{} class
+  \texttt{special-operator-description} is made.
 \end{itemize}
 
 \Defmethod {describe-block} {client (environment
-  compilation-environment) \\ name}
+  {\tt compilation-environment}) \\ name}
 
 This method returns \texttt{nil}.
 
 \Defmethod {describe-tag} {client (environment
-  compilation-environment) \\ name}
+  {\tt compilation-environment}) \\ name}
 
 This method returns \texttt{nil}.
 
+\defmethod {global-environment} {client (environment
+  {\tt run-time-environment})}
 \Defmethod {global-environment} {client (environment
-  compilation-environment)}
+  {\tt compilation-environment})}
 
-This method returns \textit{environment}.
-
-\Defmethod {macro-function} {client (environment
-  compilation-environment) \\ symbol}
-
-\Defmethod {compiler-macro-function} {client (environment
-  compilation-environment) \\ function-name}
-
-\Defmethod {symbol-macro-expansion} {client (environment
-  compilation-environment) \\ symbol}
+These methods return \textit{environment}.
