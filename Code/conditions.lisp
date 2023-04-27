@@ -1,85 +1,25 @@
 (cl:in-package #:clostrum-implementation)
 
-(define-condition env:attempt-to-define-special-operator-for-existing-function
-    (error)
-  ((%function-name :initarg :function-name :reader function-name))
-  (:report (lambda (condition stream)
-             (format stream
-                     "Attempt to define ~s as a special operator,~@
-                      but it already names a function."
-                     (function-name condition)))))
-
-(define-condition env:attempt-to-define-special-operator-for-existing-macro
-    (error)
-  ((%function-name :initarg :function-name :reader function-name))
-  (:report (lambda (condition stream)
-             (format stream
-                     "Attempt to define ~s as a special operator,~@
-                      but it already names a macro."
-                     (function-name condition)))))
-
-(define-condition env:attempt-to-define-macro-for-existing-function
-    (error)
-  ((%function-name :initarg :function-name :reader function-name))
-  (:report (lambda (condition stream)
-             (format stream
-                     "Attempt to define ~s as a macro,~@
-                      but it already names a function."
-                     (function-name condition)))))
-
-(define-condition env:attempt-to-define-function-for-existing-special-operator
-    (error)
-  ((%function-name :initarg :function-name :reader function-name))
-  (:report (lambda (condition stream)
-             (format stream
-                     "Attempt to define ~s as a function,~@
-                      but it already names a special operator."
-                     (function-name condition)))))
-
-(define-condition env:attempt-to-define-function-for-existing-macro
-    (error)
-  ((%function-name :initarg :function-name :reader function-name))
-  (:report (lambda (condition stream)
-             (format stream
-                     "Attempt to define ~s as a function,~@
-                      but it already names a macro."
-                     (function-name condition)))))
-
-(define-condition env:attempt-to-set-function-type-of-special-operator
-    (error)
-  ((%function-name :initarg :function-name :reader function-name))
-  (:report (lambda (condition stream)
-             (format stream
-                     "Attempt to set the function type of ~s~@
-                      but it already names a special operator."
-                     (function-name condition)))))
-
-(define-condition env:attempt-to-set-function-type-of-macro
-    (error)
-  ((%function-name :initarg :function-name :reader function-name))
-  (:report (lambda (condition stream)
-             (format stream
-                     "Attempt to set the function type of ~s~@
-                      but it already names a macro."
-                     (function-name condition)))))
-
-(define-condition env:attempt-to-declare-inline-a-non-existing-function
-    (error)
-  ((%function-name :initarg :function-name :reader function-name))
-  (:report (lambda (condition stream)
-             (format stream
-                     "Attempt to declare the function ~s INLINE~@
-                      but there is no function with that name."
-                     (function-name condition)))))
-
-(define-condition env:attempt-to-define-constant-for-existing-constant
+(define-condition env:attempt-to-set-constant-value
     (error)
   ((%name :initarg :name :reader name))
   (:report (lambda (condition stream)
              (format stream
-                     "Attempt to define ~s as a constant,~@
-                      but it already names a constant."
+                     "Attempt to set the value of ~s, but it names~@
+                      a constant variable."
                      (name condition)))))
+
+(define-condition env:attempt-to-redefine-constant-incompatibly
+    (error)
+  ((%name :initarg :name :reader name)
+   (%old-value :initarg :old :reader old-value)
+   (%new-value :initarg :new :reader new-value))
+  (:report (lambda (condition stream)
+             (format stream
+                     "Attempt to define ~s as a constant with value ~s,~@
+                      but it already names a constant with non-EQL value ~s."
+                     (name condition)
+                     (new-value condition) (old-value condition)))))
 
 (define-condition env:attempt-to-define-constant-for-existing-special-variable
     (error)
@@ -133,15 +73,6 @@
              (format stream
                      "Attempt to define ~s as a symbol macro,~@
                       but it already names a special variable."
-                     (name condition)))))
-
-(define-condition env:attempt-to-proclaim-the-type-of-a-constant-variable
-    (error)
-  ((%name :initarg :name :reader name))
-  (:report (lambda (condition stream)
-             (format stream
-                     "Attempt to proclaim the type of ~s,~@
-                      but it names a constant variable."
                      (name condition)))))
 
 (define-condition env:attempt-to-define-a-setf-expander-of-non-existing-function-or-macro

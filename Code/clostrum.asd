@@ -2,10 +2,10 @@
 
 (defsystem "clostrum"
   :description "First-class global environments for Common Lisp."
+  :serial t
   :components
   ((:file "packages")
    (:file "clostrum")
-   (:file "evaluation-environment-mixin")
-   (:file "compilation-environment")
+   (:file "default-methods")
    (:file "conditions"))
   :in-order-to ((test-op (test-op "clostrum-test"))))
