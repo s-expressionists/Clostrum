@@ -43,8 +43,8 @@
            #:special-operator-p #:compiler-macro-function)
   (:export #:setf-expander #:make-special-operator)
   ;; Variables
-  (:shadow #:symbol-value)
-  (:export #:symbol-value)
+  (:shadow #:symbol-value #:boundp #:makunbound)
+  (:export #:symbol-value #:boundp #:makunbound)
   (:export #:make-variable #:make-parameter #:make-constant
            #:make-symbol-macro)
   ;; Types and classes

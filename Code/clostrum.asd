@@ -7,5 +7,4 @@
   ((:file "packages")
    (:file "clostrum")
    (:file "default-methods")
-   (:file "conditions"))
-  :in-order-to ((test-op (test-op "clostrum-test"))))
+   (:file "conditions")))

@@ -58,7 +58,7 @@
                      (name condition)))))
 
 (define-condition env:attempt-to-define-symbol-macro-for-existing-constant
-    (error)
+    (program-error)
   ((%name :initarg :name :reader name))
   (:report (lambda (condition stream)
              (format stream
@@ -67,7 +67,7 @@
                      (name condition)))))
 
 (define-condition env:attempt-to-define-symbol-macro-for-existing-special-variable
-    (error)
+    (program-error)
   ((%name :initarg :name :reader name))
   (:report (lambda (condition stream)
              (format stream

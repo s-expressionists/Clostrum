@@ -48,6 +48,8 @@
 (define-accessor env:setf-expander (client environment operator-name))
 
 (define-accessor env:symbol-value (client environment variable-name))
+(defgeneric env:boundp (client env variable-name))
+(defgeneric env:makunbound (client env variable-name))
 (defgeneric env:make-variable (client environment variable-name value))
 (defgeneric env:make-parameter (client environment variable-name value))
 (defgeneric env:make-constant (client environment variable-name value))

@@ -78,6 +78,14 @@
       (let ((cell (sys:variable-cell client environment variable-name)))
         (setf (sys:variable-cell-value client cell) new))))
 
+(defmethod env:boundp (client environment variable-name)
+  (sys:variable-cell-boundp
+   client (sys:variable-cell client environment variable-name)))
+
+(defmethod env:makunbound (client environment variable-name)
+  (sys:variable-cell-makunbound
+   client (sys:variable-cell client environment variable-name)))
+
 (defmethod env:make-variable (client environment variable-name new)
   (ecase (sys:variable-status client environment variable-name)
     ((nil)

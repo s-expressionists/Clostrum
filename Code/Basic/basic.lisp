@@ -70,7 +70,7 @@
     :reader name)
    (status
     :initform nil
-    :reader status
+    :accessor status
     :type (member :constant :special :symbol-macro nil))
    ;; The CAR of the cell contains the value of the variable
    ;; determined by the entry.  The CDR of the cell contains a value
@@ -121,7 +121,7 @@
 (defun ensure-type-entry (name environment &rest keyword-arguments)
   (let ((entry (type-entry name environment)))
     (if (null entry)
-        (setf entry (apply #'make-instance 'class-entry :name name
+        (setf entry (apply #'make-instance 'type-entry :name name
                            keyword-arguments)
               (type-entry name environment) entry)
         (apply #'reinitialize-instance entry keyword-arguments))
