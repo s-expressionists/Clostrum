@@ -9,7 +9,6 @@
         (error 'undefined-function :name operator-name))))
 
 (defmethod (setf env:fdefinition) (new client environment operator-name)
-  (check-type new function)
   (let ((cell (sys:operator-cell client environment operator-name)))
     (setf (sys:operator-status client environment operator-name) :function
           (sys:operator-cell-value client cell) new)))
@@ -38,7 +37,6 @@
       nil))
 
 (defmethod (setf env:macro-function) (new client environment operator-name)
-  (check-type new function)
   (let ((cell (sys:operator-cell client environment operator-name)))
     (setf (sys:operator-status client environment operator-name) :macro
           (sys:operator-cell-value client cell) new)))
@@ -56,7 +54,6 @@
   (sys:setf-expander client environment operator-name))
 
 (defmethod (setf env:setf-expander) (new client environment operator-name)
-  (check-type new (or function null))
   (case (sys:operator-status client environment operator-name)
     ((:function :macro)
      (setf (sys:setf-expander client environment operator-name) new))
@@ -179,7 +176,6 @@
 (defmethod (setf env:find-class)
     (new client environment class-name &optional errorp)
   (declare (ignore errorp))
-  (check-type new (or null class))
   (setf (sys:type-expander client environment class-name) nil)
   (cond ((null new)
          (sys:type-cell-makunbound
@@ -191,7 +187,6 @@
   new)
 
 (defmethod env:make-type (client environment type-name expander)
-  (check-type expander function)
   (setf (sys:type-expander client environment type-name) expander)
   (sys:type-cell-makunbound client
                             (sys:type-cell client environment type-name))
