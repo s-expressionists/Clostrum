@@ -45,6 +45,8 @@
 (defgeneric env:fboundp (client environment operator-name))
 (defgeneric env:fmakunbound (client environment operator-name))
 (define-accessor env:macro-function (client environment operator-name))
+(defgeneric env:special-operator-p (client environment operator-name))
+(defgeneric env:make-special-operator (client environment operator-name new))
 (define-accessor env:setf-expander (client environment operator-name))
 
 (define-accessor env:symbol-value (client environment variable-name))
