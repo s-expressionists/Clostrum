@@ -2,4 +2,5 @@
 
 (defpackage #:clostrum-trucler
   (:use #:cl)
-  (:local-nicknames (#:env #:clostrum)))
+  (:local-nicknames (#:env #:clostrum)
+                    (#:sys #:clostrum-sys)))
