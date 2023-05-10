@@ -1,7 +1,10 @@
 (cl:in-package #:clostrum-basic)
 
-(defclass compilation-environment (env:compilation-environment)
-  ((function-descriptions
+(defclass compilation-environment ()
+  ((%parent
+    :initarg :parent
+    :reader sys:evaluation-environment)
+   (function-descriptions
     :initarg :function-descriptions
     :reader function-descriptions
     :initform (make-hash-table :test #'equal))
@@ -9,19 +12,19 @@
     :initarg :variable-descriptions
     :reader variable-descriptions
     :initform (make-hash-table :test #'eq))
-   (class-descriptions
-    :initarg :class-descriptions
-    :reader class-descriptions
+   (type-descriptions
+    :initarg :type-descriptions
+    :reader type-descriptions
     :initform (make-hash-table :test #'eq))))
 
-(defmethod env:function-description
+(defmethod sys:function-description
     (client
      (env compilation-environment)
      function-name)
   (or (gethash function-name (function-descriptions env))
-      (env:function-description client (env:parent env) function-name)))
+      (sys:function-description client (sys:evaluation-environment env) function-name)))
 
-(defmethod (setf env:function-description)
+(defmethod (setf sys:function-description)
     (description
      client
      (env compilation-environment)
@@ -29,14 +32,14 @@
   (setf (gethash function-name (function-descriptions env))
         description))
 
-(defmethod env:variable-description
+(defmethod sys:variable-description
     (client
      (env compilation-environment)
      symbol)
   (or (gethash symbol (variable-descriptions env))
-      (env:variable-description client (env:parent env) symbol)))
+      (sys:variable-description client (sys:evaluation-environment env) symbol)))
 
-(defmethod (setf env:variable-description)
+(defmethod (setf sys:variable-description)
     (description
      client
      (env compilation-environment)
@@ -44,17 +47,17 @@
   (setf (gethash symbol (variable-descriptions env))
         description))
 
-(defmethod env:class-description
+(defmethod sys:type-description
     (client
      (env compilation-environment)
      symbol)
-  (or (gethash symbol (class-descriptions env))
-      (env:class-description client (env:parent env) symbol)))
+  (or (gethash symbol (type-descriptions env))
+      (sys:type-description client (sys:evaluation-environment env) symbol)))
 
-(defmethod (setf env:class-description)
+(defmethod (setf sys:type-description)
     (description
      client
      (env compilation-environment)
      symbol)
-  (setf (gethash symbol (class-descriptions env))
+  (setf (gethash symbol (type-descriptions env))
         description))

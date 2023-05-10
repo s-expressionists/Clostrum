@@ -1,78 +1,68 @@
 (cl:in-package #:clostrum-implementation)
 
-(defgeneric env:parent (environment)
-  (:documentation "Environment's parent environment."))
-
-(defclass env:run-time-environment () ()
-  (:documentation "Base class for run-time environments."))
-
 (defmacro define-accessor (name lambda-list &rest options)
-  (let ((new-value (gensym "NEW-VALUE")))
-    `(progn (defgeneric ,name ,lambda-list ,@options)
-            (defgeneric (setf ,name) (,new-value ,@lambda-list) ,@options))))
+  `(progn (defgeneric ,name ,lambda-list ,@options)
+          (defgeneric (setf ,name) (new-value ,@lambda-list) ,@options)))
 
-;;; run time
-(define-accessor env:special-operator (client environment function-name))
-(define-accessor env:fdefinition (client environment function-name))
-(define-accessor env:macro-function (client environment symbol))
-(define-accessor env:compiler-macro-function (client environment function-name))
-(define-accessor env:function-type (client environment function-name))
-(define-accessor env:function-inline (client environment function-name))
-(defgeneric env:map-defined-functions (client environment function))
-(defgeneric env:map-defined-classes (client environment function))
+;;; System API
 
-(define-accessor env:constant-variable (client environment symbol))
-;;; The accessor ENV:SPECIAL-VARIABLE is defined as two operators,
-;;; because it has an irregular lambda list.
-(defgeneric env:special-variable (client environment symbol))
-(defgeneric (setf env:special-variable)
-    (new-value client environment symbol init-p))
+;;; Run-time environment.
 
-(defgeneric env:variable-value (client environment symbol))
+(define-accessor sys:operator-status (client environment operator-name))
+(defgeneric sys:operator-cell (client environment operator-name))
+(define-accessor sys:compiler-macro-function (client environment operator-name))
+(define-accessor sys:setf-expander (client environment operator-name))
+(define-accessor sys:operator-cell-value (client cell))
+(defgeneric sys:operator-cell-boundp (client cell))
+(defgeneric sys:operator-cell-makunbound (client cell))
 
-(define-accessor env:symbol-macro (client environment symbol))
-(define-accessor env:variable-type (client environment symbol))
+(define-accessor sys:variable-status (client environment variable-name))
+(defgeneric sys:variable-cell (client environment variable-name))
+(define-accessor sys:variable-macro-expander
+    (client environment variable-name))
+(define-accessor sys:variable-cell-value (client cell))
+(defgeneric sys:variable-cell-boundp (client cell))
+(defgeneric sys:variable-cell-makunbound (client cell))
 
-(define-accessor env:find-class (client environment symbol))
-(define-accessor env:setf-expander (client environment symbol))
-(define-accessor env:type-expander (client environment symbol))
-(define-accessor env:find-package (client environment name))
-(define-accessor env:proclamation (client environment name))
+(defgeneric sys:type-cell (client environment type-name))
+(define-accessor sys:type-expander (client environment type-name))
+(define-accessor sys:type-cell-value (client cell))
+(defgeneric sys:type-cell-boundp (client cell))
+(defgeneric sys:type-cell-makunbound (client cell))
 
-(defgeneric env:function-description (client environment function-name))
-(defgeneric env:variable-description (client environment symbol))
-(defgeneric env:class-description (client environment symbol))
+(define-accessor sys:find-package (client environment name))
+(define-accessor sys:proclamation (client environment name))
 
-;;; Compilation time.
-(defgeneric (setf env:function-description)
-    (new-value client environment funciton-name))
+;;; Compilation environment.
 
-(defgeneric (setf env:variable-description)
-    (new-value client environment symbol))
+(define-accessor sys:function-description (client environment function-name))
+(define-accessor sys:variable-description (client environment variable-name))
+(define-accessor sys:type-description (client environment type-name))
 
-(defgeneric (setf env:class-description)
-    (new-value client environment symbol))
+;;; High level API
 
-(defgeneric env:import-function (client from-environment name to-environment))
+(define-accessor env:fdefinition (client environment operator-name))
+(defgeneric env:fboundp (client environment operator-name))
+(defgeneric env:fmakunbound (client environment operator-name))
+(define-accessor env:macro-function (client environment operator-name))
+(defgeneric env:special-operator-p (client environment operator-name))
+(defgeneric env:make-special-operator (client environment operator-name new))
+(define-accessor env:setf-expander (client environment operator-name))
 
-;;; A call to this function always succeeds.  It returns a CONS cell,
-;;; of which the CDR slot contains a function that, when called,
-;;; signals an error of type UNDEFINED-FUNCTION.  If FUNCTION-NAME has
-;;; no definition as a function, then the CAR slot of this cell
-;;; contains the same function object as is contained in the CDR slot.
-;;; If FUNCTION-NAME has a definition as a function, then the CAR slot
-;;; of this cell contains the defined function object.  The return
-;;; value of this function is always the same (in the sense of EQ)
-;;; when it is passed the same (in the sense of EQUAL) function name
-;;; and the same (in the sense of EQ) environment.
-(defgeneric env:function-cell (client environment function-name))
+(define-accessor env:symbol-value (client environment variable-name))
+(defgeneric env:boundp (client env variable-name))
+(defgeneric env:makunbound (client env variable-name))
+(defgeneric env:make-variable (client environment variable-name value))
+(defgeneric env:make-parameter (client environment variable-name value))
+(defgeneric env:make-constant (client environment variable-name value))
+(defgeneric env:make-symbol-macro (client environment variable-name expansion))
 
-;;; A call to this function always succeeds. It returns a CONS cell,
-;;; in which the CAR always holds the current definition of the
-;;; variable named SYMBOL.  When SYMBOL has no definition as a
-;;; variable, the CAR of this cell will contain an object that
-;;; indicates that the variable is unbound. This object is the return
-;;; value of the function VARIABLE-UNBOUND. The return value of this
-;;; function is always the same (in the sense of EQ) when it is passed
-;;; the same symbol and the same environment.
-(defgeneric env:variable-cell (client environment symbol))
+(define-accessor env:find-class
+    (client environment class-name &optional errorp))
+(defgeneric env:make-type (client environment type-name expander))
+(defgeneric env:type-expand-1 (client environment type-specifier))
+(defgeneric env:type-expand (client environment type-expand))
+
+(defgeneric env:macroexpand-1 (client environment form))
+(defgeneric env:macroexpand (client environment form))
+(defgeneric env:constantp (client environment form))

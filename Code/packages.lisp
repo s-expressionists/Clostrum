@@ -1,55 +1,78 @@
+;;; Low level API.
+(defpackage #:clostrum-sys
+  (:use #:cl)
+  (:shadow #:compiler-macro-function #:find-package)
+  (:export #:evaluation-environment)
+  ;; Run-time environment accessors and readers
+  ;; Operators
+  (:export #:operator-status #:operator-cell
+           #:compiler-macro-function #:setf-expander
+           #:operator-cell-value #:operator-cell-boundp
+           #:operator-cell-makunbound
+           #:compiler-macro-function #:setf-expander)
+  ;; Variables
+  (:export #:variable-status #:variable-cell #:variable-macro-expander
+           #:variable-cell-value #:variable-cell-boundp
+           #:variable-cell-makunbound)
+  ;; Types and classes
+  (:export #:type-cell #:type-expander #:type-cell-value #:type-cell-boundp
+           #:type-cell-makunbound)
+  ;; Packages
+  (:shadow #:find-package)
+  (:export #:find-package)
+  ;; Proclamations
+  (:export #:proclamation)
+  ;; Compilation environment accessors
+  (:export #:function-description #:variable-description #:type-description))
+
+;;; High level API.
 (defpackage #:clostrum
-  (:use)
-  ;; Protocol classes.
-  (:export
-   #:run-time-environment
-   #:evaluation-environment-mixin
-   #:compilation-environment)
-  ;; Run-time operators.
-  (:export
-   #:special-operator #:fdefinition #:macro-function
-   #:compiler-macro-function #:function-type #:function-inline
-   #:function-description
-   #:map-defined-functions
-   #:map-defined-classes
-   #:import-function
-   #:function-cell
-   ;;
-   #:constant-variable #:special-variable #:symbol-macro
-   #:variable-type #:variable-description
-   #:variable-value
-   #:variable-cell
-   ;;
-   #:find-class #:class-description #:setf-expander #:type-expander
-   #:find-package #:proclamation)
-  ;; Compilation environment operators.
-  (:export
-   #:function-description
-   #:variable-description
-   #:class-description)
-  ;; Condition types.
-  (:export
-   #:attempt-to-define-special-operator-for-existing-function
-   #:attempt-to-define-special-operator-for-existing-macro
-   #:attempt-to-define-macro-for-existing-function
-   #:attempt-to-define-function-for-existing-special-operator
-   #:attempt-to-define-function-for-existing-macro
-   #:attempt-to-set-function-type-of-special-operator
-   #:attempt-to-set-function-type-of-macro
-   #:attempt-to-declare-inline-a-non-existing-function
-   #:attempt-to-define-constant-for-existing-constant
-   #:attempt-to-define-constant-for-existing-special-variable
-   #:attempt-to-define-constant-for-existing-symbol-macro
-   #:attempt-to-define-special-variable-for-existing-constant
-   #:attempt-to-define-special-variable-for-existing-symbol-macro
-   #:attempt-to-define-symbol-macro-for-existing-constant
-   #:attempt-to-define-symbol-macro-for-existing-special-variable
-   #:attempt-to-proclaim-the-type-of-a-constant-variable
-   #:attempt-to-define-a-setf-expander-of-non-existing-function-or-macro)
-  ;; Shared readers.
-  (:export
-   #:parent))
+  (:use #:cl)
+  ;; for reexport
+  (:shadowing-import-from #:clostrum-sys
+                          #:find-package #:compiler-macro-function)
+  (:import-from #:clostrum-sys #:type-expander
+                #:function-description #:variable-description
+                #:type-description #:proclamation #:evaluation-environment)
+  ;; Protocol functions:
+  (:export #:evaluation-environment)
+  ;; Operators
+  (:shadow #:fdefinition #:fboundp #:fmakunbound #:macro-function
+           #:special-operator-p)
+  (:export #:fdefinition #:fboundp #:fmakunbound #:macro-function
+           #:special-operator-p #:compiler-macro-function)
+  (:export #:setf-expander #:make-special-operator)
+  ;; Variables
+  (:shadow #:symbol-value #:boundp #:makunbound)
+  (:export #:symbol-value #:boundp #:makunbound)
+  (:export #:make-variable #:make-parameter #:make-constant
+           #:make-symbol-macro)
+  ;; Types and classes
+  (:shadow #:find-class)
+  (:export #:find-class)
+  (:export #:make-type #:type-expand-1 #:type-expand #:type-expander)
+  ;; Packages
+  (:export #:find-package)
+  ;; Proclamations
+  (:export #:proclamation)
+  ;; General
+  (:shadow #:macroexpand-1 #:macroexpand #:constantp)
+  (:export #:macroexpand-1 #:macroexpand #:constantp)
+  ;; Compilation environment
+  (:export #:function-description #:variable-description #:type-description)
+  ;; Condition types:
+  (:export #:attempt-to-set-constant-value
+           #:attempt-to-define-special-variable-for-existing-constant
+           #:attempt-to-define-special-variable-for-existing-symbol-macro
+           #:attempt-to-redefine-constant-incompatibly
+           #:attempt-to-define-constant-for-existing-special-variable
+           #:attempt-to-define-constant-for-existing-symbol-macro
+           #:attempt-to-define-symbol-macro-for-existing-special-variable
+           #:attempt-to-define-symbol-macro-for-existing-constant
+           #:attempt-to-define-a-setf-expander-of-non-existing-function-or-macro
+           #:undefined-class))
 
 (defpackage #:clostrum-implementation
   (:use #:cl)
-  (:local-nicknames (#:env #:clostrum)))
+  (:local-nicknames (#:sys #:clostrum-sys)
+                    (#:env #:clostrum)))
