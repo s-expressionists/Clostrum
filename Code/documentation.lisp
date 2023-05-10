@@ -101,6 +101,14 @@ The return values of this function are undefined."))
     "Set the compiler type description for TYPE-NAME in ENVIRONMENT."))
 
 (documentation-utils:define-docs
+  (function sys:evaluation-environment
+    "Given a compilation environment, return its corresponding evaluation environment.")
+  (type env:run-time-environment
+    "Abstract class of run-time environments, containing actual definitions.")
+  (type env:compilation-environment
+    "Abstract class of compilation environments, containing information for the compiler to use."))
+
+(documentation-utils:define-docs
   (function env:fdefinition
     "As CL:FDEFINITION. Get the function definition for OPERATOR-NAME in ENVIRONMENT. If OPERATOR-NAME is not fbound in ENVIRONMENT, signal an UNDEFINED-FUNCTION error.
 If the operator names a macro, the object passed to (SETF MACRO-FUNCTION) will be returned. If the operator names a special operator, the object passed to MAKE-SPECIAL-OPERATOR will be returned.")

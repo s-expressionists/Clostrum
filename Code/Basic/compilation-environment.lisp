@@ -1,9 +1,9 @@
 (cl:in-package #:clostrum-basic)
 
-(defclass compilation-environment ()
+(defclass compilation-environment (env:compilation-environment)
   ((%parent
     :initarg :parent
-    :reader sys:evaluation-environment)
+    :reader evaluation-environment)
    (function-descriptions
     :initarg :function-descriptions
     :reader function-descriptions
@@ -17,12 +17,16 @@
     :reader type-descriptions
     :initform (make-hash-table :test #'eq))))
 
+(defmethod sys:evaluation-environment (client (env compilation-environment))
+  (declare (ignore client))
+  (evaluation-environment env))
+
 (defmethod sys:function-description
     (client
      (env compilation-environment)
      function-name)
   (or (gethash function-name (function-descriptions env))
-      (sys:function-description client (sys:evaluation-environment env) function-name)))
+      (sys:function-description client (sys:evaluation-environment client env) function-name)))
 
 (defmethod (setf sys:function-description)
     (description
@@ -37,7 +41,7 @@
      (env compilation-environment)
      symbol)
   (or (gethash symbol (variable-descriptions env))
-      (sys:variable-description client (sys:evaluation-environment env) symbol)))
+      (sys:variable-description client (sys:evaluation-environment client env) symbol)))
 
 (defmethod (setf sys:variable-description)
     (description
@@ -52,7 +56,7 @@
      (env compilation-environment)
      symbol)
   (or (gethash symbol (type-descriptions env))
-      (sys:type-description client (sys:evaluation-environment env) symbol)))
+      (sys:type-description client (sys:evaluation-environment client env) symbol)))
 
 (defmethod (setf sys:type-description)
     (description

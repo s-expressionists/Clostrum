@@ -1,6 +1,6 @@
 (cl:in-package #:clostrum-basic)
 
-(defclass run-time-environment ()
+(defclass run-time-environment (env:run-time-environment)
   ((functions
     :reader functions
     :initform (make-hash-table :test #'equal))

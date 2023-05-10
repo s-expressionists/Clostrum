@@ -34,6 +34,8 @@
   (:import-from #:clostrum-sys #:type-expander
                 #:function-description #:variable-description
                 #:type-description #:proclamation #:evaluation-environment)
+  ;; Protocol classes:
+  (:export #:run-time-environment #:compilation-environment)
   ;; Protocol functions:
   (:export #:evaluation-environment)
   ;; Operators

@@ -1,5 +1,8 @@
 (cl:in-package #:clostrum-implementation)
 
+(defclass env:run-time-environment () ())
+(defclass env:compilation-environment () ())
+
 (defmacro define-accessor (name lambda-list &rest options)
   `(progn (defgeneric ,name ,lambda-list ,@options)
           (defgeneric (setf ,name) (new-value ,@lambda-list) ,@options)))
@@ -7,6 +10,8 @@
 ;;; System API
 
 ;;; Run-time environment.
+
+(defgeneric sys:evaluation-environment (client environment))
 
 (define-accessor sys:operator-status (client environment operator-name))
 (defgeneric sys:operator-cell (client environment operator-name))
