@@ -1,0 +1,67 @@
+name: test
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ master ]
+  pull_request:
+
+jobs:
+  test:
+    name: ${{ matrix.os }} / ${{ matrix.lisp }}
+
+    defaults:
+      run:
+        shell: bash -l {0}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+        - macos-latest
+        - ubuntu-22.04
+        lisp:
+        - ccl
+        - sbcl
+        exclude:
+        - os: ubuntu-22.04
+          lisp: ccl
+
+    # run the job on every combination of "os" above
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: CCL environment variables
+      if: matrix.lisp == 'ccl'
+      run: |
+        echo -e "LISP=ccl64\nLOAD=--load\nEVAL=--eval\nQUIT=--eval \"(quit)\"" >> $GITHUB_ENV
+
+    - name: SBCL environment variables
+      if: matrix.lisp == 'sbcl'
+      run: |
+        echo -e "LISP=sbcl\nLOAD=--load\nEVAL=--eval\nQUIT=--quit" >> $GITHUB_ENV
+
+    - name: Install Ubuntu dependencies
+      if: matrix.os == 'ubuntu-22.04'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y sbcl
+
+    - name: Install MacOS dependencies
+      if: matrix.os == 'macos-latest'
+      run: |
+        brew install sbcl clozure-cl
+
+    - uses: actions/checkout@v3
+
+    - name: Install Quicklisp
+      run: |
+        mkdir -p $HOME/.config/common-lisp/source-registry.conf.d
+        echo "(:TREE #P\"${{ github.workspace }}/\")" > $HOME/.config/common-lisp/source-registry.conf.d/clostrum.conf
+        curl -kLO https://beta.quicklisp.org/quicklisp.lisp
+        $LISP $LOAD quicklisp.lisp $EVAL "(quicklisp-quickstart:install)" $EVAL "(ql-util:without-prompting (ql:add-to-init-file))" $QUIT
+        $LISP $EVAL "(ql:quickload '(:clostrum-basic :clostrum-test))" $QUIT
+        
+    - name: Run Regression Tests
+      run: |
+        $LISP $EVAL "(mapc #'asdf:load-system '(:clostrum-basic :clostrum-test))" $EVAL "(clostrum/test:run-tests-exit nil 'clostrum-basic:run-time-environment nil 'clostrum-basic:compilation-environment)"

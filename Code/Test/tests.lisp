@@ -11,6 +11,16 @@
                   *compilation-environment-class*)
   (run! 'clostrum))
 
+(defun run-tests-exit (client-class
+                       run-time-environment-class
+                       evaluation-environment-class
+                       compilation-environment-class)
+  ;; Like run-tests, but exit with status. Used for external CI.
+  (uiop:quit (if (run-tests client-class run-time-environment-class
+                            evaluation-environment-class
+                            compilation-environment-class)
+                 0 100)))
+
 (def-suite* clostrum
   :description "A test suite for clostrum.")
 
