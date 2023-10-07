@@ -83,18 +83,20 @@
   (sys:variable-cell-makunbound
    client (sys:variable-cell client environment variable-name)))
 
-(defmethod env:make-variable (client environment variable-name new)
+(defmethod env:make-variable (client environment variable-name
+                              &optional (value nil valuep))
   (ecase (sys:variable-status client environment variable-name)
     ((nil)
-     (setf (sys:variable-cell-value
-            client (sys:variable-cell client environment variable-name))
-           new
-           (sys:variable-status client environment variable-name)
-           :special))
+     (when valuep
+       (setf (sys:variable-cell-value
+              client (sys:variable-cell client environment variable-name))
+             value))
+     (setf (sys:variable-status client environment variable-name) :special))
     ((:special)
-     (let ((cell (sys:variable-cell client environment variable-name)))
-       (unless (sys:variable-cell-boundp client cell)
-         (setf (sys:variable-cell-value client cell) new))))
+     (when valuep
+       (let ((cell (sys:variable-cell client environment variable-name)))
+         (unless (sys:variable-cell-boundp client cell)
+           (setf (sys:variable-cell-value client cell) value)))))
     ((:constant)
      (error 'env:attempt-to-define-special-variable-for-existing-constant
             :name variable-name))

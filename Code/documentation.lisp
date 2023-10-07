@@ -143,7 +143,7 @@ The nature of a setf expander is otherwise implementation-defined. One choice wo
   (function env:makunbound
     "As CL:MAKUNBOUND. Make VARIABLE-NAME have no global value in ENVIRONMENT. Returns VARIABLE-NAME.")
   (function env:make-variable
-    "Functional version of CL:DEFVAR. Proclaim VARIABLE-NAME special, and if it has no global value, set its global value to VALUE.")
+    "Functional version of CL:DEFVAR. Proclaim VARIABLE-NAME special, and if it has no global value and VALUE is provided, set its global value to VALUE.")
   (function env:make-parameter
     "Functional version of CL:DEFPARAMETER. Proclaim VARiABLE-NAME special, and set its global value to VALUE.")
   (function env:make-constant
