@@ -84,3 +84,9 @@
                       but the name is not defined as a function~@
                       or a macro."
                      (name condition)))))
+
+(define-condition env:undefined-class (cell-error)
+  ()
+  (:report (lambda (condition stream)
+             (format stream "There is no class named ~s."
+                     (cell-error-name condition)))))
