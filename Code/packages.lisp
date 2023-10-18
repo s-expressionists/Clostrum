@@ -1,7 +1,7 @@
 ;;; Low level API.
 (defpackage #:clostrum-sys
   (:use #:cl)
-  (:shadow #:compiler-macro-function #:find-package)
+  (:shadow #:compiler-macro-function #:find-package #:symbol-plist)
   (:export #:evaluation-environment)
   ;; Run-time environment accessors and readers
   ;; Operators
@@ -13,13 +13,14 @@
   ;; Variables
   (:export #:variable-status #:variable-cell #:variable-macro-expander
            #:variable-cell-value #:variable-cell-boundp
-           #:variable-cell-makunbound)
+           #:variable-cell-makunbound
+           #:symbol-plist)
   ;; Types and classes
   (:export #:type-cell #:type-expander #:type-cell-value #:type-cell-boundp
            #:type-cell-makunbound)
   ;; Packages
   (:shadow #:find-package)
-  (:export #:find-package)
+  (:export #:find-package #:map-all-packages)
   ;; Proclamations
   (:export #:proclamation)
   ;; Compilation environment accessors
@@ -30,10 +31,12 @@
   (:use #:cl)
   ;; for reexport
   (:shadowing-import-from #:clostrum-sys
-                          #:find-package #:compiler-macro-function)
+                          #:find-package #:compiler-macro-function
+                          #:symbol-plist)
   (:import-from #:clostrum-sys #:type-expander
                 #:function-description #:variable-description
-                #:type-description #:proclamation #:evaluation-environment)
+                #:type-description #:proclamation #:evaluation-environment
+                #:map-all-packages)
   ;; Protocol classes:
   (:export #:run-time-environment #:compilation-environment)
   ;; Protocol functions:
@@ -49,12 +52,13 @@
   (:export #:symbol-value #:boundp #:makunbound)
   (:export #:make-variable #:make-parameter #:make-constant
            #:make-symbol-macro)
+  (:export #:symbol-plist)
   ;; Types and classes
   (:shadow #:find-class)
   (:export #:find-class)
   (:export #:make-type #:type-expand-1 #:type-expand #:type-expander)
   ;; Packages
-  (:export #:find-package)
+  (:export #:find-package #:map-all-packages)
   ;; Proclamations
   (:export #:proclamation)
   ;; General

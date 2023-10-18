@@ -29,6 +29,8 @@
 (defgeneric sys:variable-cell-boundp (client cell))
 (defgeneric sys:variable-cell-makunbound (client cell))
 
+(define-accessor sys:symbol-plist (client environment symbol))
+
 (defgeneric sys:type-cell (client environment type-name))
 (define-accessor sys:type-expander (client environment type-name))
 (define-accessor sys:type-cell-value (client cell))
@@ -36,6 +38,7 @@
 (defgeneric sys:type-cell-makunbound (client cell))
 
 (define-accessor sys:find-package (client environment name))
+(defgeneric sys:map-all-packages (client environment function))
 (define-accessor sys:proclamation (client environment name))
 
 ;;; Compilation environment.

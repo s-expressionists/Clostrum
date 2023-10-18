@@ -55,7 +55,11 @@ This is NIL if no expander has been set, or else the object set by (SETF VARIABL
     "Return true iff CELL has a value. The CELL is an object returned by VARIABLE-CELL.")
   (function sys:variable-cell-makunbound
     "Make CELL have no value. The CELL is an object returned by VARIABLE-CELL.
-The return values of this function are undefined."))
+The return values of this function are undefined.")
+  (function sys:symbol-plist
+    "Retrieve the plist attached to SYMBOL in ENVIRONMENT.")
+  (function (setf sys:symbol-plist)
+    "Set the plist attached to SYMBOL in ENVIRONMENT."))
 
 (documentation-utils:define-docs
   (function sys:type-cell
@@ -81,6 +85,8 @@ The return values of this function are undefined."))
     "Find the package bound to NAME in ENVIRONMENT, or NIL if none has been defined.")
   (function (setf sys:find-package)
     "Set the package bound to NAME in ENVIRONMENT.")
+  (function sys:map-all-packages
+    "Call FUNCTION on all PACKAGES in ENVIRONMENT, in some undefined order. This can be used for example to implement LIST-ALL-PACKAGES.")
   (function sys:proclamation
     "Find the proclamation associated with NAME in ENVIRONMENT. The nature of proclamations is client-defined.")
   (function (setf sys:proclamation)
