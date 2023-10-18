@@ -85,6 +85,8 @@ The return values of this function are undefined."))
     "Find the package bound to NAME in ENVIRONMENT, or NIL if none has been defined.")
   (function (setf sys:find-package)
     "Set the package bound to NAME in ENVIRONMENT.")
+  (function sys:map-all-packages
+    "Call FUNCTION on all PACKAGES in ENVIRONMENT, in some undefined order. This can be used for example to implement LIST-ALL-PACKAGES.")
   (function sys:proclamation
     "Find the proclamation associated with NAME in ENVIRONMENT. The nature of proclamations is client-defined.")
   (function (setf sys:proclamation)

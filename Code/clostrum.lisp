@@ -38,6 +38,7 @@
 (defgeneric sys:type-cell-makunbound (client cell))
 
 (define-accessor sys:find-package (client environment name))
+(defgeneric sys:map-all-packages (client environment function))
 (define-accessor sys:proclamation (client environment name))
 
 ;;; Compilation environment.

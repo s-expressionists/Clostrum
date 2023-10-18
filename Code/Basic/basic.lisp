@@ -306,6 +306,13 @@
       (remhash name (packages environment))
       (setf (gethash name (packages environment)) new-package)))
 
+(defmethod sys:map-all-packages
+    (client (environment run-time-environment) function)
+  (maphash (lambda (name package)
+             (declare (ignore name))
+             (funcall function package))
+           (packages environment)))
+
 
 ;;; Declarations.
 
