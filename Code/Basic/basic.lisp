@@ -86,7 +86,11 @@
     :type cons)
    (symbol-macro-expander
     :accessor symbol-macro-expander
-    :type (or function null)))
+    :type (or function null))
+   (plist
+    :initform nil
+    :accessor plist
+    :type list))
   (:default-initargs :name (error "The initarg :NAME is required.")))
 
 ;;; Make sure NAME names a variable entry in ENVIRONMENT.
@@ -245,6 +249,17 @@
   ;; NEW is always a function, as undefining a symbol macro is instead done by
   ;; changing its STATUS. So we don't need the (or ... (variable-entry ...))
   (setf (symbol-macro-expander (ensure-variable-entry symbol environment)) new))
+
+(defmethod sys:symbol-plist (client (environment run-time-environment) symbol)
+  (declare (ignore client))
+  (let ((entry (variable-entry symbol environment)))
+    (if (null entry)
+        nil
+        (plist entry))))
+(defmethod (setf sys:symbol-plist)
+    (new client (environment run-time-environment) symbol)
+  (declare (ignore client))
+  (setf (plist (ensure-variable-entry symbol environment)) new))
 
 
 ;;; Types and classes.

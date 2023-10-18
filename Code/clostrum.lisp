@@ -29,6 +29,8 @@
 (defgeneric sys:variable-cell-boundp (client cell))
 (defgeneric sys:variable-cell-makunbound (client cell))
 
+(define-accessor sys:symbol-plist (client environment symbol))
+
 (defgeneric sys:type-cell (client environment type-name))
 (define-accessor sys:type-expander (client environment type-name))
 (define-accessor sys:type-cell-value (client cell))

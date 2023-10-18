@@ -1,7 +1,7 @@
 ;;; Low level API.
 (defpackage #:clostrum-sys
   (:use #:cl)
-  (:shadow #:compiler-macro-function #:find-package)
+  (:shadow #:compiler-macro-function #:find-package #:symbol-plist)
   (:export #:evaluation-environment)
   ;; Run-time environment accessors and readers
   ;; Operators
@@ -13,7 +13,8 @@
   ;; Variables
   (:export #:variable-status #:variable-cell #:variable-macro-expander
            #:variable-cell-value #:variable-cell-boundp
-           #:variable-cell-makunbound)
+           #:variable-cell-makunbound
+           #:symbol-plist)
   ;; Types and classes
   (:export #:type-cell #:type-expander #:type-cell-value #:type-cell-boundp
            #:type-cell-makunbound)
@@ -30,7 +31,8 @@
   (:use #:cl)
   ;; for reexport
   (:shadowing-import-from #:clostrum-sys
-                          #:find-package #:compiler-macro-function)
+                          #:find-package #:compiler-macro-function
+                          #:symbol-plist)
   (:import-from #:clostrum-sys #:type-expander
                 #:function-description #:variable-description
                 #:type-description #:proclamation #:evaluation-environment)
@@ -49,6 +51,7 @@
   (:export #:symbol-value #:boundp #:makunbound)
   (:export #:make-variable #:make-parameter #:make-constant
            #:make-symbol-macro)
+  (:export #:symbol-plist)
   ;; Types and classes
   (:shadow #:find-class)
   (:export #:find-class)
