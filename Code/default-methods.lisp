@@ -55,7 +55,12 @@
 
 (defmethod (setf env:setf-expander) (new client environment operator-name)
   (case (sys:operator-status client environment operator-name)
-    ((:function :macro)
+    ;; CLHS says DEFINE-SETF-EXPANDER only works on function and macro names, but
+    ;; we loosen that restriction a bit so that a setf expander can be defined for
+    ;; THE. If an environment wants to restrict DEFINE-SETF-EXPANDER it can do so
+    ;; just as well in the definition of DEFINE-SETF-EXPANDER, not the primitive
+    ;; accessor here.
+    ((:function :macro :special-operator)
      (setf (sys:setf-expander client environment operator-name) new))
     (otherwise
      (error 'env:attempt-to-define-a-setf-expander-of-non-existing-function-or-macro
