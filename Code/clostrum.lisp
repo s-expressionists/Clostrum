@@ -46,6 +46,7 @@
 (define-accessor sys:function-description (client environment function-name))
 (define-accessor sys:variable-description (client environment variable-name))
 (define-accessor sys:type-description (client environment type-name))
+(define-accessor sys:optimize-description (client environment))
 
 ;;; High level API
 

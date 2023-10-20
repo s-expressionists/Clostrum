@@ -53,6 +53,10 @@
       (env:function-description
        client (env:evaluation-environment client environment) name)))
 
+(defmethod trucler:describe-optimize
+    (client (environment env:compilation-environment))
+  (env:optimize-description client environment))
+
 (defmethod trucler:describe-block
     (client (environment env:compilation-environment) name)
   (declare (ignore client name))

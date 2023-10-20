@@ -24,7 +24,8 @@
   ;; Proclamations
   (:export #:proclamation)
   ;; Compilation environment accessors
-  (:export #:function-description #:variable-description #:type-description))
+  (:export #:function-description #:variable-description
+           #:type-description #:optimize-description))
 
 ;;; High level API.
 (defpackage #:clostrum
@@ -35,8 +36,8 @@
                           #:symbol-plist)
   (:import-from #:clostrum-sys #:type-expander
                 #:function-description #:variable-description
-                #:type-description #:proclamation #:evaluation-environment
-                #:map-all-packages)
+                #:type-description #:optimize-description #:proclamation
+                #:evaluation-environment #:map-all-packages)
   ;; Protocol classes:
   (:export #:run-time-environment #:compilation-environment)
   ;; Protocol functions:
@@ -65,7 +66,8 @@
   (:shadow #:macroexpand-1 #:macroexpand #:constantp)
   (:export #:macroexpand-1 #:macroexpand #:constantp)
   ;; Compilation environment
-  (:export #:function-description #:variable-description #:type-description)
+  (:export #:function-description #:variable-description
+           #:type-description #:optimize-description)
   ;; Condition types:
   (:export #:attempt-to-set-constant-value
            #:attempt-to-define-special-variable-for-existing-constant

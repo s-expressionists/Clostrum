@@ -15,7 +15,11 @@
    (type-descriptions
     :initarg :type-descriptions
     :reader type-descriptions
-    :initform (make-hash-table :test #'eq))))
+    :initform (make-hash-table :test #'eq))
+   (optimize-description
+    ;; Unfortunately there's really nothing we can sensibly use as a default here.
+    :initarg :optimize-description
+    :accessor optimize-description)))
 
 (defmethod sys:evaluation-environment (client (env compilation-environment))
   (declare (ignore client))
@@ -65,3 +69,11 @@
      symbol)
   (setf (gethash symbol (type-descriptions env))
         description))
+
+(defmethod sys:optimize-description (client (env compilation-environment))
+  (declare (ignore client))
+  (optimize-description env))
+
+(defmethod (setf sys:optimize-description) (new client (env compilation-environment))
+  (declare (ignore client))
+  (setf (optimize-description env) new))
