@@ -1,7 +1,9 @@
 (cl:in-package #:clostrum-basic)
 
-(defclass run-time-environment (env:run-time-environment)
-  ((functions
+(defclass basic-environment ()
+  ((parent :reader parent :initarg :parent
+           :initform nil)
+   (functions
     :reader functions
     :initform (make-hash-table :test #'equal))
    (variables
@@ -10,12 +12,21 @@
    (types
     :reader types
     :initform (make-hash-table :test #'eq))
-   (packages
-    :reader packages
-    :initform (make-hash-table :test #'equal))
+   (optimize
+    :accessor optimize
+    :initform nil)
    (declarations
     :reader declarations
     :initform (make-hash-table :test #'eq))))
+
+(defclass run-time-environment (basic-environment env:run-time-environment)
+  ((packages
+    :reader packages
+    :initform (make-hash-table :test #'equal))))
+
+(defclass compilation-environment (basic-environment env:compilation-environment)
+  ()
+  (:default-initargs :parent (error "The initarg :PARENT is required.")))
 
 (defun operator-entry (name env)
   (gethash name (functions env) nil))

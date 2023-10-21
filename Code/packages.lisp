@@ -1,73 +1,71 @@
 ;;; Low level API.
 (defpackage #:clostrum-sys
   (:use #:cl)
-  (:shadow #:compiler-macro-function #:find-package #:symbol-plist)
-  (:export #:evaluation-environment)
+  (:shadow #:compiler-macro-function #:find-package #:symbol-plist #:optimize)
+  (:export #:parent)
   ;; Run-time environment accessors and readers
   ;; Operators
-  (:export #:operator-status #:operator-cell
+  (:export #:operator-status #:operator-cell #:ensure-operator-cell
            #:compiler-macro-function #:setf-expander
            #:operator-cell-value #:operator-cell-boundp
            #:operator-cell-makunbound
+           #:operator-inline #:operator-inline-known-p
+           #:operator-inline-data #:operator-ftype
            #:compiler-macro-function #:setf-expander)
   ;; Variables
-  (:export #:variable-status #:variable-cell #:variable-macro-expander
+  (:export #:variable-status #:variable-cell #:ensure-variable-cell
            #:variable-cell-value #:variable-cell-boundp
            #:variable-cell-makunbound
+           #:variable-type #:variable-macro-expander
            #:symbol-plist)
   ;; Types and classes
   (:export #:type-cell #:type-expander #:type-cell-value #:type-cell-boundp
-           #:type-cell-makunbound)
+           #:ensure-type-cell #:type-cell-makunbound)
   ;; Packages
   (:shadow #:find-package)
   (:export #:find-package #:map-all-packages)
-  ;; Proclamations
-  (:export #:proclamation)
-  ;; Compilation environment accessors
-  (:export #:function-description #:variable-description
-           #:type-description #:optimize-description))
+  ;; Proclamations & optimize
+  (:export #:proclamation #:optimize))
 
 ;;; High level API.
 (defpackage #:clostrum
   (:use #:cl)
-  ;; for reexport
-  (:shadowing-import-from #:clostrum-sys
-                          #:find-package #:compiler-macro-function
-                          #:symbol-plist)
-  (:import-from #:clostrum-sys #:type-expander
-                #:function-description #:variable-description
-                #:type-description #:optimize-description #:proclamation
-                #:evaluation-environment #:map-all-packages)
+  (:import-from #:clostrum-sys
+                #:parent
+                #:proclamation
+                #:ensure-operator-cell #:ensure-variable-cell #:ensure-type-cell)
   ;; Protocol classes:
-  (:export #:run-time-environment #:compilation-environment)
+  (:export #:environment #:run-time-environment #:compilation-environment)
   ;; Protocol functions:
-  (:export #:evaluation-environment)
+  (:export #:parent #:merge-types #:merge-optimize)
   ;; Operators
   (:shadow #:fdefinition #:fboundp #:fmakunbound #:macro-function
-           #:special-operator-p)
-  (:export #:fdefinition #:fboundp #:fmakunbound #:macro-function
            #:special-operator-p #:compiler-macro-function)
+  (:export #:operator-status #:ensure-operator-cell)
+  (:export #:fdefinition #:fboundp #:fmakunbound #:macro-function
+           #:special-operator-p #:compiler-macro-function
+           #:operator-ftype #:operator-inline #:operator-inline-data)
   (:export #:setf-expander #:make-special-operator)
   ;; Variables
   (:shadow #:symbol-value #:boundp #:makunbound)
-  (:export #:symbol-value #:boundp #:makunbound)
+  (:export #:ensure-variable-cell)
+  (:export #:variable-status #:symbol-value #:boundp #:makunbound)
   (:export #:make-variable #:make-parameter #:make-constant
-           #:make-symbol-macro)
+           #:make-symbol-macro #:variable-macro-expander #:variable-type)
   (:export #:symbol-plist)
   ;; Types and classes
   (:shadow #:find-class)
+  (:export #:ensure-type-cell)
   (:export #:find-class)
-  (:export #:make-type #:type-expand-1 #:type-expand #:type-expander)
+  (:export #:type-expand-1 #:type-expand #:type-expander)
   ;; Packages
   (:export #:find-package #:map-all-packages)
-  ;; Proclamations
-  (:export #:proclamation)
+  ;; Proclamations & optimize
+  (:shadow #:optimize)
+  (:export #:proclamation #:optimize #:proclaim-optimize)
   ;; General
   (:shadow #:macroexpand-1 #:macroexpand #:constantp)
   (:export #:macroexpand-1 #:macroexpand #:constantp)
-  ;; Compilation environment
-  (:export #:function-description #:variable-description
-           #:type-description #:optimize-description)
   ;; Condition types:
   (:export #:attempt-to-set-constant-value
            #:attempt-to-define-special-variable-for-existing-constant
@@ -78,6 +76,7 @@
            #:attempt-to-define-symbol-macro-for-existing-special-variable
            #:attempt-to-define-symbol-macro-for-existing-constant
            #:attempt-to-define-a-setf-expander-of-non-existing-function-or-macro
+           #:attempt-to-set-ftype-of-non-function
            #:undefined-class))
 
 (defpackage #:clostrum-implementation

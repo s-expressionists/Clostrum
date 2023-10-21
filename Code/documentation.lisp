@@ -11,6 +11,8 @@ The status is either NIL, meaning not fbound, or :FUNCTION, :MACRO, or :SPECIAL-
     "Retrieve the cell for OPERATOR-NAME's fbinding in ENVIRONMENT.
 The nature of the cell is implementation-defined, except that it must work with OPERATOR-CELL-VALUE, OPERATOR-CELL-BOUNDP, and OPERATOR-CELL-MAKUNBOUND.
 Calls to this function always retrieve the same cell given the same arguments, regardless of the operator being fbound or not.")
+  (function sys:ensure-operator-cell
+    "Ensure that OPERATOR-NAME has a cell in ENVIRONMENT, and return that cell.")
   (function sys:compiler-macro-function
     "Return the compiler macro function for OPERATOR-NAME in ENVIRONMENT.
 This is NIL if no function has been set, or else the object set by (SETF COMPILER-MACRO-FUNCTION).")
@@ -93,22 +95,8 @@ The return values of this function are undefined."))
     "Set the proclamation associated with NAME in ENVIRONMENT."))
 
 (documentation-utils:define-docs
-  (function sys:function-description
-    "Get the compiler function description for FUNCTION-NAME in ENVIRONMENT.")
-  (function (setf sys:function-description)
-    "Set the compiler function description for FUNCTION-NAME in ENVIRONMENT.")
-  (function sys:variable-description
-    "Get the compiler variable description for VARIABLE-NAME in ENVIRONMENT.")
-  (function (setf sys:variable-description)
-    "Set the compiler variable description for VARIABLE-NAME in ENVIRONMENT.")
-  (function sys:type-description
-    "Get the compiler type description for TYPE-NAME in ENVIRONMENT.")
-  (function (setf sys:type-description)
-    "Set the compiler type description for TYPE-NAME in ENVIRONMENT."))
-
-(documentation-utils:define-docs
-  (function sys:evaluation-environment
-    "Given a compilation environment, return its corresponding evaluation environment.")
+  (function sys:parent
+    "Given an environment, return the environment it inherits from, or NIL if there is no such parent.")
   (type env:run-time-environment
     "Abstract class of run-time environments, containing actual definitions.")
   (type env:compilation-environment
@@ -162,8 +150,6 @@ The nature of a setf expander is otherwise implementation-defined. One choice wo
     "As CL:FIND-CLASS. Return the class named CLASS-NAME in ENVIRONMENT. If there is no such class, return NIL, unless ERRORP is true in which case an error of type ERROR is signaled.")
   (function (setf env:find-class)
     "As (SETF CL:FIND-CLASS). Set the class for CLASS-NAME in ENVIRONMENT. ERRORP is ignored.")
-  (function env:make-type
-    "Functional version of CL:DEFTYPE. Define TYPE-NAME to be a derived type in ENVIRONMENT, with type expander EXPANDER. The consequences are unspecified if TYPE-NAME already names a class.")
   (function env:type-expand-1
     "Operator analogous to CL:MACROEXPAND-1, but for type specifiers. Given a type specifier and an environment, return (values expansion true) if the type specifier is derived, otherwise (values specifier nil).")
   (function env:type-expand

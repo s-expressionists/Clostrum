@@ -85,6 +85,15 @@
                       or a macro."
                      (name condition)))))
 
+(define-condition env:attempt-to-set-ftype-of-non-function (error)
+  ((%name :initarg :name :reader name)
+   (%status :initarg :status :reader status))
+  (:report (lambda (condition stream)
+             (format stream
+                     "Attempt to proclaim an FTYPE for ~s,~@
+                      but the name is defined as a ~s."
+                     (name condition) (status condition)))))
+
 (define-condition env:undefined-class (cell-error)
   ()
   (:report (lambda (condition stream)
