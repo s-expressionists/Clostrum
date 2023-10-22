@@ -6,17 +6,18 @@
 
 ;;; TODO
 ;;;
-;;; - add entries like function-inline in the compilation environment
 ;;; - specify error conditions in documentation and use them
 
 (defsystem "clostrum-basic"
   :description "Example implementation of the Clostrum protocol."
   :depends-on ("clostrum")
+  :serial t
   :components
   ((:file "packages")
-   (:file "run-time-environment")
+   (:file "environment")
+   (:file "entry")
    (:file "basic")
-   (:file "compilation-environment"))
+   (:file "run-time"))
   :in-order-to ((test-op (load-op "clostrum-test")))
   :perform (test-op (operation component)
              (flet ((s (name) (uiop:find-symbol* name '#:clostrum-basic)))

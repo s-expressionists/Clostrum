@@ -1,7 +1,8 @@
 (cl:in-package #:clostrum-implementation)
 
-(defclass env:run-time-environment () ())
-(defclass env:compilation-environment () ())
+(defclass env:environment () ())
+(defclass env:run-time-environment (env:environment) ())
+(defclass env:compilation-environment (env:environment) ())
 
 (defmacro define-accessor (name lambda-list &rest options)
   `(progn (defgeneric ,name ,lambda-list ,@options)
@@ -9,14 +10,20 @@
 
 ;;; System API
 
-;;; Run-time environment.
+(defgeneric sys:parent (client environment))
 
-(defgeneric sys:evaluation-environment (client environment))
+;;; Run-time environment.
 
 (define-accessor sys:operator-status (client environment operator-name))
 (defgeneric sys:operator-cell (client environment operator-name))
+(defgeneric sys:ensure-operator-cell (client environment operator-name))
 (define-accessor sys:compiler-macro-function (client environment operator-name))
 (define-accessor sys:setf-expander (client environment operator-name))
+(define-accessor sys:operator-inline (client environment operator-name))
+(defgeneric sys:operator-inline-known-p (client environment operator-name))
+(define-accessor sys:operator-inline-data (client environment operator-name))
+(define-accessor sys:operator-ftype (client environment operator-name))
+
 (define-accessor sys:operator-cell-value (client cell))
 (defgeneric sys:operator-cell-boundp (client cell))
 (defgeneric sys:operator-cell-makunbound (client cell))
@@ -25,6 +32,8 @@
 (defgeneric sys:variable-cell (client environment variable-name))
 (define-accessor sys:variable-macro-expander
     (client environment variable-name))
+(define-accessor sys:variable-type (client environment variable-name))
+
 (define-accessor sys:variable-cell-value (client cell))
 (defgeneric sys:variable-cell-boundp (client cell))
 (defgeneric sys:variable-cell-makunbound (client cell))
@@ -40,38 +49,45 @@
 (define-accessor sys:find-package (client environment name))
 (defgeneric sys:map-all-packages (client environment function))
 (define-accessor sys:proclamation (client environment name))
-
-;;; Compilation environment.
-
-(define-accessor sys:function-description (client environment function-name))
-(define-accessor sys:variable-description (client environment variable-name))
-(define-accessor sys:type-description (client environment type-name))
-(define-accessor sys:optimize-description (client environment))
+(define-accessor sys:optimize (client environment))
 
 ;;; High level API
 
+(defgeneric env:merge-types (client type1 type2))
+(defgeneric env:merge-optimize (client new-optimize old-optimize))
+
+(defgeneric env:operator-status (client environment operator-name))
 (define-accessor env:fdefinition (client environment operator-name))
 (defgeneric env:fboundp (client environment operator-name))
 (defgeneric env:fmakunbound (client environment operator-name))
-(define-accessor env:macro-function (client environment operator-name))
 (defgeneric env:special-operator-p (client environment operator-name))
 (defgeneric env:make-special-operator (client environment operator-name new))
+(define-accessor env:operator-inline (client environment operator-name))
+(define-accessor env:operator-ftype (client environment operator-name))
+(define-accessor env:macro-function (client environment operator-name))
+(define-accessor env:compiler-macro-function (client environment operator-name))
 (define-accessor env:setf-expander (client environment operator-name))
 
+(defgeneric env:variable-status (client environment variable-name))
 (define-accessor env:symbol-value (client environment variable-name))
 (defgeneric env:boundp (client env variable-name))
 (defgeneric env:makunbound (client env variable-name))
+(define-accessor env:variable-type (client environment variable-name))
 (defgeneric env:make-variable (client environment variable-name
                                &optional value))
 (defgeneric env:make-parameter (client environment variable-name value))
 (defgeneric env:make-constant (client environment variable-name value))
 (defgeneric env:make-symbol-macro (client environment variable-name expansion))
 
+(defgeneric env:ensure-type-cell (client environment name))
 (define-accessor env:find-class
     (client environment class-name &optional errorp))
-(defgeneric env:make-type (client environment type-name expander))
+(define-accessor env:type-expander (client environment type-name))
 (defgeneric env:type-expand-1 (client environment type-specifier))
 (defgeneric env:type-expand (client environment type-expand))
+
+(defgeneric env:optimize (client environment))
+(defgeneric env:proclaim-optimize (client environment optimize))
 
 (defgeneric env:macroexpand-1 (client environment form))
 (defgeneric env:macroexpand (client environment form))

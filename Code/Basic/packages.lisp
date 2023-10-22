@@ -4,6 +4,7 @@
   (:use #:cl)
   (:local-nicknames (#:env #:clostrum)
                     (#:sys #:clostrum-sys))
-  (:shadow #:compiler-macro-function)
+  (:shadow #:compiler-macro-function #:inline #:ftype #:optimize)
   (:export #:run-time-environment
-           #:compilation-environment))
+           #:compilation-environment
+           #:top-type))
