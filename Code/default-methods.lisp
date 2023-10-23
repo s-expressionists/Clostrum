@@ -45,7 +45,8 @@
         (sys:operator-cell-value client cell)
         (error 'undefined-function :name operator-name))))
 
-(defmethod (setf env:fdefinition) (new client environment operator-name)
+(defmethod (setf env:fdefinition)
+    (new client (environment env:run-time-environment) operator-name)
   (let ((cell (env:ensure-operator-cell client environment operator-name)))
     (setf (sys:operator-status client environment operator-name) :function
           (sys:operator-cell-value client cell) new)))
@@ -54,7 +55,8 @@
   (let ((cell (find-operator-cell client environment operator-name)))
     (and cell (sys:operator-cell-boundp client cell))))
 
-(defmethod env:fmakunbound (client environment operator-name)
+(defmethod env:fmakunbound
+    (client (environment env:run-time-environment) operator-name)
   ;; NOTE: We do not forbid fmakunbound of special operators. If the client
   ;; wants to forbid that, it is assumed they will roll that into a general
   ;; package lock mechanism that forbids undefining standard functions and
@@ -96,6 +98,15 @@
     (setf (sys:operator-cell-value client cell) new
           (sys:operator-status client environment operator-name) :special-operator)
     operator-name))
+
+(defmethod env:note-function (client environment operator-name)
+  (let ((status (sys:operator-status client environment operator-name)))
+    (ecase status
+      ((nil)
+       (setf (sys:operator-status client environment operator-name) :function))
+      ((:function))
+      ((:macro :special-operator)
+       (error 'attempt-to-note-operator-as-function :name operator-name :status sys)))))
 
 (defmethod env:operator-ftype (client environment operator-name)
   (let ((parent (env:parent client environment))
@@ -179,7 +190,8 @@
         (sys:variable-cell-value client cell)
         (error 'unbound-variable :name variable-name))))
 
-(defmethod (setf env:symbol-value) (new client environment variable-name)
+(defmethod (setf env:symbol-value)
+    (new client (environment env:run-time-environment) variable-name)
   (if (eq (env:variable-status client environment variable-name) :constant)
       (error 'env:attempt-to-set-constant-value :name variable-name)
       (let ((cell (env:ensure-variable-cell client environment variable-name)))
@@ -189,7 +201,7 @@
   (let ((cell (sys:variable-cell client environment variable-name)))
     (and cell (sys:variable-cell-boundp client cell))))
 
-(defmethod env:makunbound (client environment variable-name)
+(defmethod env:makunbound (client (environment env:run-time-environment) variable-name)
   (sys:variable-cell-makunbound
    client (env:ensure-variable-cell client environment variable-name)))
 
@@ -206,16 +218,8 @@
                               &optional (value nil valuep))
   (ecase (env:variable-status client environment variable-name)
     ((nil)
-     (setf (sys:variable-status client environment variable-name) :special)
-     (when valuep
-       (setf (sys:variable-cell-value
-              client (env:ensure-variable-cell client environment variable-name))
-             value)))
-    ((:special)
-     (when valuep
-       (let ((cell (env:ensure-variable-cell client environment variable-name)))
-         (unless (sys:variable-cell-boundp client cell)
-           (setf (sys:variable-cell-value client cell) value)))))
+     (setf (sys:variable-status client environment variable-name) :special))
+    ((:special))
     ((:constant)
      (error 'env:attempt-to-define-special-variable-for-existing-constant
             :name variable-name))
@@ -223,7 +227,16 @@
      (error 'env:attempt-to-define-special-variable-for-existing-symbol-macro
             :name variable-name))))
 
-(defmethod env:make-parameter (client environment variable-name new)
+(defmethod env:make-variable :after
+    (client (environment env:run-time-environment) variable-name
+     &optional (value nil valuep))
+  (when valuep
+    (let ((cell (env:ensure-variable-cell client environment variable-name)))
+      (unless (sys:variable-cell-boundp client cell)
+        (setf (sys:variable-cell-value client cell) value)))))
+
+(defmethod env:make-parameter
+    (client (environment env:run-time-environment) variable-name new)
   (ecase (env:variable-status client environment variable-name)
     ((nil)
      (setf (sys:variable-cell-value

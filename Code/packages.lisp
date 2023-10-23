@@ -45,7 +45,7 @@
   (:export #:fdefinition #:fboundp #:fmakunbound #:macro-function
            #:special-operator-p #:compiler-macro-function
            #:operator-ftype #:operator-inline #:operator-inline-data)
-  (:export #:setf-expander #:make-special-operator)
+  (:export #:setf-expander #:make-special-operator #:note-function)
   ;; Variables
   (:shadow #:symbol-value #:boundp #:makunbound)
   (:export #:ensure-variable-cell)
@@ -77,6 +77,7 @@
            #:attempt-to-define-symbol-macro-for-existing-constant
            #:attempt-to-define-a-setf-expander-of-non-existing-function-or-macro
            #:attempt-to-set-ftype-of-non-function
+           #:attempt-to-note-operator-as-function
            #:undefined-class))
 
 (defpackage #:clostrum-implementation

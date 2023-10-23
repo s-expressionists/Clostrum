@@ -7,7 +7,7 @@
     t))
 
 ;;; Function and variable entries.
-(defclass compilation-operator-entry ()
+(defclass operator-entry ()
   ((name
     :initarg :name
     :reader name)
@@ -15,6 +15,14 @@
     :initform nil
     :accessor status
     :type (member :function :macro :special-operator nil))
+   ;; The CAR of the cell contains the function determined by the
+   ;; entry.  The CDR of the cell contains a function that, when
+   ;; called, signals an error.  When the function determined by the
+   ;; entry is undefined, the CAR of the cell is the same as the CDR
+   ;; of the cell.
+   (cell
+    :reader cell
+    :type cons)
    (compiler-macro-function
     :initform nil
     :accessor compiler-macro-function
@@ -38,16 +46,6 @@
   (:default-initargs :name (error "The initarg :NAME is required.")
                      :ftype (error "The initarg :FTYPE is required.")))
 
-(defclass operator-entry (compilation-operator-entry)
-  (;; The CAR of the cell contains the function determined by the
-   ;; entry.  The CDR of the cell contains a function that, when
-   ;; called, signals an error.  When the function determined by the
-   ;; entry is undefined, the CAR of the cell is the same as the CDR
-   ;; of the cell.
-   (cell
-    :reader cell
-    :type cons)))
-
 ;;; Make sure NAME names a function entry in ENVIRONMENT.
 ;;; KEYWORD-ARGUMENTS are keyword/value pairs that will be passed
 ;;; either to MAKE-INSTANCE in order create a new entry if no entry
@@ -58,15 +56,9 @@
   (let ((entry (operator-entry name environment)))
     (if (null entry)
         (setf (operator-entry name environment)
-              (etypecase environment
-                (run-time-environment
-                 (apply #'make-instance 'operator-entry
-                        :name name :ftype (top-type client)
-                        keyword-arguments))
-                (compilation-environment
-                 (apply #'make-instance 'compilation-operator-entry
-                        :name name :ftype (top-type client)
-                        keyword-arguments))))
+              (apply #'make-instance 'operator-entry
+                     :name name :ftype (top-type client)
+                     keyword-arguments))
         (apply #'reinitialize-instance entry keyword-arguments))))
 
 (defmethod initialize-instance :after ((instance operator-entry) &key name)
@@ -100,17 +92,7 @@
     :initform nil
     :accessor status
     :type (member :constant :special :symbol-macro nil))
-   (symbol-macro-expander
-    :accessor symbol-macro-expander
-    :type (or function null))
-   (vtype
-    :initarg :vtype
-    :accessor vtype))
-  (:default-initargs :name (error "The initarg :NAME is required.")
-                     :vtype (error "The initarg :VTYPE is required.")))
-
-(defclass variable-entry (compilation-variable-entry)
-  (;; The CAR of the cell contains the value of the variable
+   ;; The CAR of the cell contains the value of the variable
    ;; determined by the entry.  The CDR of the cell contains a value
    ;; that indicates that the variable is unbound.  When the variable
    ;; is unbound, the CAR and the CDR contain the same value.  Since
@@ -122,7 +104,17 @@
     :reader cell
     :initform (cons +unbound+ +unbound+)
     :type cons)
-   (plist
+   (symbol-macro-expander
+    :accessor symbol-macro-expander
+    :type (or function null))
+   (vtype
+    :initarg :vtype
+    :accessor vtype))
+  (:default-initargs :name (error "The initarg :NAME is required.")
+                     :vtype (error "The initarg :VTYPE is required.")))
+
+(defclass variable-entry (compilation-variable-entry)
+  ((plist
     :initform nil
     :accessor plist
     :type list)))

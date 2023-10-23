@@ -62,6 +62,7 @@
 (defgeneric env:fmakunbound (client environment operator-name))
 (defgeneric env:special-operator-p (client environment operator-name))
 (defgeneric env:make-special-operator (client environment operator-name new))
+(defgeneric env:note-function (client environment operator-name))
 (define-accessor env:operator-inline (client environment operator-name))
 (define-accessor env:operator-ftype (client environment operator-name))
 (define-accessor env:macro-function (client environment operator-name))

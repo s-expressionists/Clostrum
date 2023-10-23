@@ -94,6 +94,15 @@
                       but the name is defined as a ~s."
                      (name condition) (status condition)))))
 
+(define-condition env:attempt-to-note-operator-as-function (error)
+  ((%name :initarg :name :reader name)
+   (%status :initarg :status :reader status))
+  (:report (lambda (condition stream)
+             (format stream
+                     "Attempt to note ~s as a function,~@
+                      but the name is already defined as a ~s."
+                     (name condition) (status condition)))))
+
 (define-condition env:undefined-class (cell-error)
   ()
   (:report (lambda (condition stream)
