@@ -39,6 +39,20 @@
           (env:operator-status client parent operator-name)
           nil))))
 
+(defmethod env:ensure-operator-cell (client environment operator-name)
+  (or (sys:operator-cell client environment operator-name)
+    (let* ((parent (env:parent client environment))
+           (parent-cell
+             (find-operator-cell client parent operator-name))
+           (new-cell
+             (sys:ensure-operator-cell client environment operator-name)))
+      (when parent-cell
+        ;; Copy in the old value.
+        (when (sys:operator-cell-boundp client parent-cell)
+          (setf (sys:operator-cell-value client new-cell)
+                (sys:operator-cell-value client parent-cell))))
+      new-cell)))
+
 (defmethod env:fdefinition (client environment operator-name)
   (let ((cell (find-operator-cell client environment operator-name)))
     (if (and cell (sys:operator-cell-boundp client cell))
@@ -184,6 +198,20 @@
           (env:variable-status client parent variable-name)
           nil))))
 
+(defmethod env:ensure-variable-cell (client environment variable-name)
+  (or (sys:variable-cell client environment variable-name)
+    (let* ((parent (env:parent client environment))
+           (parent-cell
+             (find-variable-cell client parent variable-name))
+           (new-cell
+             (sys:ensure-variable-cell client environment variable-name)))
+      (when parent-cell
+        ;; Copy in the old value.
+        (when (sys:variable-cell-boundp client parent-cell)
+          (setf (sys:variable-cell-value client new-cell)
+                (sys:variable-cell-value client parent-cell))))
+      new-cell)))
+
 (defmethod env:symbol-value (client environment variable-name)
   (let ((cell (find-variable-cell client environment variable-name)))
     (if (and cell (sys:variable-cell-boundp client cell))
@@ -319,6 +347,20 @@
      (or (sys:type-cell client environment type-name)
        (find-type-cell client (env:parent client environment) type-name)))
     (null nil)))
+
+(defmethod env:ensure-type-cell (client environment type-name)
+  (or (sys:type-cell client environment type-name)
+    (let* ((parent (env:parent client environment))
+           (parent-cell
+             (find-type-cell client parent type-name))
+           (new-cell
+             (sys:ensure-type-cell client environment type-name)))
+      (when parent-cell
+        ;; Copy in the old value.
+        (when (sys:type-cell-boundp client parent-cell)
+          (setf (sys:type-cell-value client new-cell)
+                (sys:type-cell-value client parent-cell))))
+      new-cell)))
 
 (defmethod env:find-class (client environment class-name &optional (errorp t))
   (let ((cell (find-type-cell client environment class-name)))

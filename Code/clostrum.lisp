@@ -57,6 +57,7 @@
 (defgeneric env:merge-optimize (client new-optimize old-optimize))
 
 (defgeneric env:operator-status (client environment operator-name))
+(defgeneric env:ensure-operator-cell (client environment operator-name))
 (define-accessor env:fdefinition (client environment operator-name))
 (defgeneric env:fboundp (client environment operator-name))
 (defgeneric env:fmakunbound (client environment operator-name))
@@ -70,6 +71,7 @@
 (define-accessor env:setf-expander (client environment operator-name))
 
 (defgeneric env:variable-status (client environment variable-name))
+(defgeneric env:ensure-variable-cell (client environment variable-name))
 (define-accessor env:symbol-value (client environment variable-name))
 (defgeneric env:boundp (client env variable-name))
 (defgeneric env:makunbound (client env variable-name))

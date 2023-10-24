@@ -32,8 +32,7 @@
   (:use #:cl)
   (:import-from #:clostrum-sys
                 #:parent
-                #:proclamation
-                #:ensure-operator-cell #:ensure-variable-cell #:ensure-type-cell)
+                #:proclamation)
   ;; Protocol classes:
   (:export #:environment #:run-time-environment #:compilation-environment)
   ;; Protocol functions:
