@@ -117,7 +117,16 @@
   ((plist
     :initform nil
     :accessor plist
-    :type list)))
+    :type list)
+   ;; This is necessary to ensure that inheritance of symbol plists
+   ;; works properly. If known-p is true, this environment has a plist,
+   ;; so parents shouldn't be consulted.
+   ;; The separate variable is necessary because it is possible for an
+   ;; environment to have a plist set to NIL while parent plists exist
+   ;; and are non-null.
+   (plist-known-p
+    :initform nil
+    :accessor plist-known-p)))
 
 ;;; Make sure NAME names a variable entry in ENVIRONMENT.
 ;;; KEYWORD-ARGUMENTS are keyword/value pairs that will be passed

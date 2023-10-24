@@ -337,6 +337,21 @@
      (error 'env:attempt-to-define-symbol-macro-for-existing-constant
             :name variable-name))))
 
+(defmethod env:symbol-plist (client environment symbol)
+  (if (sys:symbol-plist-known-p client environment symbol)
+      (sys:symbol-plist client environment symbol)
+      (let* ((parent (env:parent client environment))
+             (parent-plist (env:symbol-plist client parent symbol)))
+        (if parent-plist
+            (setf (sys:symbol-plist client environment symbol)
+                  ;; copy-list so that alterations don't appear in parent.
+                  (copy-list parent-plist))
+            nil))))
+
+(defmethod (setf env:symbol-plist)
+    (new client (environment env:run-time-environment) symbol)
+  (setf (sys:symbol-plist client environment symbol) new))
+
 ;;; Types and classes
 
 (defun find-type-cell (client environment type-name)

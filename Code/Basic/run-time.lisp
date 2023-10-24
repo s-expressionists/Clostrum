@@ -62,7 +62,15 @@
         (plist entry))))
 (defmethod (setf sys:symbol-plist)
     (new client (environment run-time-environment) symbol)
-  (setf (plist (ensure-variable-entry client symbol environment)) new))
+  (let ((entry (ensure-variable-entry client symbol environment)))
+    (setf (plist-known-p entry) t (plist entry) new)))
+
+(defmethod sys:symbol-plist-known-p
+    (client (environment run-time-environment) symbol)
+  (let ((entry (variable-entry symbol environment)))
+    (if (null entry)
+        nil
+        (plist-known-p entry))))
 
 
 ;;; Packages.

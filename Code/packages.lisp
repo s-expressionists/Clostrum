@@ -17,7 +17,7 @@
            #:variable-cell-value #:variable-cell-boundp
            #:variable-cell-makunbound
            #:variable-type #:variable-macro-expander
-           #:symbol-plist)
+           #:symbol-plist #:symbol-plist-known-p)
   ;; Types and classes
   (:export #:type-cell #:type-expander #:type-cell-value #:type-cell-boundp
            #:ensure-type-cell #:type-cell-makunbound)
@@ -46,7 +46,7 @@
            #:operator-ftype #:operator-inline #:operator-inline-data)
   (:export #:setf-expander #:make-special-operator #:note-function)
   ;; Variables
-  (:shadow #:symbol-value #:boundp #:makunbound)
+  (:shadow #:symbol-value #:boundp #:makunbound #:symbol-plist)
   (:export #:ensure-variable-cell)
   (:export #:variable-status #:symbol-value #:boundp #:makunbound)
   (:export #:make-variable #:make-parameter #:make-constant

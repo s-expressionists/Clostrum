@@ -39,6 +39,7 @@
 (defgeneric sys:variable-cell-makunbound (client cell))
 
 (define-accessor sys:symbol-plist (client environment symbol))
+(defgeneric sys:symbol-plist-known-p (client environment symbol))
 
 (defgeneric sys:type-cell (client environment type-name))
 (define-accessor sys:type-expander (client environment type-name))
@@ -81,6 +82,7 @@
 (defgeneric env:make-parameter (client environment variable-name value))
 (defgeneric env:make-constant (client environment variable-name value))
 (defgeneric env:make-symbol-macro (client environment variable-name expansion))
+(define-accessor env:symbol-plist (client environment symbol))
 
 (defgeneric env:ensure-type-cell (client environment name))
 (define-accessor env:find-class
