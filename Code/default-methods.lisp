@@ -120,7 +120,8 @@
        (setf (sys:operator-status client environment operator-name) :function))
       ((:function))
       ((:macro :special-operator)
-       (error 'attempt-to-note-operator-as-function :name operator-name :status sys)))))
+       (error 'attempt-to-note-operator-as-function
+              :name operator-name :status status)))))
 
 (defmethod env:operator-ftype (client environment operator-name)
   (let ((parent (env:parent client environment))
@@ -242,8 +243,8 @@
 (defmethod (setf env:variable-type) (new client environment variable-name)
   (setf (sys:variable-type client environment variable-name) new))
 
-(defmethod env:make-variable (client environment variable-name
-                              &optional (value nil valuep))
+(defmethod env:make-variable (client environment variable-name &optional value)
+  (declare (ignore value))
   (ecase (env:variable-status client environment variable-name)
     ((nil)
      (setf (sys:variable-status client environment variable-name) :special))
