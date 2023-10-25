@@ -30,6 +30,7 @@
 
 (define-accessor sys:variable-status (client environment variable-name))
 (defgeneric sys:variable-cell (client environment variable-name))
+(defgeneric sys:ensure-variable-cell (client environment variable-name))
 (define-accessor sys:variable-macro-expander
     (client environment variable-name))
 (define-accessor sys:variable-type (client environment variable-name))
@@ -42,6 +43,7 @@
 (defgeneric sys:symbol-plist-known-p (client environment symbol))
 
 (defgeneric sys:type-cell (client environment type-name))
+(defgeneric sys:ensure-type-cell (client environment type-name))
 (define-accessor sys:type-expander (client environment type-name))
 (define-accessor sys:type-cell-value (client cell))
 (defgeneric sys:type-cell-boundp (client cell))
