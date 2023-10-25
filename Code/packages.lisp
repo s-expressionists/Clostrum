@@ -32,7 +32,10 @@
   (:use #:cl)
   (:import-from #:clostrum-sys
                 #:parent
-                #:proclamation)
+                #:proclamation
+                #:variable-cell-boundp #:variable-cell-value #:variable-cell-makunbound
+                #:operator-cell-boundp #:operator-cell-value #:operator-cell-makunbound
+                #:type-cell-boundp #:type-cell-value #:type-cell-makunbound)
   ;; Protocol classes:
   (:export #:environment #:run-time-environment #:compilation-environment)
   ;; Protocol functions:
@@ -40,21 +43,24 @@
   ;; Operators
   (:shadow #:fdefinition #:fboundp #:fmakunbound #:macro-function
            #:special-operator-p #:compiler-macro-function)
-  (:export #:operator-status #:ensure-operator-cell)
+  (:export #:operator-status #:ensure-operator-cell
+           #:operator-cell-boundp #:operator-cell-value #:operator-cell-makunbound)
   (:export #:fdefinition #:fboundp #:fmakunbound #:macro-function
            #:special-operator-p #:compiler-macro-function
            #:operator-ftype #:operator-inline #:operator-inline-data)
   (:export #:setf-expander #:make-special-operator #:note-function)
   ;; Variables
   (:shadow #:symbol-value #:boundp #:makunbound #:symbol-plist)
-  (:export #:ensure-variable-cell)
+  (:export #:ensure-variable-cell
+           #:variable-cell-boundp #:variable-cell-value #:variable-cell-makunbound)
   (:export #:variable-status #:symbol-value #:boundp #:makunbound)
   (:export #:make-variable #:make-parameter #:make-constant
            #:make-symbol-macro #:variable-macro-expander #:variable-type)
   (:export #:symbol-plist)
   ;; Types and classes
   (:shadow #:find-class)
-  (:export #:ensure-type-cell)
+  (:export #:ensure-type-cell
+           #:type-cell-boundp #:type-cell-value #:type-cell-makunbound)
   (:export #:find-class)
   (:export #:type-expand-1 #:type-expand #:type-expander)
   ;; Packages
