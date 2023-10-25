@@ -70,6 +70,7 @@
 (defgeneric env:make-special-operator (client environment operator-name new))
 (defgeneric env:note-function (client environment operator-name))
 (define-accessor env:operator-inline (client environment operator-name))
+(define-accessor env:operator-inline-data (client environment operator-name))
 (define-accessor env:operator-ftype (client environment operator-name))
 (define-accessor env:macro-function (client environment operator-name))
 (define-accessor env:compiler-macro-function (client environment operator-name))

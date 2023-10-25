@@ -152,7 +152,7 @@
       (if parent
           (env:operator-inline-data client parent operator-name)
           nil))))
-(defmethod (setf env:operator-inline) (new client environment operator-name)
+(defmethod (setf env:operator-inline-data) (new client environment operator-name)
   (setf (sys:operator-inline-data client environment operator-name) new))
 
 (defmethod env:setf-expander (client (environment env:compilation-environment) operator-name)
