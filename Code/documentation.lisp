@@ -10,9 +10,11 @@ The status is either NIL, meaning not fbound, or :FUNCTION, :MACRO, or :SPECIAL-
   (function sys:operator-cell
     "Retrieve the cell for OPERATOR-NAME's fbinding in ENVIRONMENT.
 The nature of the cell is implementation-defined, except that it must work with OPERATOR-CELL-VALUE, OPERATOR-CELL-BOUNDP, and OPERATOR-CELL-MAKUNBOUND.
-Calls to this function always retrieve the same cell given the same arguments, regardless of the operator being fbound or not.")
+If no cell yet exists in this environment, NIL is returned.
+
+See ENSURE-OPERATOR-CELL")
   (function sys:ensure-operator-cell
-    "Ensure that OPERATOR-NAME has a cell in ENVIRONMENT, and return that cell.")
+    "Ensure that OPERATOR-NAME has a cell in ENVIRONMENT, and return that cell. Calls to this function always retrieve the same cell given the same arguments, regardless of the operator being fbound or not.")
   (function sys:compiler-macro-function
     "Return the compiler macro function for OPERATOR-NAME in ENVIRONMENT.
 This is NIL if no function has been set, or else the object set by (SETF COMPILER-MACRO-FUNCTION).")
@@ -24,6 +26,20 @@ This is NIL if no expander has been set, or else the object set by (SETF SETF-EX
 The nature of a setf expander is otherwise implementation-defined. One choice would be to have it as a function of two arguments, a place and an environment, analogous to a macro expander, that returns the setf expansion.")
   (function (setf sys:setf-expander)
     "Set the setf expander for OPERATOR-NAME in ENVIRONMENT.")
+  (function sys:operator-inline
+    "Return the inline proclamation for the given operator. This is either CL:INLINE, CL:NOTINLINE, or NIL, meaning no proclamation either way.")
+  (function (setf sys:operator-inline)
+    "Set the inline proclamation for the given operator.")
+  (function sys:operator-inline-known-p
+    "Return true iff the inline proclamation for this operator has been set. This function exists so that the proclamation can be set to NIL in a child environment without the inheritance-aware high level API functions deciding to consult a parent instead.")
+  (function sys:operator-inline-data
+    "Return the inline data for the given operator. The nature of this data is defined by the client.")
+  (function (setf sys:operator-inline-data)
+    "Set the inline data for the given operator.")
+  (function sys:operator-ftype
+    "Return the proclaimed ftype for the given operator. Clostrum does not impose any kind of representation of types on clients, so using OPERATOR-FTYPE before an ftype is proclaimed (by (SETF OPERATOR-FTYPE)) may result in an error. Implementations are recommended to install a default type themselves to avoid this.")
+  (function (setf sys:operator-ftype)
+    "Proclaim an ftype for the given operator. Clostrum does not impose any kind of representation of types on clients.")
   (function sys:operator-cell-value
     "Get the value stored in CELL. The CELL is an object returned by OPERATOR-CELL. If OPERATOR-CELL-BOUNDP is not true, a function signals UNDEFINED-FUNCTION when called with any arguments is returned.")
   (function (setf sys:operator-cell-value)
@@ -51,6 +67,16 @@ Calls to this function always retrieve the same cell given the same arguments, r
 This is NIL if no expander has been set, or else the object set by (SETF VARIABLE-MACRO-EXPANDER).")
   (function (setf sys:variable-macro-expander)
     "Set the symbol macro expander for VARIABLE-NAME in ENVIRONMENT.")
+  (function sys:variable-type
+    "Return the proclaimed type for the given variable. Clostrum does not impose any kind of representation of types on clients, so using VARIABLE-FTYPE before a type is proclaimed (by (SETF VARIABLE-TYPE)) may result in an error. Implementations are recommended to install a default type themselves to avoid this.")
+  (function (setf sys:variable-type)
+    "Proclaim a type for the given variable. Clostrum does not impose any kind of representation of types on clients.")
+  (function sys:symbol-plist
+    "Return the plist for a symbol.")
+  (function (setf sys:symbol-plist)
+    "Set the plist for a symbol.")
+  (function sys:symbol-plist-known-p
+    "Return true iff the symbol's plist in this environment has been set. This is used by the high-level API to disambiguate the situation in which a symbol plist has been set to NIL in one environment but set to something non-NIL in a parent.")
   (function sys:variable-cell-value
     "Get the value stored in CELL. The CELL is an object returned by VARIABLE-CELL. If VARIABLE-CELL-BOUNDP is not true of the cell, the effects are undefined.")
   (function sys:variable-cell-boundp
@@ -87,6 +113,12 @@ The return values of this function are undefined."))
     "Find the package bound to NAME in ENVIRONMENT, or NIL if none has been defined.")
   (function (setf sys:find-package)
     "Set the package bound to NAME in ENVIRONMENT.")
+  (function sys:package-names
+    "Return a fresh list of all names of PACKAGE in ENVIRONMENT.")
+  (function sys:package-name
+    "Return the name of PACKAGE in ENVIRONMENT, or NIL if it has none.")
+  (function (setf sys:package-name)
+    "Set the name of PACKAGE in ENVIRONMENT. Note that this function does not necessarily establish the name for FIND-PACKAGE.")
   (function sys:map-all-packages
     "Call FUNCTION on all PACKAGES in ENVIRONMENT, in some undefined order. This can be used for example to implement LIST-ALL-PACKAGES.")
   (function sys:proclamation
@@ -120,6 +152,8 @@ If the operator names a macro, the object passed to (SETF MACRO-FUNCTION) will b
     "As CL:SPECIAL-OPERATOR-P. Return true iff OPERATOR-NAME names a special operator in ENVIRONMENT.")
   (function env:make-special-operator
     "Make OPERATOR-NAME a special operator in ENVIRONMENT. Future calls to FDEFINITION will return the object given as NEW.")
+  (function env:note-function
+    "Make OPERATOR-NAME a function in ENVIRONMENT, without providing a definition. The name will not be fbound, but this information can be retrieved by OPERATOR-STATUS. This function is provided to implement the (optional) compile time side effect of DEFUN.")
   (function sys:setf-expander
     "Return the setf expander for OPERATOR-NAME in ENVIRONMENT.
 This is NIL if no expander has been set, or else the object set by (SETF SETF-EXPANDER).
@@ -136,6 +170,10 @@ The nature of a setf expander is otherwise implementation-defined. One choice wo
     "As CL:BOUNDP. Return true iff VARIABLE-NAME has a global value in ENVIRONMENT.")
   (function env:makunbound
     "As CL:MAKUNBOUND. Make VARIABLE-NAME have no global value in ENVIRONMENT. Returns VARIABLE-NAME.")
+  (function env:symbol-plist
+    "As CL:SYMBOL-PLIST.")
+  (function (setf env:symbol-plist)
+    "As (SETF CL:SYMBOL-PLIST).")
   (function env:make-variable
     "Functional version of CL:DEFVAR. Proclaim VARIABLE-NAME special, and if it has no global value and VALUE is provided, set its global value to VALUE.")
   (function env:make-parameter
