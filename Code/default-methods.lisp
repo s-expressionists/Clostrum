@@ -441,6 +441,51 @@
                  (setf ever-expanded t type-specifier expansion)
                  (return (values type-specifier ever-expanded))))))
 
+;;; Packages
+
+(defmethod env:find-package (client (environment env:run-time-environment) name)
+  (or (sys:find-package client environment name)
+    (let ((parent (env:parent client environment)))
+      (if parent
+          (setf (sys:find-package client environment name)
+                (env:find-package client parent name))
+          nil))))
+(defmethod (setf env:find-package)
+    (new client (environment env:run-time-environment) name)
+  (setf (sys:find-package client environment name) new))
+
+(defmethod env:package-name (client (environment env:run-time-environment) package)
+  (or (sys:package-name client environment package)
+    (let ((parent (env:parent client environment)))
+      (if parent
+          (setf (sys:package-name client environment package)
+                (env:package-name client parent package))
+          nil))))
+(defmethod (setf env:package-name)
+    (new client (environment env:run-time-environment) package)
+  (setf (sys:package-name client environment package) new))
+
+(defmethod env:map-all-packages (client (env env:run-time-environment) function)
+  (let ((parent (env:parent client env)))
+    (if parent
+        ;; In order to get everything including parents, we gather up a list and then
+        ;; map over that. Kind of inefficient.
+        (let ((packages nil))
+          (declare (dynamic-extent packages))
+          (sys:map-all-packages client env (lambda (p) (push p packages)))
+          (env:map-all-packages client parent (lambda (p) (pushnew p packages)))
+          (mapc function packages))
+        ;; Easy case.
+        (sys:map-all-packages client env function))))
+
+(defmethod env:package-names (client (env env:run-time-environment) package)
+  (append
+   (sys:package-names client env package)
+   (let ((parent (env:parent client env)))
+     (if parent
+         (env:package-names client parent package)
+         nil))))
+
 ;;; Optimize
 
 (defmethod env:optimize (client environment) (sys:optimize client environment))

@@ -87,7 +87,14 @@
 
 (defmethod sys:map-all-packages
     (client (environment run-time-environment) function)
-  (maphash (lambda (name package)
+  (maphash (lambda (package name)
              (declare (ignore name))
              (funcall function package))
-           (packages environment)))
+           (package-names environment)))
+
+(defmethod sys:package-names (client (env run-time-environment) package)
+  (let ((names nil))
+    (maphash (lambda (name spackage)
+               (when (eql spackage package)
+                 (push name names)))
+             (packages env))))

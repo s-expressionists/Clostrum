@@ -22,8 +22,8 @@
   (:export #:type-cell #:type-expander #:type-cell-value #:type-cell-boundp
            #:ensure-type-cell #:type-cell-makunbound)
   ;; Packages
-  (:shadow #:find-package)
-  (:export #:find-package #:map-all-packages)
+  (:shadow #:find-package #:package-name)
+  (:export #:find-package #:package-name #:package-names #:map-all-packages)
   ;; Proclamations & optimize
   (:export #:proclamation #:optimize))
 
@@ -58,7 +58,8 @@
   (:export #:find-class)
   (:export #:type-expand-1 #:type-expand #:type-expander)
   ;; Packages
-  (:export #:find-package #:map-all-packages)
+  (:shadow #:find-package #:package-name)
+  (:export #:find-package #:package-name #:package-names #:map-all-packages)
   ;; Proclamations & optimize
   (:shadow #:optimize)
   (:export #:proclamation #:optimize #:proclaim-optimize)

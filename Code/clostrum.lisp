@@ -50,7 +50,9 @@
 (defgeneric sys:type-cell-makunbound (client cell))
 
 (define-accessor sys:find-package (client environment name))
+(define-accessor sys:package-name (client environment package))
 (defgeneric sys:map-all-packages (client environment function))
+(defgeneric sys:package-names (client environment package))
 (define-accessor sys:proclamation (client environment name))
 (define-accessor sys:optimize (client environment))
 
@@ -92,6 +94,11 @@
 (define-accessor env:type-expander (client environment type-name))
 (defgeneric env:type-expand-1 (client environment type-specifier))
 (defgeneric env:type-expand (client environment type-expand))
+
+(define-accessor env:find-package (client environment name))
+(define-accessor env:package-name (client environment package))
+(defgeneric env:map-all-packages (client environment function))
+(defgeneric env:package-names (client environment package))
 
 (defgeneric env:optimize (client environment))
 (defgeneric env:proclaim-optimize (client environment optimize))

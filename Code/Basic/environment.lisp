@@ -22,7 +22,10 @@
 (defclass run-time-environment (basic-environment env:run-time-environment)
   ((packages
     :reader packages
-    :initform (make-hash-table :test #'equal))))
+    :initform (make-hash-table :test #'equal))
+   (package-names
+    :reader package-names
+    :initform (make-hash-table))))
 
 (defclass compilation-environment (basic-environment env:compilation-environment)
   ()
