@@ -63,7 +63,7 @@
 ;;; on implementations than the cell merely existing and being boundp.
 (test (call-undefined-function :fixture with-envs)
   (let* ((fname (make-symbol "F"))
-         (cell (sys:operator-cell cli renv fname)))
+         (cell (sys:ensure-operator-cell cli renv fname)))
     (signals undefined-function (funcall (sys:operator-cell-value cli cell)))))
 
 (test (function-binding :fixture with-envs)
