@@ -39,7 +39,7 @@ jobs:
     - name: SBCL environment variables
       if: matrix.lisp == 'sbcl'
       run: |
-        echo -e "LISP=sbcl\nLOAD=--load\nEVAL=--eval\nQUIT=--quit" >> $GITHUB_ENV
+        echo -e "LISP=sbcl --disable-debugger\nLOAD=--load\nEVAL=--eval\nQUIT=--quit" >> $GITHUB_ENV
 
     - name: Install Ubuntu dependencies
       if: matrix.os == 'ubuntu-22.04'
@@ -61,7 +61,7 @@ jobs:
         curl -kLO https://beta.quicklisp.org/quicklisp.lisp
         $LISP $LOAD quicklisp.lisp $EVAL "(quicklisp-quickstart:install)" $EVAL "(ql-util:without-prompting (ql:add-to-init-file))" $QUIT
         $LISP $EVAL "(ql:quickload '(:clostrum-basic :clostrum-test))" $QUIT
-        
+
     - name: Run Regression Tests
       run: |
         $LISP $EVAL "(mapc #'asdf:load-system '(:clostrum-basic :clostrum-test))" $EVAL "(clostrum/test:run-tests-exit nil 'clostrum-basic:run-time-environment nil 'clostrum-basic:compilation-environment)"
