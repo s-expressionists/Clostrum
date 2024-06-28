@@ -94,7 +94,7 @@
     (client environment class-name &optional errorp))
 (define-accessor env:type-expander (client environment type-name))
 (defgeneric env:type-expand-1 (client environment type-specifier))
-(defgeneric env:type-expand (client environment type-expand))
+(defgeneric env:type-expand (client environment type-specifier))
 
 (define-accessor env:find-package (client environment name))
 (define-accessor env:package-name (client environment package))
