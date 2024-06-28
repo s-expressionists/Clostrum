@@ -63,7 +63,7 @@
 ;;; on implementations than the cell merely existing and being boundp.
 (test (call-undefined-function :fixture with-envs)
   (let* ((fname (make-symbol "F"))
-         (cell (sys:operator-cell cli renv fname)))
+         (cell (sys:ensure-operator-cell cli renv fname)))
     (signals undefined-function (funcall (sys:operator-cell-value cli cell)))))
 
 (test (function-binding :fixture with-envs)
@@ -223,7 +223,7 @@
     (is-false (sys:type-cell-boundp
                cli (sys:type-cell cli renv cname)))))
 
-(test (make-class :fixture with-envs)
+(test (find-class :fixture with-envs)
   (let ((cname (make-symbol "C"))
         (class (cl:find-class 'cons)))
     (finishes (setf (env:find-class cli renv cname) class))
@@ -235,12 +235,12 @@
     (signals error (env:find-class cli renv cname))
     (is (null (env:find-class cli renv cname nil)))))
 
-(test (make-type :fixture with-envs)
+(test (type-expander :fixture with-envs)
   (let ((tname (make-symbol "T"))
         (expander (lambda (specifier env)
                     (declare (ignore specifier env))
                     '(or cons null))))
-    (finishes (env:make-type cli renv tname expander))
+    (finishes (setf (env:type-expander cli renv tname) expander))
     (is (eql expander (env:type-expander cli renv tname)))
     (is (equal '(or cons null) (env:type-expand-1 cli renv tname)))
     (is (equal '(or cons null) (env:type-expand-1 cli renv `(,tname))))))

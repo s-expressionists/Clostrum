@@ -9,4 +9,5 @@
    (:file "clostrum")
    (:file "default-methods")
    (:file "conditions")
-   (:file "documentation")))
+   (:file "documentation"))
+  :in-order-to ((test-op (test-op "clostrum-test"))))

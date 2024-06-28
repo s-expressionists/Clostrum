@@ -31,7 +31,7 @@ The Clostrum API is divided into two parts, a "high level" package `clostrum`, a
 
 For operating on run-time environments, the `clostrum` package makes available environment manipulation functions and accessors similar to those in the standard: `fdefinition`, `fboundp`, `fmakunbound`, `macro-function`, `special-operator-p` for functions; `symbol-value`, `boundp`, `makunbound`, `symbol-plist` for variables; `find-class` for classes; `find-package` for packages; and `macroexpand-1`, `macroexpand`, and `constantp`.
 
-There are additional functions and accessors corresponding to some other Lisp operators. `setf-expander` can be used for `define-setf-expander`; `make-variable`, `make-parameter`, `make-constant`, and `make-symbol-macro` for `defvar`, `defparameter`, `defconstant`, and `define-symbol-macro` respectively; and `make-type` and `type-expander` for `deftype`, along with `type-expand-1` and `type-expand` to work with type specifiers.
+There are additional functions and accessors corresponding to some other Lisp operators. `setf-expander` can be used for `define-setf-expander`; `make-variable`, `make-parameter`, `make-constant`, and `make-symbol-macro` for `defvar`, `defparameter`, `defconstant`, and `define-symbol-macro` respectively; `type-expander` for `deftype`, along with `type-expand-1` and `type-expand` to work with type specifiers.
 
 For proclamations, `proclamation` can be used for `declaration` or CLtL2's `define-declaration`. `variable-type` covers `type`, and `special` proclamations can be done with `make-variable`. `operator-ftype` handles `ftype` and `operator-inline` `inline`. User-defined inlining data, such as a definition, can be associated with an operator through `operator-inline-data`.
 
