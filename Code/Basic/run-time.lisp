@@ -77,22 +77,36 @@
 
 (defmethod sys:find-package
     (client (environment run-time-environment) name)
+  (declare (ignore client))
   (values (gethash name (packages environment))))
 
 (defmethod (setf sys:find-package)
     (new-package client (environment run-time-environment) name)
+  (declare (ignore client))
   (if (null new-package)
       (remhash name (packages environment))
       (setf (gethash name (packages environment)) new-package)))
 
+(defmethod sys:package-name
+    (client (environment run-time-environment) package)
+  (declare (ignore client))
+  (gethash package (package-names environment)))
+
+(defmethod (setf sys:package-name)
+    (new-name client (environment run-time-environment) package)
+  (declare (ignore client))
+  (setf (gethash package (package-names environment)) new-name))
+
 (defmethod sys:map-all-packages
     (client (environment run-time-environment) function)
+  (declare (ignore client))
   (maphash (lambda (package name)
              (declare (ignore name))
              (funcall function package))
            (package-names environment)))
 
 (defmethod sys:package-names (client (env run-time-environment) package)
+  (declare (ignore client))
   (let ((names nil))
     (maphash (lambda (name spackage)
                (when (eql spackage package)
