@@ -74,7 +74,7 @@
     (if (null entry)
         nil
         (inline-data entry))))
-(defmethod (setf sys:operator-inline) (new client (env basic-environment) name)
+(defmethod (setf sys:operator-inline-data) (new client (env basic-environment) name)
   (setf (inline-data (ensure-operator-entry client name env)) new))
 
 (defmethod sys:operator-ftype (client (env basic-environment) name)
