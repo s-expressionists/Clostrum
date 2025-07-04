@@ -111,4 +111,5 @@
     (maphash (lambda (name spackage)
                (when (eql spackage package)
                  (push name names)))
-             (packages env))))
+             (packages env))
+    names))
