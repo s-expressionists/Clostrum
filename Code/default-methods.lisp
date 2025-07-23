@@ -410,8 +410,6 @@
           (%type-expander environment)))))
 (defmethod (setf env:type-expander) (expander client environment type-name)
   (setf (sys:type-expander client environment type-name) expander)
-  (sys:type-cell-makunbound client
-                            (env:ensure-type-cell client environment type-name))
   type-name)
 
 (defmethod env:type-expand-1 (client environment (type-specifier symbol))
