@@ -112,23 +112,42 @@ The return values of this function are undefined."))
   (function sys:find-package
     "Find the package bound to NAME in ENVIRONMENT, or NIL if none has been defined.")
   (function (setf sys:find-package)
-    "Set the package bound to NAME in ENVIRONMENT.")
+    "Set the package bound to NAME in ENVIRONMENT. This can be used to define both nicknames and the proper name.")
   (function sys:package-names
     "Return a fresh list of all names of PACKAGE in ENVIRONMENT.")
   (function sys:package-name
     "Return the name of PACKAGE in ENVIRONMENT, or NIL if it has none.")
   (function (setf sys:package-name)
     "Set the name of PACKAGE in ENVIRONMENT. Note that this function does not necessarily establish the name for FIND-PACKAGE.")
+  (function env:find-package
+    "Find the package bound to NAME in ENVIRONMENT, or NIL if none has been defined.")
   (function sys:map-all-packages
     "Call FUNCTION on all PACKAGES in ENVIRONMENT, in some undefined order. This can be used for example to implement LIST-ALL-PACKAGES.")
   (function sys:proclamation
-    "Find the proclamation associated with NAME in ENVIRONMENT. The nature of proclamations is client-defined.")
+    "Find the proclamation associated with NAME in ENVIRONMENT. The nature of proclamations is client-defined. This mechanism is intended for implementing the DECLARATION declaration, or CLTL2's DEFINE-DECLARATION.")
   (function (setf sys:proclamation)
-    "Set the proclamation associated with NAME in ENVIRONMENT."))
+    "Set the proclamation associated with NAME in ENVIRONMENT.")
+  (function sys:optimize
+    "Return the OPTIMIZE proclamation data for ENVIRONMENT. The nature of this data is client-defined.
+The default method expects OPTIMIZE proclamation data to be a list of optimize qualities or (quality value) lists, i.e. the CDR of an OPTIMIZE declaration specifier.")
+  (function (setf sys:optimize)
+    "Set the OPTIMIZE proclamation data for ENVIRONMENT. The nature of this data is client-defined.
+The default method expects OPTIMIZE proclamation data to be a list of optimize qualities or (quality value) lists, i.e. the CDR of an OPTIMIZE declaration specifier.")
+  (function env:optimize
+    "Return the OPTIMIZE proclamation for ENVIRONMENT.")
+  (function env:proclaim-optimize
+    "Proclaim a new optimize proclamation for ENVIRONMENT. OPTIMIZE is merged with the existing proclamation by MERGE-OPTIMIZE, and this merged proclamation is stored in the environment.
+
+See MERGE-OPTIMIZE")
+  (function env:merge-optimize
+    "Compute an optimize proclamation from two optimize proclamations. NEW-OPTIMIZE is the new data dn OLD-OPTIMIZE is the old data.
+The default method assumes that optimize proclamation data is a list of qualities or (quality value) lists. It normalizes any quality symbols to (quality 3), and discards any qualities in OLD-OPTIMIZE that are present in NEW-OPTIMIZE. Nonstandard optimization qualities are discarded."))
 
 (documentation-utils:define-docs
   (function sys:parent
     "Given an environment, return the environment it inherits from, or NIL if there is no such parent.")
+  (type env:environment
+    "Abstract parent class of all environments.")
   (type env:run-time-environment
     "Abstract class of run-time environments, containing actual definitions.")
   (type env:compilation-environment
@@ -159,7 +178,11 @@ If the operator names a macro, the object passed to (SETF MACRO-FUNCTION) will b
 This is NIL if no expander has been set, or else the object set by (SETF SETF-EXPANDER).
 The nature of a setf expander is otherwise implementation-defined. One choice would be to have it as a function of two arguments, a place and an environment, analogous to a macro expander, that returns the setf expansion.")
   (function (setf sys:setf-expander)
-    "Set the setf expander for OPERATOR-NAME in ENVIRONMENT. OPERATOR-NAME must already be defined as a function or macro."))
+    "Set the setf expander for OPERATOR-NAME in ENVIRONMENT. OPERATOR-NAME must already be defined as a function or macro.")
+  (function env:compiler-macro-function
+    "As CL:COMPILER-MACRO-FUNCTION, return the compiler macro function associated with OPERATOR-NAME, or NIL if there isn't one.")
+  (function (setf env:compiler-macro-function)
+    "Set the compiler macro function associated with OPERATOR-NAME. If NEW is NIL, any previously associated compiler macro is removed."))
 
 (documentation-utils:define-docs
   (function env:symbol-value
@@ -181,7 +204,9 @@ The nature of a setf expander is otherwise implementation-defined. One choice wo
   (function env:make-constant
     "Functional version of CL:DEFCONTANT. Make VARIABLE-NAME constant and set its global value to VALUE.")
   (function env:make-symbol-macro
-    "Functional version of CL:DEFINE-SYMBOL-MACRO. Make VARIABLE-NAME a symbol macro and set its expansion to EXPANSION."))
+    "Functional version of CL:DEFINE-SYMBOL-MACRO. Make VARIABLE-NAME a symbol macro and set its expansion to EXPANSION.")
+  (function env:variable-macro-expander
+    "Retrieve the symbol macro function associated with VARIABLE-NAME if there is one, or else return NIL. The variable macro expander is a function of two arguments, a form and an environment."))
 
 (documentation-utils:define-docs
   (function env:find-class
@@ -191,7 +216,10 @@ The nature of a setf expander is otherwise implementation-defined. One choice wo
   (function env:type-expand-1
     "Operator analogous to CL:MACROEXPAND-1, but for type specifiers. Given a type specifier and an environment, return (values expansion true) if the type specifier is derived, otherwise (values specifier nil).")
   (function env:type-expand
-    "Operator analogous to CL:MACROEXPAND, but for type specifiers. Given a type specifier and an environment, repeatedly expand the specifier as a derived type, and then return (values expansion true) if it was ever expanded, and otherwise (values specifier nil)."))
+    "Operator analogous to CL:MACROEXPAND, but for type specifiers. Given a type specifier and an environment, repeatedly expand the specifier as a derived type, and then return (values expansion true) if it was ever expanded, and otherwise (values specifier nil).")
+  (function env:merge-types
+    "Given two types, compute their conjunction (i.e. the AND of their specifiers). Clients with custom type representations must specialize this method in order for type retrieval on environments with parents to work correctly.
+The default method assumes that types are represented by their specifiers, and so simply forms the list (AND TYPE1 TYPE2)."))
 
 (documentation-utils:define-docs
   (function env:macroexpand-1

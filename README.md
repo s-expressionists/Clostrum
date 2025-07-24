@@ -59,11 +59,11 @@ The Common Lisp standard mentions environments inheriting from each other in the
 
 The basic rule of inherited bindings Clostrum has adopted is as follows: The _values_ in bindings are inherited from parent environments, but the bindings _themselves_ are not. Mutating a binding or making it unbound has no effect on a parent environment; in fact, no operation on a child environment will mutate anything in the parent environment.
 
-Since the standard only contemplates environment inheritance in the context of compilation, these inheritance semantics are designed to allow `compile-file` operations to mutate an evaluation environment without mutating anything in the parent. For example, a function definition or redefinition within `(eval-when (:compile-toplevel) ...)` can affect an evaluation environment, but after `compile-file` returns, this evaluation environment is discarded, and the startup environment has no trace.
+Since the standard only contemplates environment inheritance in the context of compilation, these inheritance semantics are designed to allow `compile-file` operations to mutate an evaluation environment without mutating anything in the parent. For example, a function definition or redefinition within `(eval-when (:compile-toplevel) ...)` can affect an evaluation environment, but after `compile-file` returns, this evaluation environment is discarded, and the startup environment leaves no trace.
 
 # Basic
 
-The `clostrum-basic` system is the reference implementation of Clostrum. It implements the low level interface, so the high level interface can be used with the basic environments. The classes `run-time-environment` and `compilation-environment` represent run-time and compilation environments respectively.
+The `clostrum-basic` system is the reference implementation of Clostrum. It implements the low level interface, and so the high level interface can be used with the basic environments.
 
 # Trucler
 

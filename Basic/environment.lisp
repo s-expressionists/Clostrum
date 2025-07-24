@@ -25,11 +25,14 @@
     :initform (make-hash-table :test #'equal))
    (package-names
     :reader package-names
-    :initform (make-hash-table))))
+    :initform (make-hash-table)))
+  (:documentation "Reference implementation of a Clostrum runtime environment.
+:parent is the only valid initarg."))
 
 (defclass compilation-environment (basic-environment env:compilation-environment)
   ()
-  (:default-initargs :parent (error "The initarg :PARENT is required.")))
+  (:default-initargs :parent (error "The initarg :PARENT is required."))
+  (:documentation "Reference implementation of a Clostrum compilation environment. The :parent initarg is required, and there are no other valid initargs."))
 
 (defun operator-entry (name env)
   (gethash name (functions env) nil))

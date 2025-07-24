@@ -4,7 +4,9 @@
   (:method (client)
     (declare (ignore client))
     ;; Default: use type specifiers.
-    t))
+    t)
+  (:documentation "Return the top type. Clients with custom type representations must specialize this method to return the appropriate representation.
+The default method uses type specifiers as types, and thus returns T."))
 
 ;;; Function and variable entries.
 (defclass operator-entry ()
