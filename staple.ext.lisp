@@ -1,7 +1,9 @@
 (staple:load-system-quietly :clostrum-basic)
+(staple:load-system-quietly :clostrum-trucler)
 
 (defmethod staple:subsystems ((system (eql (asdf:find-system :clostrum))))
-  (list (asdf:find-system :clostrum-basic)))
+  (list (asdf:find-system :clostrum-basic)
+        (asdf:find-system :clostrum-trucler)))
 
 (defmethod staple:packages ((system (eql (asdf:find-system :clostrum))))
   ;; the implementation package is excluded,
@@ -10,6 +12,3 @@
 
 (defmethod staple:packages ((system (eql (asdf:find-system :clostrum-basic))))
   (list (find-package "CLOSTRUM-BASIC")))
-
-(defmethod staple:documents ((system (eql (asdf:find-system :clostrum))))
-  (list (asdf:system-relative-pathname system "../README.md")))
