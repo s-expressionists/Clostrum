@@ -5,7 +5,7 @@ symbol representing the name, whereas the definition of a *type* might
 be in a hash table that is the value of a special variable.
 
 In the paper [First-class Global Environments in Common
-Lisp](http://metamodular.com/SICL/environments.pdf),
+Lisp](https://metamodular.eu/SICL-documents/environments.pdf),
 presented at the European Lisp Symposium in 2015, we outlined a
 protocol for an alternative way of representing global environments,
 namely as first-class instances of a standard classes.  This library
