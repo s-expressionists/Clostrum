@@ -120,7 +120,7 @@
        (setf (sys:operator-status client environment operator-name) :function))
       ((:function))
       ((:macro :special-operator)
-       (error 'attempt-to-note-operator-as-function
+       (error 'env:attempt-to-note-operator-as-function
               :name operator-name :status status)))))
 
 (defmethod env:operator-ftype (client environment operator-name)
