@@ -17,14 +17,18 @@ The default method uses type specifiers as types, and thus returns T."))
     :initform nil
     :accessor status
     :type (member :function :macro :special-operator nil))
+   ;; By default, cells are conses.
    ;; The CAR of the cell contains the function determined by the
    ;; entry.  The CDR of the cell contains a function that, when
    ;; called, signals an error.  When the function determined by the
    ;; entry is undefined, the CAR of the cell is the same as the CDR
    ;; of the cell.
+   ;; The implementation of cells can be changed by clients by
+   ;; specializing MAKE-OPERATOR-CELL as well as the CLOSTRUM-SYS
+   ;; functions for manipulating cells.
    (cell
-    :reader cell
-    :type cons)
+    :initarg :cell
+    :reader cell)
    (compiler-macro-function
     :initform nil
     :accessor compiler-macro-function
@@ -60,29 +64,28 @@ The default method uses type specifiers as types, and thus returns T."))
         (setf (operator-entry name environment)
               (apply #'make-instance 'operator-entry
                      :name name :ftype (top-type client)
+                     :cell (make-operator-cell client name environment)
                      keyword-arguments))
         (apply #'reinitialize-instance entry keyword-arguments))))
 
-(defmethod initialize-instance :after ((instance operator-entry) &key name)
-  ;; We indicate that a function name is FUNBOUND by storing a
-  ;; function in the CAR of the cell that, when called, signals an
-  ;; UNDEFINED-FUNCTION error.  This way, there is no need for an
-  ;; explicit test to verify that the name is FBOUND before calling
-  ;; the function.  We store the same, as in EQ, function in the CDR
-  ;; of the cell.  That way, testing whether the function is unbound
-  ;; is an EQ comparison between the CAR and the CDR of the cell, and
-  ;; FMAKUNBOUND is implemented by copying the CDR of the cell to the
-  ;; CAR.
-  (let ((unbound-function
-          (lambda (&rest args)
-            (declare (ignore args))
-            (error 'undefined-function :name name))))
-    (setf (slot-value instance 'cell)
-          (cons unbound-function unbound-function))))
-
-(defun function-bound-p (operator-entry)
-  (let ((cell (cell operator-entry)))
-    (not (eq (car cell) (cdr cell)))))
+(defgeneric make-operator-cell (client environment name)
+  (:method (client env name)
+    (declare (ignore client env))
+    ;; We indicate that a function name is FUNBOUND by storing a
+    ;; function in the CAR of the cell that, when called, signals an
+    ;; UNDEFINED-FUNCTION error.  This way, there is no need for an
+    ;; explicit test to verify that the name is FBOUND before calling
+    ;; the function.  We store the same, as in EQ, function in the CDR
+    ;; of the cell.  That way, testing whether the function is unbound
+    ;; is an EQ comparison between the CAR and the CDR of the cell, and
+    ;; FMAKUNBOUND is implemented by copying the CDR of the cell to the
+    ;; CAR.
+    (flet ((unbound-function (&rest args)
+             (declare (ignore args))
+             (error 'undefined-function :name name)))
+      (cons #'unbound-function #'unbound-function)))
+  (:documentation "Make a fresh operator cell. CLOSTRUM-SYS:OPERATOR-CELL-VALUE etc. should be specialized to operate correctly on the cell at least when given the same client.
+Clients may specialize this method if they have their own implementations of cells. A default method is provided that uses a simple representation as a cons."))
 
 (defconstant +unbound+ 'unbound)
 
@@ -94,17 +97,16 @@ The default method uses type specifiers as types, and thus returns T."))
     :initform nil
     :accessor status
     :type (member :constant :special :symbol-macro nil))
+   ;; By default, cells are conses.
    ;; The CAR of the cell contains the value of the variable
    ;; determined by the entry.  The CDR of the cell contains a value
    ;; that indicates that the variable is unbound.  When the variable
-   ;; is unbound, the CAR and the CDR contain the same value.  Since
-   ;; CL:MAKUNBOUND (which should really be called something else like
-   ;; MAKE-TO-HAVE-NO-VALUE) must take into account dynamic bindings
-   ;; of the variable, we do not supply code for MAKUNBOUND here.  It
-   ;; must be implemented by the client.
+   ;; is unbound, the CAR and the CDR contain the same value.
+   ;; The nature of cells can be changed by clients by specializing
+   ;; MAKE-VARIABLE-CELL as well as the CLOSTRUM-SYS cell functions.
    (cell
     :reader cell
-    :initform (cons +unbound+ +unbound+)
+    :initarg :cell
     :type cons)
    (symbol-macro-expander
     :accessor symbol-macro-expander
@@ -144,20 +146,25 @@ The default method uses type specifiers as types, and thus returns T."))
                 (run-time-environment
                  (apply #'make-instance 'variable-entry
                         :name name :vtype (top-type client)
+                        :cell (make-variable-cell client environment name)
                         keyword-arguments))
                 (compilation-environment
                  (apply #'make-instance 'compilation-variable-entry
                         :name name :vtype (top-type client)
+                        :cell (make-variable-cell client environment name)
                         keyword-arguments))))
         (apply #'reinitialize-instance entry keyword-arguments))))
 
-(defun variable-bound-p (variable-entry)
-  (let ((cell (cell variable-entry)))
-    (not (eq (car cell) +unbound+))))
+(defgeneric make-variable-cell (client environment name)
+  (:method (client environment name)
+    (declare (ignore client environment name))
+    (cons +unbound+ +unbound+))
+  (:documentation "Make a fresh variable cell. CLOSTRUM-SYS:VARIABLE-CELL-VALUE etc. should be specialized to operate correctly on the cell at least when given the same client.
+Clients may specialize this method if they have their own implementations of cells. A default method is provided that uses a simple representation as a cons."))
 
 (defclass type-entry ()
   ((%name :initarg :name :reader name)
-   (%cell :initform (cons nil nil) :reader cell :type cons)
+   (%cell :initarg :cell :reader cell :type cons)
    (%type-expander :initform nil :accessor type-expander
                    :type (or function null))))
 
@@ -166,14 +173,22 @@ The default method uses type specifiers as types, and thus returns T."))
 ;;; to MAKE-INSTANCE in order to create a new entry if none exits,
 ;;; or to REINITIALIZE-INSTANCE to modify an existing entry.
 ;;; The new or exiting entry is returned.
-(defun ensure-type-entry (name environment &rest keyword-arguments)
+(defun ensure-type-entry (client name environment &rest keyword-arguments)
   (let ((entry (type-entry name environment)))
     (if (null entry)
         (setf entry (apply #'make-instance 'type-entry :name name
+                           :cell (make-type-cell client environment name)
                            keyword-arguments)
               (type-entry name environment) entry)
         (apply #'reinitialize-instance entry keyword-arguments))
     entry))
+
+(defgeneric make-type-cell (client environment name)
+  (:method (client environment name)
+    (declare (ignore client environment name))
+    (cons nil nil))
+  (:documentation "Make a fresh type cell. CLOSTRUM-SYS:TYPE-CELL-VALUE etc. should be specialized to operate correctly on the cell at least when given the same client.
+Clients may specialize this method if they have their own implementations of cells. A default method is provided that uses a simple representation as a cons."))
 
 (declaim (cl:inline cell-value (setf cell-value) cell-boundp cell-makunbound))
 (defun cell-value (cell) (car cell))
