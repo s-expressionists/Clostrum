@@ -149,7 +149,7 @@
         nil)))
 
 (defmethod sys:ensure-type-cell (client (environment basic-environment) symbol)
-  (cell (ensure-type-entry symbol environment)))
+  (cell (ensure-type-entry client symbol environment)))
 
 (defmethod sys:type-expander (client (environment basic-environment) symbol)
   (let ((entry (type-entry symbol environment)))
@@ -160,7 +160,7 @@
     (new client (environment basic-environment) symbol)
   (let ((entry (if (null new)
                    (type-entry symbol environment)
-                   (ensure-type-entry symbol environment))))
+                   (ensure-type-entry client symbol environment))))
     (unless (null entry)
       (setf (type-expander entry) new)))
   new)
