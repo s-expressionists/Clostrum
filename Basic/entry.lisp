@@ -64,7 +64,7 @@ The default method uses type specifiers as types, and thus returns T."))
         (setf (operator-entry name environment)
               (apply #'make-instance 'operator-entry
                      :name name :ftype (top-type client)
-                     :cell (make-operator-cell client name environment)
+                     :cell (make-operator-cell client environment name)
                      keyword-arguments))
         (apply #'reinitialize-instance entry keyword-arguments))))
 
