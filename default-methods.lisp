@@ -24,13 +24,11 @@
 
 (defun find-operator-cell (client environment operator-name)
   "Find an operator cell if it exists, or return NIL. Internal."
-  (etypecase environment
-    (env:compilation-environment
-     (find-operator-cell client (env:parent client environment) operator-name))
-    (env:run-time-environment
-     (or (sys:operator-cell client environment operator-name)
-       (find-operator-cell client (env:parent client environment) operator-name)))
-    (null nil)))
+  (or (sys:operator-cell client environment operator-name)
+    (let ((parent (env:parent client environment)))
+      (if parent
+          (find-operator-cell client parent operator-name)
+          nil))))
 
 (defmethod env:operator-status (client environment operator-name)
   (or (sys:operator-status client environment operator-name)
@@ -43,7 +41,9 @@
   (or (sys:operator-cell client environment operator-name)
     (let* ((parent (env:parent client environment))
            (parent-cell
-             (find-operator-cell client parent operator-name))
+             (if parent
+                 (find-operator-cell client parent operator-name)
+                 nil))
            (new-cell
              (sys:ensure-operator-cell client environment operator-name)))
       (when parent-cell
@@ -184,13 +184,11 @@
 
 (defun find-variable-cell (client environment variable-name)
   "Find an variable cell if it exists, or return NIL. Internal."
-  (etypecase environment
-    (env:compilation-environment
-     (find-variable-cell client (env:parent client environment) variable-name))
-    (env:run-time-environment
-     (or (sys:variable-cell client environment variable-name)
-       (find-variable-cell client (env:parent client environment) variable-name)))
-    (null nil)))
+  (or (sys:variable-cell client environment variable-name)
+    (let ((parent (env:parent client environment)))
+      (if parent
+          (find-variable-cell client parent variable-name)
+          nil))))
 
 (defmethod env:variable-status (client environment variable-name)
   (or (sys:variable-status client environment variable-name)
@@ -203,7 +201,9 @@
   (or (sys:variable-cell client environment variable-name)
     (let* ((parent (env:parent client environment))
            (parent-cell
-             (find-variable-cell client parent variable-name))
+             (if parent
+                 (find-variable-cell client parent variable-name)
+                 nil))
            (new-cell
              (sys:ensure-variable-cell client environment variable-name)))
       (when parent-cell
@@ -340,13 +340,23 @@
 (defmethod env:symbol-plist (client environment symbol)
   (if (sys:symbol-plist-known-p client environment symbol)
       (sys:symbol-plist client environment symbol)
-      (let* ((parent (env:parent client environment))
-             (parent-plist (env:symbol-plist client parent symbol)))
-        (if parent-plist
-            (setf (sys:symbol-plist client environment symbol)
-                  ;; copy-list so that alterations don't appear in parent.
-                  (copy-list parent-plist))
-            nil))))
+      (labels ((%plist (env)
+                 (if (sys:symbol-plist-known-p client env symbol)
+                     (values (sys:symbol-plist client env symbol) t)
+                     (let ((parent (env:parent client env)))
+                       (if parent
+                           (%plist parent)
+                           (values nil nil))))))
+        (let ((parent (env:parent client environment)))
+          (if parent
+              (multiple-value-bind (plist knownp) (%plist parent)
+                (if knownp
+                    (setf (sys:symbol-plist client environment symbol)
+                          ;; copy-list so that alterations
+                          ;; don't appear in parent
+                          (copy-list plist))
+                    nil))
+              nil)))))
 
 (defmethod (setf env:symbol-plist)
     (new client (environment env:run-time-environment) symbol)
@@ -356,19 +366,19 @@
 
 (defun find-type-cell (client environment type-name)
   "Find a type cell if it exists, or return NIL. Internal."
-  (etypecase environment
-    (env:compilation-environment
-     (find-type-cell client (env:parent client environment) type-name))
-    (env:run-time-environment
-     (or (sys:type-cell client environment type-name)
-       (find-type-cell client (env:parent client environment) type-name)))
-    (null nil)))
+  (or (sys:type-cell client environment type-name)
+    (let ((parent (env:parent client environment)))
+      (if parent
+          (find-type-cell client parent type-name)
+          nil))))
 
 (defmethod env:ensure-type-cell (client environment type-name)
   (or (sys:type-cell client environment type-name)
     (let* ((parent (env:parent client environment))
            (parent-cell
-             (find-type-cell client parent type-name))
+             (if parent
+                 (find-type-cell client parent type-name)
+                 nil))
            (new-cell
              (sys:ensure-type-cell client environment type-name)))
       (when parent-cell
@@ -399,15 +409,13 @@
   new)
 
 (defmethod env:type-expander (client environment type-name)
-  (let ((cell (find-type-cell client environment type-name)))
-    (if (and cell (sys:type-cell-boundp client cell))
-        nil
-        (labels ((%type-expander (environment)
-                   (if (null environment)
-                       nil
-                       (or (sys:type-expander client environment type-name)
-                         (%type-expander (env:parent client environment))))))
-          (%type-expander environment)))))
+  (let ((cell (sys:type-cell client environment type-name)))
+    (cond ((and cell (sys:type-cell-boundp client cell)) nil)
+          ((sys:type-expander client environment type-name))
+          (t (let ((parent (env:parent client environment)))
+               (if parent
+                   (env:type-expander client parent type-name)
+                   nil))))))
 (defmethod (setf env:type-expander) (expander client environment type-name)
   (setf (sys:type-expander client environment type-name) expander)
   type-name)
@@ -529,6 +537,7 @@
     (otherwise nil)))
 
 (defmethod env:constantp (client environment (form cons))
+  (declare (ignore client environment))
   ;; This method is kind of awkward: A client must take care of QUOTE itself
   ;; to use this function for cl:constantp. Clostrum does not assume that QUOTE
   ;; always has its standard meaning, and because it imposes no meaning on
@@ -537,5 +546,6 @@
   nil)
 
 (defmethod env:constantp (client environment (form t))
+  (declare (ignore client environment))
   ;; not a symbol or cons. therefore the form is self-evaluating.
   t)
