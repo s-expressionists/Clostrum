@@ -17,16 +17,6 @@
   (declare (ignore client))
   (cell-makunbound cell))
 
-(defmethod sys:operator-cell (client (environment run-time-environment) name)
-  (declare (ignore client))
-  (let ((entry (operator-entry name environment)))
-    (if entry
-        (cell entry)
-        nil)))
-
-(defmethod sys:ensure-operator-cell (client (environment run-time-environment) name)
-  (cell (ensure-operator-entry client name environment)))
-
 
 ;;; Variables.
 
@@ -42,17 +32,6 @@
 (defmethod sys:variable-cell-makunbound (client cell)
   (declare (ignore client))
   (cell-makunbound cell))
-
-(defmethod sys:variable-cell (client (environment run-time-environment) name)
-  (declare (ignore client))
-  (let ((entry (variable-entry name environment)))
-    (if entry
-        (cell entry)
-        nil)))
-
-(defmethod sys:ensure-variable-cell
-    (client (environment run-time-environment) symbol)
-  (cell (ensure-variable-entry client symbol environment)))
 
 (defmethod sys:symbol-plist (client (environment run-time-environment) symbol)
   (declare (ignore client))

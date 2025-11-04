@@ -21,6 +21,16 @@
       (setf (status entry) new)))
   new)
 
+(defmethod sys:operator-cell (client (environment basic-environment) name)
+  (declare (ignore client))
+  (let ((entry (operator-entry name environment)))
+    (if entry
+        (cell entry)
+        nil)))
+
+(defmethod sys:ensure-operator-cell (client (environment basic-environment) name)
+  (cell (ensure-operator-entry client name environment)))
+
 (defmethod sys:compiler-macro-function (client (env basic-environment) name)
   (declare (ignore client))
   (let ((entry (operator-entry name env)))
@@ -103,6 +113,17 @@
     (unless (null entry)
       (setf (status entry) new))
     new))
+
+(defmethod sys:variable-cell (client (environment basic-environment) name)
+  (declare (ignore client))
+  (let ((entry (variable-entry name environment)))
+    (if entry
+        (cell entry)
+        nil)))
+
+(defmethod sys:ensure-variable-cell
+    (client (environment basic-environment) symbol)
+  (cell (ensure-variable-entry client symbol environment)))
 
 (defmethod sys:variable-macro-expander
     (client (environment basic-environment) symbol)
