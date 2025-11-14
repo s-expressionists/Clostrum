@@ -208,3 +208,28 @@
 (defmethod (setf sys:optimize) (new client (environment basic-environment))
   (declare (ignore client))
   (setf (optimize environment) new))
+
+
+;;; Methods for compilation environments.
+(defmethod sys:symbol-plist-known-p
+    (client (environment compilation-environment) symbol)
+  (declare (ignore client symbol))
+  nil)
+
+(defmethod sys:find-package (client (environment compilation-environment) name)
+  (declare (ignore client name))
+  nil)
+
+(defmethod sys:package-name
+    (client (environment compilation-environment) package)
+  (declare (ignore client package))
+  nil)
+
+(defmethod sys:package-names
+    (client (environment compilation-environment) package)
+  (declare (ignore client package))
+  nil)
+
+(defmethod sys:map-all-packages
+    (client (environment compilation-environment) function)
+  (declare (ignore client function)))
