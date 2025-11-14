@@ -349,13 +349,7 @@
                            (values nil nil))))))
         (let ((parent (env:parent client environment)))
           (if parent
-              (multiple-value-bind (plist knownp) (%plist parent)
-                (if knownp
-                    (setf (sys:symbol-plist client environment symbol)
-                          ;; copy-list so that alterations
-                          ;; don't appear in parent
-                          (copy-list plist))
-                    nil))
+              (%plist parent)
               nil)))))
 
 (defmethod (setf env:symbol-plist)
@@ -453,8 +447,7 @@
   (or (sys:find-package client environment name)
     (let ((parent (env:parent client environment)))
       (if parent
-          (setf (sys:find-package client environment name)
-                (env:find-package client parent name))
+          (env:find-package client parent name)
           nil))))
 (defmethod (setf env:find-package)
     (new client (environment env:run-time-environment) name)
