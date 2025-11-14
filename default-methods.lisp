@@ -449,6 +449,12 @@
       (if parent
           (env:find-package client parent name)
           nil))))
+(defmethod env:find-package
+    (client (environment env:compilation-environment) name)
+  (let ((parent (env:parent client environment)))
+    (if parent
+        (env:find-package client parent name)
+        nil)))
 (defmethod (setf env:find-package)
     (new client (environment env:run-time-environment) name)
   (setf (sys:find-package client environment name) new))
@@ -460,6 +466,11 @@
           (setf (sys:package-name client environment package)
                 (env:package-name client parent package))
           nil))))
+(defmethod env:package-name (client (environment env:compilation-environment) package)
+  (let ((parent (env:parent client environment)))
+    (if parent
+        (env:package-name client parent package)
+        nil)))
 (defmethod (setf env:package-name)
     (new client (environment env:run-time-environment) package)
   (setf (sys:package-name client environment package) new))
@@ -476,6 +487,10 @@
           (mapc function packages))
         ;; Easy case.
         (sys:map-all-packages client env function))))
+(defmethod env:map-all-packages (client (env env:compilation-environment) function)
+  (let ((parent (env:parent client env)))
+    (when parent
+      (env:map-all-packages client parent function))))
 
 (defmethod env:package-names (client (env env:run-time-environment) package)
   (append
@@ -484,6 +499,11 @@
      (if parent
          (env:package-names client parent package)
          nil))))
+(defmethod env:package-names (client (env env:compilation-environment) package)
+  (let ((parent (env:parent client env)))
+    (if parent
+        (env:package-names client parent package)
+        nil)))
 
 ;;; Optimize
 
