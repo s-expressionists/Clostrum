@@ -101,6 +101,7 @@
 
 (defmethod sys:variable-status
     (client (environment basic-environment) symbol)
+  (declare (ignore client))
   (let ((entry (variable-entry symbol environment)))
     (if (null entry)
         nil
@@ -127,6 +128,7 @@
 
 (defmethod sys:variable-macro-expander
     (client (environment basic-environment) symbol)
+  (declare (ignore client))
   (let ((entry (variable-entry symbol environment)))
     (if (null entry)
         nil
@@ -173,6 +175,7 @@
   (cell (ensure-type-entry client symbol environment)))
 
 (defmethod sys:type-expander (client (environment basic-environment) symbol)
+  (declare (ignore client))
   (let ((entry (type-entry symbol environment)))
     (if (null entry)
         nil
@@ -191,10 +194,12 @@
 
 (defmethod sys:proclamation
     (client (environment basic-environment) name)
+  (declare (ignore client))
   (values (gethash name (declarations environment))))
 
 (defmethod (setf sys:proclamation)
     (new-value client (environment basic-environment) name)
+  (declare (ignore client))
   (cond ((null new-value)
          (remhash name (declarations environment)))
         (t

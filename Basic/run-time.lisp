@@ -46,6 +46,7 @@
 
 (defmethod sys:symbol-plist-known-p
     (client (environment run-time-environment) symbol)
+  (declare (ignore client))
   (let ((entry (variable-entry symbol environment)))
     (if (null entry)
         nil
