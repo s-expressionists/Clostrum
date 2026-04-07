@@ -54,6 +54,7 @@
 (defgeneric sys:map-all-packages (client environment function))
 (defgeneric sys:package-names (client environment package))
 (define-accessor sys:proclamation (client environment name))
+(defgeneric sys:map-proclamations (client environment function))
 (define-accessor sys:optimize (client environment))
 
 ;;; High level API

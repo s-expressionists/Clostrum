@@ -205,6 +205,11 @@
         (t
          (setf (gethash name (declarations environment)) new-value))))
 
+(defmethod sys:map-proclamations
+    (client (environment basic-environment) function)
+  (declare (ignore client))
+  (maphash function (declarations environment)))
+
 
 ;;; Optimize.
 (defmethod sys:optimize (client (environment basic-environment))

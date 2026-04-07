@@ -127,6 +127,8 @@ The return values of this function are undefined."))
     "Find the proclamation associated with NAME in ENVIRONMENT. The nature of proclamations is client-defined. This mechanism is intended for implementing the DECLARATION declaration, or CLTL2's DEFINE-DECLARATION.")
   (function (setf sys:proclamation)
     "Set the proclamation associated with NAME in ENVIRONMENT.")
+  (function sys:map-proclamations
+    "Call FUNCTION on all proclamations in ENVIRONMENT, in some undefined order. The function receives two arguments: the name of the proclamation, and the client-defined data.")
   (function sys:optimize
     "Return the OPTIMIZE proclamation data for ENVIRONMENT. The nature of this data is client-defined.
 The default method expects OPTIMIZE proclamation data to be a list of optimize qualities or (quality value) lists, i.e. the CDR of an OPTIMIZE declaration specifier.")

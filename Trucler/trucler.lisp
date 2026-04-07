@@ -56,6 +56,15 @@
   (declare (ignore client name))
   nil)
 
+(defmethod trucler:describe-declarations
+    (client (environment env:environment))
+  (make-instance 'trucler:declarations-description
+    :declarations (let ((ids ()))
+                    (env:map-proclamations
+                     client environment
+                     (lambda (id data) (declare (ignore data)) (push id ids)))
+                    ids)))
+
 (defmethod trucler:describe-tag
     (client (environment env:environment) tag)
   (declare (ignore client tag))

@@ -25,14 +25,14 @@
   (:shadow #:find-package #:package-name)
   (:export #:find-package #:package-name #:package-names #:map-all-packages)
   ;; Proclamations & optimize
-  (:export #:proclamation #:optimize))
+  (:export #:proclamation #:map-proclamations #:optimize))
 
 ;;; High level API.
 (defpackage #:clostrum
   (:use #:cl)
   (:import-from #:clostrum-sys
                 #:parent
-                #:proclamation
+                #:proclamation #:map-proclamations
                 #:variable-cell-boundp #:variable-cell-value #:variable-cell-makunbound
                 #:operator-cell-boundp #:operator-cell-value #:operator-cell-makunbound
                 #:type-cell-boundp #:type-cell-value #:type-cell-makunbound)
@@ -68,7 +68,7 @@
   (:export #:find-package #:package-name #:package-names #:map-all-packages)
   ;; Proclamations & optimize
   (:shadow #:optimize)
-  (:export #:proclamation #:optimize #:proclaim-optimize)
+  (:export #:proclamation #:map-proclamations #:optimize #:proclaim-optimize)
   ;; General
   (:shadow #:macroexpand-1 #:macroexpand #:constantp)
   (:export #:macroexpand-1 #:macroexpand #:constantp)
